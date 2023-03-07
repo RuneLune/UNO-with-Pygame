@@ -9,7 +9,7 @@ white = (255, 255, 255)
 black = (0, 0, 0)
 fps = 30
 
-# Pyhame initialize
+# Pygame initialize
 pygame.init()
 
 pygame.display.set_caption("Hello, world!")
