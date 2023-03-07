@@ -1,11 +1,11 @@
 UNO-with-Pygame
 ===============
-![Generic badge](https://img.shields.io/badge/Build-pending-lightgray.svg)
-![Generic badge](https://img.shields.io/badge/License-MIT-orange.svg)
-![Generic badge](https://img.shields.io/badge/Python-3.9-blue.svg)
-![Generic badge](https://img.shields.io/badge/Linter-Flake8-skyblue.svg)
-![Generic badge](https://img.shields.io/badge/Format-Black-black.svg)
-![Generic badge](https://img.shields.io/badge/IDE-VSCode-blue.svg)
+[![Generic badge](https://img.shields.io/badge/Build-pending-lightgray.svg)](#)
+[![Generic badge](https://img.shields.io/badge/License-MIT-orange.svg)](https://raw.githubusercontent.com/RuneRabbit/UNO-with-Pygame/main/LICENSE?token=GHSAT0AAAAAAB7LMPFYP4G6I75RDBW7LH3SZAG4RVA)
+[![Generic badge](https://img.shields.io/badge/Python-3.9-blue.svg)](https://www.python.org/downloads/release/python-3913/)
+[![Generic badge](https://img.shields.io/badge/Linter-Flake8-skyblue.svg)](https://flake8.pycqa.org/en/latest/)
+[![Generic badge](https://img.shields.io/badge/Formater-Black-black.svg)](https://black.readthedocs.io/en/stable/)
+[![Generic badge](https://img.shields.io/badge/IDE-VSCode-blue.svg)](https://code.visualstudio.com/)
 
 UNO with Pygame Project from Software Engineering class. 
 
