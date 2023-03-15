@@ -2,6 +2,7 @@ import pygame
 import sys
 
 import colors
+from settings_function import Settings
 
 pygame.init()
 
@@ -36,6 +37,8 @@ for i in range(len(menu_options)):
     menu_rect[i].top = screen.get_rect().centery + i * screen_size[1] / (
         3 * len(menu_options)
     )
+
+settings = Settings()
 
 
 # Define menu function
