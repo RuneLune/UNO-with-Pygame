@@ -6,7 +6,7 @@ import colors
 pygame.init()
 
 # Set up the screen
-screen_size = (1280, 720)
+screen_size = (1280, 960)
 screen = pygame.display.set_mode(screen_size)
 pygame.display.set_caption("Start")
 
