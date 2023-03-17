@@ -7,7 +7,7 @@ from settings_function import Settings
 pygame.init()
 
 # Set up the screen
-screen_size = (1280, 960)
+screen_size = (1280, 720)
 screen = pygame.display.set_mode(screen_size)
 pygame.display.set_caption("Settings")
 
