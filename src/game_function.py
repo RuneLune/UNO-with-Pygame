@@ -58,3 +58,13 @@ class Bot:
 
     """def play_card(self, deck):
         playable_cards = """
+
+class Startgame:
+    def __new__(cls):
+        return super().__new__(cls)
+    
+    def __init__(self):
+        return super().__init__()
+    
+    def order(self):
+        return self
