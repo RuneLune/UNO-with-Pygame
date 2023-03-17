@@ -9,7 +9,7 @@ class Settings():
 
     def __init__(self):
         # Screen size
-        self.screen_size = (1280, 960)
+        self.screen_size = (1280, 720)
 
         # Key bindings
         self.key_left = pygame.K_LEFT
@@ -46,7 +46,7 @@ class Settings():
     # Settings reset method
     def reset(self):
         # Screen size
-        self.screen_size = (1280, 960)
+        self.screen_size = (1280, 720)
 
         # Key bindings
         self.key_left = pygame.K_LEFT
