@@ -12,4 +12,3 @@ UNO with Pygame Project from Software Engineering class.
 # [UNO Game Card Assets](https://opengameart.org/content/uno)
 
 UNO game card images are sourced from [opengameart.org](https://opengameart.org/) created by the author [JotaFaD](https://opengameart.org/users/jotafad). 
-# UNO-with-Pygame
