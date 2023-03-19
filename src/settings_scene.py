@@ -70,5 +70,5 @@ def settings_scene():
     # Draw menu options
     for i in range(len(menu_text)):
         screen.blit(menu_text[i], menu_rect[i])
-    
+
     return ("continue")
