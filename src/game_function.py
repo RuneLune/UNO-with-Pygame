@@ -59,12 +59,35 @@ class Bot:
     """def play_card(self, deck):
         playable_cards = """
 
-class Startgame:
+class Game:
     def __new__(cls):
         return super().__new__(cls)
     
     def __init__(self):
+
+        self.running = True # 게임 실행
+
+        self.players = [] # 게임에 참여하는 players 리스트
+
+        # 인간 플레이어 추가...
+
+        # 봇 플레이어 추가...
+
+        self.turn = -1 # players 리스트의 인덱스를 턴 넘버로 사용
+        self.reverse = False # 턴 방향
+
         return super().__init__()
     
-    def order(self):
-        return self
+    def turn(self): # 턴
+        if not self.reverse: # 정방향
+            self.turn += 1 # 그 다음 사람 턴
+            if self.turn >= len(self.players): # 턴 넘버가 리스트 인덱스 넘어간다면
+                self.turn = 0 # 다시 첫 번째 player로 턴 변경
+        else: # 역방향
+            self.turn -= 1 # 역방향이므로 그 전 사람 턴
+            if self.turn < 0: # 턴 넘버가 음수 된다면
+                self.turn = len(self.players) - 1 # 제일 마지막 player로 턴 변경
+
+    def whoisFirst(self): # 플레이어 순서 정하기
+        random.shuffle(self.players) # players 순서 섞기
+        return self.players[0] # 첫 번째 플레이어 반환
