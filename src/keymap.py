@@ -19,6 +19,7 @@ class KeyMap:
         self.keys = pygame.key.get_pressed()
         self.is_custom = False
 
+    # if input is text, key is mapped
     def key_custom(self, target):
         pygame.event.wait()
         event = pygame.event.poll()
@@ -27,6 +28,7 @@ class KeyMap:
         elif event.type == pygame.KEYDOWN and key_default[target]:
             key_saved[target] = key_default[target]
 
+    # return defalut key or user custom key
     def down(self):
         if self.is_custom is True:
             return self.keys[key_saved["down"]]
