@@ -1,6 +1,7 @@
 import pygame
 import json
 import os
+import ctypes # Get Resolution of PC
 
 
 class Settings():
@@ -9,7 +10,7 @@ class Settings():
 
     def __init__(self):
         # Screen size
-        self.screen_size = (1280, 960)
+        self.screen_size = (1280, 720)
 
         # Key bindings
         self.key_left = pygame.K_LEFT
@@ -46,7 +47,7 @@ class Settings():
     # Settings reset method
     def reset(self):
         # Screen size
-        self.screen_size = (1280, 960)
+        self.screen_size = (1280, 720)
 
         # Key bindings
         self.key_left = pygame.K_LEFT
@@ -85,3 +86,30 @@ class Settings():
 
         # Return 0 if save was successful
         return 0
+
+    # 800*600 Screen
+    def SVGA(self):
+        self.screen_size = (800, 600)
+
+        return self
+    
+    # 1280*720 Screen
+    def HD(self):
+        self.screen_size = (1280, 720)
+        
+        return self
+    
+    # 1920*1080 Screen
+    def FHD(self):
+        self.screen_size = (1920, 1080)
+
+        return self
+    
+    # Fullscreen
+    def fullScreen(self):
+        user32 = ctypes.windll.user32
+        self.screen_size = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1) # Get resolution
+        self.screen = pygame.display.set_mode(self.screen_size, pygame.FULLSCREEN)  # Fullscreen setting
+
+        return self
+    
