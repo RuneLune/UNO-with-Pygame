@@ -57,6 +57,18 @@ class KeyMap:
         else:
             return self.keys[pygame.K_RIGHT]
 
+    def select(self):
+        if self.is_custom is True:
+            return self.keys[key_saved["select"]]
+        else:
+            # pygame.K_RETURN is normal enter key
+            return self.keys[pygame.K_RETURN]
+
+    def cancel(self):
+        if self.is_custom is True:
+            return self.keys[key_saved["cancel"]]
+        else:
+            return self.keys[pygame.K_ESCAPE]
 
 ##########################
 # key mapping test code
