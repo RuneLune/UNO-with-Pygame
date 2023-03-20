@@ -5,13 +5,17 @@ key_saved = {
     "down": 1073741905,
     "left": 1073741904,
     "right": 1073741903,
-}  # default value is arrow
+    "select": 13,
+    "cancel": 27
+}
 key_default = {
     "up": 1073741906,
     "down": 1073741905,
     "left": 1073741904,
     "right": 1073741903,
-}
+    "select": 13,
+    "cancel": 27
+}  # default value is arrow, enter, escape
 
 
 class KeyMap:
