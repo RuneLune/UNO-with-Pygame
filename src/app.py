@@ -11,11 +11,7 @@ fps = 60
 clock = pygame.time.Clock()
 scene = "main"
 
-scenes = {
-    "main": main_scene, 
-    "start": start_scene, 
-    "settings": settings_scene
-}
+scenes = {"main": main_scene, "start": start_scene, "settings": settings_scene}
 
 pygame.display.set_caption("main")
 

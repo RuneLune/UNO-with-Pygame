@@ -1,12 +1,20 @@
 import pygame
 
-key_saved = {"up": 1073741906, "down": 1073741905,
-             "left": 1073741904, "right": 1073741903}  # default value is arrow
-key_default = {"up": 1073741906, "down": 1073741905,
-               "left": 1073741904, "right": 1073741903}
+key_saved = {
+    "up": 1073741906,
+    "down": 1073741905,
+    "left": 1073741904,
+    "right": 1073741903,
+}  # default value is arrow
+key_default = {
+    "up": 1073741906,
+    "down": 1073741905,
+    "left": 1073741904,
+    "right": 1073741903,
+}
 
 
-class KeyMap():
+class KeyMap:
     def __init__(self):
         self.keys = pygame.key.get_pressed()
         self.is_custom = False
@@ -20,25 +28,25 @@ class KeyMap():
             key_saved[target] = key_default[target]
 
     def down(self):
-        if self.is_custom == True:
+        if self.is_custom is True:
             return self.keys[key_saved["down"]]
         else:
             return self.keys[pygame.K_DOWN]
 
     def up(self):
-        if self.is_custom == True:
+        if self.is_custom is True:
             return self.keys[key_saved["up"]]
         else:
             return self.keys[pygame.K_UP]
 
     def left(self):
-        if self.is_custom == True:
+        if self.is_custom is True:
             return self.keys[key_saved["left"]]
         else:
             return self.keys[pygame.K_LEFT]
 
     def right(self):
-        if self.is_custom == True:
+        if self.is_custom is True:
             return self.keys[key_saved["right"]]
         else:
             return self.keys[pygame.K_RIGHT]

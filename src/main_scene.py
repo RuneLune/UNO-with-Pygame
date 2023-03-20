@@ -84,7 +84,7 @@ def main_scene():
                     selected_menu = 0
             elif event.key == pygame.K_RETURN:
                 return menu_func(selected_menu)
-    
+
     select_rect.center = menu_rect[selected_menu].center
 
     # Fill background
