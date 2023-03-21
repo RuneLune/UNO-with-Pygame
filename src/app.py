@@ -11,7 +11,7 @@ pygame.init()
 
 settings = Settings()
 
-screen = pygame.display.set_mode(settings.get_screen_resolution())
+# screen = pygame.display.set_mode(settings.get_screen_resolution())
 
 fps = 60
 clock = pygame.time.Clock()

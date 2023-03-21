@@ -16,6 +16,7 @@ class Settings_Scene:
     def __init__(self, settings):
         self.__menu_options = [
             "Screen Size |",
+            "Fullscreen |",
             "Key Settings |",
             "Up |",
             "Down |",
@@ -40,9 +41,6 @@ class Settings_Scene:
             "res/font/MainFont.ttf", round(screen_size[1] / 20)
         )
 
-        # self.__title_font = pygame.font.SysFont("Arial", round(screen_size[1] / 10))
-        # self.__menu_font = pygame.font.SysFont("Arial", round(screen_size[1] / 20))
-
         self.__title_text = self.__title_font.render("Settings", True, colors.white)
         self.__title_rect = self.__title_text.get_rect()
         self.__title_rect.centerx = self.__screen.get_rect().centerx
@@ -54,10 +52,8 @@ class Settings_Scene:
             )
             self.__menu_rect.append(self.__menu_text[i].get_rect())
             self.__menu_rect[i].right = self.__screen.get_rect().centerx * 0.9
-            self.__menu_rect[
-                i
-            ].top = self.__screen.get_rect().centery / 3 + i * screen_size[1] / (
-                2 * len(self.__menu_options)
+            self.__menu_rect[i].top = (
+                self.__screen.get_rect().centery / 3 + i * screen_size[1] / 16
             )
             if i == 0:  # Screen Size
                 self.__setting_text.append(
@@ -70,22 +66,42 @@ class Settings_Scene:
                 )
                 self.__button_rect.append(self.__button_text[-1].get_rect())
                 self.__button_rect[-1].left = self.__screen.get_rect().centerx
-                self.__button_rect[
-                    -1
-                ].top = self.__screen.get_rect().centery / 3 + i * screen_size[1] / (
-                    2 * len(self.__menu_options)
+                self.__button_rect[-1].top = (
+                    self.__screen.get_rect().centery / 3 + i * screen_size[1] / 16
                 )
                 self.__button_text.append(
                     self.__menu_font.render("▶", True, colors.white)
                 )
                 self.__button_rect.append(self.__button_text[-1].get_rect())
                 self.__button_rect[-1].right = self.__screen.get_rect().centerx * 1.5
-                self.__button_rect[
-                    -1
-                ].top = self.__screen.get_rect().centery / 3 + i * screen_size[1] / (
-                    2 * len(self.__menu_options)
+                self.__button_rect[-1].top = (
+                    self.__screen.get_rect().centery / 3 + i * screen_size[1] / 16
                 )
-            elif i == 2:  # Key Settings - Left
+            elif i == 1:  # Fullscreen
+                if settings.get("fullscreen", None) is True:
+                    text = "Enable"
+                else:
+                    text = "Disable"
+                self.__setting_text.append(
+                    self.__menu_font.render(text, True, colors.white)
+                )
+                self.__button_text.append(
+                    self.__menu_font.render("◀", True, colors.white)
+                )
+                self.__button_rect.append(self.__button_text[-1].get_rect())
+                self.__button_rect[-1].left = self.__screen.get_rect().centerx
+                self.__button_rect[-1].top = (
+                    self.__screen.get_rect().centery / 3 + i * screen_size[1] / 16
+                )
+                self.__button_text.append(
+                    self.__menu_font.render("▶", True, colors.white)
+                )
+                self.__button_rect.append(self.__button_text[-1].get_rect())
+                self.__button_rect[-1].right = self.__screen.get_rect().centerx * 1.5
+                self.__button_rect[-1].top = (
+                    self.__screen.get_rect().centery / 3 + i * screen_size[1] / 16
+                )
+            elif i == 3:  # Key Settings - Left
                 self.__setting_text.append(
                     self.__menu_font.render(
                         pygame.key.name(
@@ -95,7 +111,7 @@ class Settings_Scene:
                         colors.white,
                     )
                 )
-            elif i == 3:  # Key Settings - Right
+            elif i == 4:  # Key Settings - Right
                 self.__setting_text.append(
                     self.__menu_font.render(
                         pygame.key.name(
@@ -105,7 +121,7 @@ class Settings_Scene:
                         colors.white,
                     )
                 )
-            elif i == 4:  # Key Settings - Up
+            elif i == 5:  # Key Settings - Up
                 self.__setting_text.append(
                     self.__menu_font.render(
                         pygame.key.name(
@@ -115,7 +131,7 @@ class Settings_Scene:
                         colors.white,
                     )
                 )
-            elif i == 5:  # Key Settings - Down
+            elif i == 6:  # Key Settings - Down
                 self.__setting_text.append(
                     self.__menu_font.render(
                         pygame.key.name(
@@ -125,7 +141,7 @@ class Settings_Scene:
                         colors.white,
                     )
                 )
-            elif i == 6:  # Key Settings - Select
+            elif i == 7:  # Key Settings - Select
                 self.__setting_text.append(
                     self.__menu_font.render(
                         pygame.key.name(
@@ -135,7 +151,7 @@ class Settings_Scene:
                         colors.white,
                     )
                 )
-            elif i == 7:  # Key Settings - Cancel
+            elif i == 8:  # Key Settings - Cancel
                 self.__setting_text.append(
                     self.__menu_font.render(
                         pygame.key.name(
@@ -145,7 +161,7 @@ class Settings_Scene:
                         colors.white,
                     )
                 )
-            elif i == 8:  # Colorblind Mode
+            elif i == 9:  # Colorblind Mode
                 if settings.get("colorblind_mode", None) is True:
                     text = "Enable"
                 else:
@@ -159,15 +175,18 @@ class Settings_Scene:
                 )
             self.__setting_rect.append(self.__setting_text[i].get_rect())
             self.__setting_rect[i].centerx = self.__screen.get_rect().centerx * 1.25
-            self.__setting_rect[
-                i
-            ].top = self.__screen.get_rect().centery / 3 + i * screen_size[1] / (
-                2 * len(self.__menu_options)
+            self.__setting_rect[i].top = (
+                self.__screen.get_rect().centery / 3 + i * screen_size[1] / 16
             )
         return None
 
     def refresh(self):
-        self.__screen = pygame.display.set_mode(self.__settings.get_screen_resolution())
+        flag = 0
+        if self.__settings.get_settings().get("fullscreen", False) is True:
+            flag |= pygame.FULLSCREEN
+        self.__screen = pygame.display.set_mode(
+            self.__settings.get_screen_resolution(), flag
+        )
         self.__menu_text = []
         self.__menu_rect = []
         self.__setting_text = []
@@ -195,9 +214,6 @@ class Settings_Scene:
             for i in range(len(self.__button_text)):
                 if self.__button_rect[i].collidepoint(mouse_pos):
                     return self.__button_func(i)
-            # for i in range(len(self.__menu_options)):
-            #     if self.__menu_rect[i].collidepoint(mouse_pos):
-            #         return self.__menu_func(i)
 
         return "continue"
 
@@ -209,9 +225,12 @@ class Settings_Scene:
         return ("continue", None)
 
     def __button_func(self, i):
-        if i == 0:  # Lower Screen Resolution
-            self.__settings.lower_screen_size()
-        elif i == 1:  # Higher Screen Resolution
-            self.__settings.higher_screen_size()
+        if self.__settings.get_settings().get("fullscreen", False) is False:
+            if i == 0:  # Lower Screen Resolution
+                self.__settings.lower_screen_size()
+            elif i == 1:  # Higher Screen Resolution
+                self.__settings.higher_screen_size()
+        if i == 2 or i == 3:  # Change Fullscreen Option
+            self.__settings.change_fullscreen()
         self.refresh()
         return ("continue", None)

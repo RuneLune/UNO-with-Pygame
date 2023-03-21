@@ -7,6 +7,7 @@ import ctypes  # Get Resolution of PC
 
 initial_settings = {
     "screen_size": "SVGA",
+    "full_screen": False,
     "key_settings": {
         "left": pygame.K_LEFT,
         "right": pygame.K_RIGHT,
@@ -43,9 +44,7 @@ class Settings:
             except BaseException:
                 # Error occurred while loading settings from file
                 pass
-        self.__screen_resolution = self.get_screen_size(
-            self.__settings.get("screen_size", None)
-        )
+        self.set_screen_resolution()
 
     # Settings reset method
     def reset_settings(self):
@@ -69,21 +68,20 @@ class Settings:
     def get_settings(self):
         return copy.deepcopy(self.__settings)
 
-    def get_screen_size(self, screen_type):
-        if screen_type == "SVGA":
-            return (800, 600)
-        elif screen_type == "HD":
-            return (1280, 720)
-        elif screen_type == "FHD":
-            return (1920, 1080)
-        elif screen_type == "Full Screen":
-            return (
-                ctypes.windll.user32.GetSystemMetrics(0),
-                ctypes.windll.user32.GetSystemMetrics(1),
-            )
+    def set_screen_resolution(self):
+        if self.__settings.get("fullscreen", False) is False:
+            screen_type = self.__settings.get("screen_size", "SVGA")
+            if screen_type == "SVGA":
+                self.__SVGA()
+            elif screen_type == "HD":
+                self.__HD()
+            elif screen_type == "FHD":
+                self.__FHD()
+            else:
+                self.__settings.update(screen_size="SVGA")
+                self.__SVGA()
         else:
-            self.__settings.update(screen_size="SVGA")
-            return (800, 600)
+            self.__fullscreen()
 
     def get_screen_resolution(self):
         return self.__screen_resolution
@@ -112,6 +110,14 @@ class Settings:
             self.__SVGA()
         self.save_settings()
 
+    def change_fullscreen(self):
+        if self.__settings.get("fullscreen", False) is False:
+            self.__settings.update(fullscreen=True)
+        else:
+            self.__settings.update(fullscreen=False)
+        self.set_screen_resolution()
+        self.save_settings()
+
     # 800*600 Screen
     def __SVGA(self):
         self.__screen_resolution = (800, 600)
@@ -125,11 +131,8 @@ class Settings:
         self.__screen_resolution = (1920, 1080)
 
     # Fullscreen
-    def __fullScreen(self):
-        user32 = ctypes.windll.user32
-        self.__settings.update(
-            screen_size=(user32.GetSystemMetrics(0), user32.GetSystemMetrics(1))
-        )  # Get resolution
-        self.screen = pygame.display.set_mode(
-            self.screen_size, pygame.FULLSCREEN
-        )  # Fullscreen setting
+    def __fullscreen(self):
+        self.__screen_resolution = (
+            ctypes.windll.user32.GetSystemMetrics(0),
+            ctypes.windll.user32.GetSystemMetrics(1),
+        )
