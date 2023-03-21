@@ -11,16 +11,19 @@ pygame.init()
 
 settings = Settings()
 
-screen_size = settings.get_settings().get("screen_size", None)
-screen = pygame.display.set_mode(screen_size)
+screen = pygame.display.set_mode(settings.get_screen_resolution())
 
 fps = 60
 clock = pygame.time.Clock()
 current_scene = "settings"
 
-scenes = {"main": main_scene, "start": start_scene, "settings": Settings_Scene(screen)}
+scenes = {
+    "main": main_scene,
+    "start": start_scene,
+    "settings": Settings_Scene(settings),
+}
 
-pygame.display.set_caption("main")
+pygame.display.set_caption("UNO with Pygame")
 
 # Main loop
 running = True
@@ -28,15 +31,16 @@ while running:
     scenes[current_scene].draw()
 
     for event in pygame.event.get():
-        scenes[current_scene].handle(event)
+        if event.type == pygame.QUIT:
+            running = False
+            pygame.quit()
+            sys.exit()
+        else:
+            res = scenes[current_scene].handle(event)
 
-    # res = scenes[scene]()
-    # if res[0] == "scene":
-    #     scene = res[1]
-    #     pygame.display.set_caption(res[1])
-    # elif res[0] == "exit":
-    #     pygame.quit()
-    #     sys.exit()
+    if res[0] == "scene":
+        scene = res[1]
+        pygame.display.set_caption(res[1])
 
     # Update screen
     pygame.display.update()
