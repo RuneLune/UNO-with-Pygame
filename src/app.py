@@ -2,28 +2,27 @@ import pygame
 import sys
 
 from settings_function import Settings
+import events
 
-from main_scene import main_scene
-from start_scene import start_scene
+from main_scene import Main_Scene
+from start_scene import Start_Scene
 from settings_scene import Settings_Scene
 
 pygame.init()
 
 settings = Settings()
 
-# screen = pygame.display.set_mode(settings.get_screen_resolution())
-
-fps = 60
+fps = 30
 clock = pygame.time.Clock()
-current_scene = "settings"
+current_scene = "main"
 
 scenes = {
-    "main": main_scene,
-    "start": start_scene,
+    "main": Main_Scene(settings),
+    "start": Start_Scene(settings),
     "settings": Settings_Scene(settings),
 }
 
-pygame.display.set_caption("UNO with Pygame")
+pygame.display.set_caption("Main Menu")
 
 # Main loop
 running = True
@@ -35,12 +34,12 @@ while running:
             running = False
             pygame.quit()
             sys.exit()
+        elif event.type == events.CHANGE_SCENE:
+            current_scene = event.target
+            scenes[current_scene].refresh()
+            continue
         else:
             res = scenes[current_scene].handle(event)
-
-    if res[0] == "scene":
-        scene = res[1]
-        pygame.display.set_caption(res[1])
 
     # Update screen
     pygame.display.update()
@@ -48,3 +47,4 @@ while running:
 
 # Quit pygame
 pygame.quit()
+sys.exit()

@@ -1,6 +1,7 @@
 import pygame
 
 import colors
+import events
 
 
 class Settings_Scene:
@@ -178,9 +179,14 @@ class Settings_Scene:
             self.__setting_rect[i].top = (
                 self.__screen.get_rect().centery / 3 + i * screen_size[1] / 16
             )
+        self.__button_text.append(self.__menu_font.render("◀ Back", True, colors.white))
+        self.__button_rect.append(self.__button_text[-1].get_rect())
+        self.__button_rect[-1].right = self.__screen.get_rect().centerx / 3
+        self.__button_rect[-1].bottom = self.__screen.get_rect().centery / 5
         return None
 
     def refresh(self):
+        pygame.display.set_caption("Settings")
         flag = 0
         if self.__settings.get_settings().get("fullscreen", False) is True:
             flag |= pygame.FULLSCREEN
@@ -232,5 +238,7 @@ class Settings_Scene:
                 self.__settings.higher_screen_size()
         if i == 2 or i == 3:  # Change Fullscreen Option
             self.__settings.change_fullscreen()
+        elif i == 4:  # Back to main
+            return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="main"))
         self.refresh()
-        return ("continue", None)
+        return None
