@@ -239,6 +239,8 @@ class Settings_Scene:
         if i == 2 or i == 3:  # Change Fullscreen Option
             self.__settings.change_fullscreen()
         elif i == 4:  # Back to main
-            return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="main"))
+            return pygame.event.post(
+                pygame.event.Event(events.CHANGE_SCENE, target="main")
+            )
         self.refresh()
         return None
