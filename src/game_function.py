@@ -74,9 +74,9 @@ class Player:
         return super().__init__()
 
     def draw_cards(self, deck, count):
-        self.cards += self.__deck.draw_cards(count)
-        self.cards.sort()
-        return len(self.cards)
+        self.__cards += self.__deck.draw_cards(count)
+        self.__cards.sort()
+        return len(self.__cards)
 
     def get_name(self):
         return self.__name
@@ -96,7 +96,7 @@ class Player:
 
     def discard_card(self, index, deck):
         deck.discard(self.__cards[index])
-        del self.__card[index]
+        del self.__cards[index]
 
 
 class Game:
