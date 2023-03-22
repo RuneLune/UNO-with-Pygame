@@ -104,7 +104,7 @@ class Main_Scene:
 
     def __menu_func(self, i):
         if i == 0:  # Start
-            return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="start"))
+            return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="game"))
         elif i == 1:  # Settings
             return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="settings"))
         elif i == 2:  # Exit

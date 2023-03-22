@@ -5,7 +5,7 @@ from settings_function import Settings
 import events
 
 from main_scene import Main_Scene
-from start_scene import Start_Scene
+from game_scene import Game_Scene
 from settings_scene import Settings_Scene
 
 pygame.init()
@@ -18,7 +18,7 @@ current_scene = "main"
 
 scenes = {
     "main": Main_Scene(settings),
-    "start": Start_Scene(settings),
+    "game": Game_Scene(settings),
     "settings": Settings_Scene(settings),
 }
 
