@@ -1,4 +1,5 @@
 import random
+import copy
 
 import cards
 
@@ -33,61 +34,100 @@ class Deck:
         self.discard_pile = self.discard_pile[:1]
         return self
 
-    def draw(self, count):
+    def draw_cards(self, count):
         if count >= len(self.draw_pile):
             self.shuffle()
-        drawing_cards = self.draw_pile[:count]
+        drawing_cards = copy.deepcopy(self.draw_pile[:count])
         self.draw_pile = self.draw_pile[count:]
         return drawing_cards
 
-    """def discard(self, card):
-        self.discarded_info = cards.check_card(card)"""
+    # def discard(self, card):
+    #     self.discarded_info = cards.check_card(card)
 
 
-class Bot:
-    def __new__(cls):
+# class Bot:
+#     def __new__(cls):
+#         return super().__new__(cls)
+
+#     def __init__(self):
+#         self.cards = []
+#         return super().__init__()
+
+#     def draw(self, deck, count):
+#         self.cards += deck.draw(count)
+#         return len(self.cards)
+
+#     def play_card(self, deck):
+#         playable_cards =
+
+
+class Player:
+    def __new__(cls, *args, **kwargs):
         return super().__new__(cls)
 
-    def __init__(self):
-        self.cards = []
+    def __init__(self, game, name):
+        self.__game = game
+        self.__name = name
+        self.__cards = []
+        self.__turn = False
+        self.__yelled_uno = False
         return super().__init__()
 
-    def draw(self, deck, count):
-        self.cards += deck.draw(count)
+    def draw_cards(self, deck, count):
+        self.cards += self.__deck.draw_cards(count)
+        self.cards.sort()
         return len(self.cards)
 
-    """def play_card(self, deck):
-        playable_cards = """
+    def get_name(self):
+        return self.__name
+
+    def is_uno(self):
+        return self.__yelled_uno
+
+    def get_hand_cards(self):
+        return copy.deepcopy(self.__cards)
+
+    def turn_start(self):
+        self.__turn = True
+
+    def turn_end(self):
+        self.__turn = False
+        self.__game.next_turn()
+
+    def discard_card(self, index, deck):
+        deck.discard(self.__cards[index])
+        del self.__card[index]
+
 
 class Game:
     def __new__(cls):
         return super().__new__(cls)
-    
+
     def __init__(self):
 
-        self.running = True # 게임 실행
+        self.running = True  # 게임 실행
 
-        self.players = [] # 게임에 참여하는 players 리스트
+        self.players = []  # 게임에 참여하는 players 리스트
 
         # 인간 플레이어 추가...
 
         # 봇 플레이어 추가...
 
-        self.turn = -1 # players 리스트의 인덱스를 턴 넘버로 사용
-        self.reverse = False # 턴 방향
+        self.turn = -1  # players 리스트의 인덱스를 턴 넘버로 사용
+        self.reverse = False  # 턴 방향
 
         return super().__init__()
-    
-    def turn(self): # 턴
-        if not self.reverse: # 정방향
-            self.turn += 1 # 그 다음 사람 턴
-            if self.turn >= len(self.players): # 턴 넘버가 리스트 인덱스 넘어간다면
-                self.turn = 0 # 다시 첫 번째 player로 턴 변경
-        else: # 역방향
-            self.turn -= 1 # 역방향이므로 그 전 사람 턴
-            if self.turn < 0: # 턴 넘버가 음수 된다면
-                self.turn = len(self.players) - 1 # 제일 마지막 player로 턴 변경
 
-    def whoisFirst(self): # 플레이어 순서 정하기
-        random.shuffle(self.players) # players 순서 섞기
-        return self.players[0] # 첫 번째 플레이어 반환
+    def turn(self):  # 턴
+        if not self.reverse:  # 정방향
+            self.turn += 1  # 그 다음 사람 턴
+            if self.turn >= len(self.players):  # 턴 넘버가 리스트 인덱스 넘어간다면
+                self.turn = 0  # 다시 첫 번째 player로 턴 변경
+        else:  # 역방향
+            self.turn -= 1  # 역방향이므로 그 전 사람 턴
+            if self.turn < 0:  # 턴 넘버가 음수 된다면
+                self.turn = len(self.players) - 1  # 제일 마지막 player로 턴 변경
+
+    def whoisFirst(self):  # 플레이어 순서 정하기
+        random.shuffle(self.players)  # players 순서 섞기
+        return self.players[0]  # 첫 번째 플레이어 반환
