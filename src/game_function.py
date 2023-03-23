@@ -131,3 +131,35 @@ class Game:
     def whoisFirst(self):  # 플레이어 순서 정하기
         random.shuffle(self.players)  # players 순서 섞기
         return self.players[0]  # 첫 번째 플레이어 반환
+    
+class Hand:
+
+    def __init__(self):
+        self.hand = []
+    
+    # 패에 카드 넣기
+    def add_card(self, card):
+        self.hand.append(card)
+    
+    # 가지고 있는 카드 나타내기
+    def has_card(self):
+        return self.hand
+    
+    # 패에서 카드 내기
+    def play_card(self, card_index):
+        card = self.hand[card_index]
+        del self.hand[card_index]
+        return card
+    
+    # 패에서 카드 개수 확인
+    def count(self):
+        return len(self.hand)
+    
+    # 낼 수 있는 카드 확인
+    def get_playable_cards(self, top_card):
+        playable_cards = []
+        for card in self.hand:
+            if card.color == top_card.color or card.number == top_card.number or card.color == "wild":
+                playable_cards.append(card)
+            
+        return playable_cards
