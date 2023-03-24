@@ -283,3 +283,7 @@ class Hand:
                 playable_cards.append(card)
 
         return playable_cards
+
+class Check:
+    def __init__(self) -> None:
+        pass
