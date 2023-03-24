@@ -204,7 +204,7 @@ class Player:
         self.__game.next_turn()
 
     def discard_card(self, index):
-        self.__game.discard(self.__cards[index])
+        self.__game.discard_card(self.__cards[index])
         del self.__cards[index]
 
     def end_turn(self):
