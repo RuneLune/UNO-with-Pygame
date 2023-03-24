@@ -49,7 +49,7 @@ class Game:
         )
         random.shuffle(self.__draw_pile)
         for i in range(0, len(self.__players)):
-            self.__players.draw_cards(7)
+            self.__players[i].draw_cards(7)
 
         # 패산에서 한 장 뒤집기
         self.__discard_pile = self.__draw_pile[:1]
