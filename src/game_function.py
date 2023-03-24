@@ -71,8 +71,8 @@ class Game:
         if self.__discarded_card.get("type", None) == "draw2":
             self.__force_draw = 2
         elif self.__discarded_card.get("type", None) == "reverse":
+            self.__current_turn = 0
             self.__reverse_direction = True
-            self.__current_turn = len(self.__players) - 1
         elif self.__discarded_card.get("type", None) == "skip":
             self.__current_turn = 2 % len(self.__players)
         # elif self.__discarded_card.get("color", None) == "wild":  # 미구현
