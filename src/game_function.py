@@ -284,6 +284,27 @@ class Hand:
 
         return playable_cards
 
-class Check:
+class Check(Player,Hand): # 다중 상속, Hand calss 작동 확인 필요
     def __init__(self) -> None:
         pass
+
+    # 승리 조건 확인
+    def winner(self):
+        if len(self.__cards) == 0 and self.__yelled_uno:
+            return True
+        else:
+            return False
+
+    # uno 외칠수 있는 조건 확인
+    def uno(self):
+        if len(self.__cards) == 2 and len(self.get_playable_cards) >= 1 :
+            return True
+        else:
+            return False
+    
+    # 기술카드 확인, 사용 상황 확인 필요
+    def technic(self):
+        for card in self.__cards:
+            if isinstance(card, int):
+                break
+            return True
