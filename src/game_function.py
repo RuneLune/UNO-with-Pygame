@@ -89,6 +89,13 @@ class Game:
         self.__discard_pile = self.__discard_pile[:1]
         return self
 
+    # 마지막으로 낸 카드 정보
+    def get_discard_info(self):
+        return {
+            "force_draw": self.__force_draw,
+            "discarded_card": copy.deepcopy(self.__discarded_card),
+        }
+
     # 카드 드로우
     def draw_cards(self, count, player):
         # 강제 드로우 수 확인
