@@ -60,6 +60,7 @@ class Game:
         while self.__discarded_card.get("type", None) == "draw4":
             self.__draw_pile += self.__discard_pile
             self.__discard_pile = self.__draw_pile[:1]
+            self.__draw_pile = self.__draw_pile[1:]
             self.__discarded_card = cards.check_card(self.__discard_pile[0])
 
         # 기술카드 처리
