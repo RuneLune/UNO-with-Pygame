@@ -32,7 +32,7 @@ def check_card(card):
     elif number == 16:
         type = "custom"
 
-    return (color, type, number)
+    return {"color": color, "type": type, "number": number}
 
 
 # Blue cards

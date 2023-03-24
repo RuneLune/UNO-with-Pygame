@@ -80,7 +80,9 @@ class Game_Scene:
 
     def __menu_func(self, i):
         if i == 0:  # Back
-            return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="main"))
+            return pygame.event.post(
+                pygame.event.Event(events.CHANGE_SCENE, target="main")
+            )
         else:
             print(self.__menu_options[i] + " clicked")
         return None
