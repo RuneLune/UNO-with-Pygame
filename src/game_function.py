@@ -14,6 +14,7 @@ class Game:
         # cls.Inst_created += 1
         return super().__new__(cls)
 
+    # 객체 초기화 함수
     def __init__(
         self,
         players_count,
@@ -22,15 +23,19 @@ class Game:
         max_rounds=-1,
         target_score=500,
     ):
+        # 봇 및 플레이어 추가
         self.__players = []
         for i in range(0, players_count - 1):
             self.__players.append(Player(self, "Player " + (i + 1)))
         self.__players.append(Player(self, "User"))
         random.shuffle(self.__players)
+
         self.__turn_seconds = turn_seconds
         self.__round_seconds = round_seconds
         self.__max_rounds = max_rounds
         self.__target_score = target_score
+
+        # 카드 추가, 셔플 및 패 분배
         self.__draw_pile = (
             list(range(cards.blue_0, cards.blue_skip + 1))
             + list(range(cards.blue_1, cards.blue_skip + 1))
@@ -43,29 +48,40 @@ class Game:
             + list(range(cards.wild_normal, cards.wild_draw + 1)) * 4
         )
         random.shuffle(self.__draw_pile)
+        for i in range(0, len(self.__players)):
+            self.__players.draw_cards(7)
+
+        # 패산에서 한 장 뒤집기
         self.__discard_pile = self.__draw_pile[:1]
         self.__draw_pile = self.__draw_pile[1:]
-        self.__discarded_info = cards.check_card(self.__discard_pile[0])
-        while self.__discarded_info.get("type", None) == "draw4":
+        self.__discarded_card = cards.check_card(self.__discard_pile[0])
+
+        # 4장 드로우 카드는 덱으로 되돌리고 다시 뒤집기
+        while self.__discarded_card.get("type", None) == "draw4":
             self.__draw_pile += self.__discard_pile
             self.__discard_pile = self.__draw_pile[:1]
-            self.__discarded_info = cards.check_card(self.__discard_pile[0])
+            self.__discarded_card = cards.check_card(self.__discard_pile[0])
+
+        # 기술카드 처리
         self.__force_draw = 0
         self.__reverse_direction = False
         self.__current_turn = 1
         self.__skip_turn = False
-        if self.__discarded_info.get("type", None) == "draw2":
+        if self.__discarded_card.get("type", None) == "draw2":
             self.__force_draw = 2
-        elif self.__discarded_info.get("type", None) == "reverse":
+        elif self.__discarded_card.get("type", None) == "reverse":
             self.__reverse_direction = True
             self.__current_turn = 0
-        elif self.__discarded_info.get("type", None) == "skip":
+        elif self.__discarded_card.get("type", None) == "skip":
             self.__current_turn = 2
-        # elif self.__discarded_info.get("color", None) == "wild":
+        # elif self.__discarded_card.get("color", None) == "wild":  # 미구현
         #     # self.__players[1].choose_color(self)
+
+        self.__player_drawed = False
 
         return super().__init__()
 
+    # 패산 셔플
     def __shuffle(self):
         discarded_cards = self.__discard_pile[1:]
         random.shuffle(discarded_cards)
@@ -73,37 +89,62 @@ class Game:
         self.__discard_pile = self.__discard_pile[:1]
         return self
 
+    # 카드 드로우
     def draw_cards(self, count, player):
+        # 강제 드로우 수 확인
         if self.__force_draw > 0:
             if count != self.self.__force_draw:
                 raise ValueError("must draw " + self.__force_draw + " cards")
-            else:
-                self.__force_draw = 0
+
+        # 남은 카드가 부족하면 패 섞고 드로우
         if count >= len(self.__draw_pile):
             self.__shuffle()
         drawing_cards = copy.deepcopy(self.__draw_pile[:count])
         self.__draw_pile = self.__draw_pile[count:]
         player.get_cards(drawing_cards)
+        self.__player_drawed = True
+        # 뽑은 카드가 낼 수 있는 경우 처리(미구현)
+        # if len(drawing_cards) == 1:
+        #     draw_card = cards.check_card(drawing_cards[0])
+        #     if (
+        #         draw_card.get("color") == "wild"
+        #         or draw_card.get("color") == self.__discarded_card.get("color")
+        #         or draw_card("number") == self.__discarded_card.get("number")
+        #     ):
+        #         self.__players[self.__current_turn].ask_discard()
+        self.__force_draw = 0
         return len(drawing_cards)
 
+    # 카드 내기
     def discard_card(self, card):
-        self.__discarded_info = cards.check_card(card)
-        if self.__discarded_info.get("type", None) == "draw2":
+        self.__discarded_card = cards.check_card(card)
+        # 기술 카드 처리
+        if self.__discarded_card.get("type", None) == "draw2":
             self.__force_draw += 2
-        elif self.__discarded_info.get("type", None) == "reverse":
+        elif self.__discarded_card.get("type", None) == "reverse":
             if self.__reverse_direction is False:
                 self.__reverse_direction = True
             else:
                 self.__reverse_direction = False
-        elif self.__discarded_info.get("type", None) == "skip":
+        elif self.__discarded_card.get("type", None) == "skip":
             self.__skip_turn = True
-        elif self.__discarded_info.get("color", None) == "wild":
+        elif self.__discarded_card.get("color", None) == "wild":
             # self.__players[self.__current_turn].choose_color(self)
-            if self.__discarded_info.get("type", None) == "draw4":
+            if self.__discarded_card.get("type", None) == "draw4":
                 self.__force_draw += 4
         self.__next_turn()
 
+    # 턴 종료시 호출 함수
+    def end_turn(self):
+        while self.__player_drawed is False:
+            self.__players[self.__current_turn].draw_cards(1)
+        self.__next_turn()
+
+    # 턴 넘기는 함수
     def __next_turn(self):
+        self.__player_drawed = False
+
+        # 스킵 및 방향 확인해 턴 넘기기
         if self.__skip_turn is False:
             if self.__reverse_direction is False:
                 self.__current_turn = (self.__current_turn + 1) % len(self.__players)
@@ -130,9 +171,13 @@ class Player:
         return super().__init__()
 
     def draw_cards(self, count):
-        self.__cards += self.__game.draw_cards(count)
-        self.__cards.sort()
+        self.__game.draw_cards(count)
         return len(self.__cards)
+
+    def get_cards(self, cards_list):
+        self.__cards += cards_list
+        self.__cards.sort()
+        return len(cards_list)
 
     def get_name(self):
         return self.__name
@@ -154,8 +199,13 @@ class Player:
         self.__game.discard(self.__cards[index])
         del self.__cards[index]
 
+    def end_turn(self):
+        self.__game.end_turn()
+
     # def choose_color(self):
     #     self.__game.set_color()
+
+    # def ask_discard(self):
 
 
 # class Game:
