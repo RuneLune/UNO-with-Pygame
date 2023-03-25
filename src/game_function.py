@@ -101,7 +101,7 @@ class Game:
     def draw_cards(self, count, player):
         # 강제 드로우 수 확인
         if self.__force_draw > 0:
-            if count != self.self.__force_draw:
+            if count != self.__force_draw:
                 raise ValueError("must draw " + self.__force_draw + " cards")
 
         # 남은 카드가 부족하면 패 섞고 드로우
@@ -140,6 +140,15 @@ class Game:
             # self.__players[self.__current_turn].choose_color(self)
             if self.__discarded_card.get("type", None) == "draw4":
                 self.__force_draw += 4
+            if self.__discarded_card.get("type", None) == "shuffle":
+                for i in range(0, len(self.__players)):
+                    shuffle_pile = []
+                    shuffle_pile += self.__players[i].get_hand_cards()
+                    self.__players[i].set_cards([])
+                random.shuffle(shuffle_pile)
+                while len(shuffle_pile) == 0:
+                    self.__players[(self.__current_turn + 1) % len(self.__players)].get_cards([shuffle_pile.pop(0)])
+
         self.__next_turn()
 
     # 턴 종료시 호출 함수
@@ -164,6 +173,9 @@ class Game:
             else:
                 self.__current_turn = (self.__current_turn - 2) % len(self.__players)
         return None
+    
+    # def set_color(self):
+    #     return
 
 
 class Player:
@@ -186,6 +198,10 @@ class Player:
         self.__cards += cards_list
         self.__cards.sort()
         return len(cards_list)
+    
+    def set_cards(self, cards_list):
+        self.__cards = copy.deepcopy(cards_list)
+        return len(self.__cards)
 
     def get_name(self):
         return self.__name
