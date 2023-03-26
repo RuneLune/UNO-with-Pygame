@@ -5,7 +5,7 @@ import cards
 
 class Player:
     def __new__(cls, *args, **kwargs):
-        return super().__new__(cls)
+        return super(Player, cls).__new__(cls)
 
     def __init__(self, game, name):
         self.__game = game
@@ -14,7 +14,7 @@ class Player:
         self.__turn = False
         self.__yelled_uno = False
         self.__points = 0
-        return super().__init__()
+        return super(Player, self).__init__()
 
     def draw_cards(self, count):
         self.__game.draw_cards(count)
