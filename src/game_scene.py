@@ -2,6 +2,7 @@ import pygame
 
 import colors
 import events
+from game import Game
 
 
 class Game_Scene:

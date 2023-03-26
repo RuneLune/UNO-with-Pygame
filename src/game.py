@@ -2,6 +2,7 @@ import random
 import copy
 
 import cards
+from player import Player
 
 
 class Game:
@@ -127,29 +128,71 @@ class Game:
     def discard_card(self, card):
         self.__discarded_card = cards.check_card(card)
         # 기술 카드 처리
-        if self.__discarded_card.get("type", None) == "draw2":
+        if self.__discarded_card.get("type") == "draw2":
             self.__force_draw += 2
-        elif self.__discarded_card.get("type", None) == "reverse":
+        elif self.__discarded_card.get("type") == "reverse":
             if self.__reverse_direction is False:
                 self.__reverse_direction = True
             else:
                 self.__reverse_direction = False
-        elif self.__discarded_card.get("type", None) == "skip":
+        elif self.__discarded_card.get("type") == "skip":
             self.__skip_turn = True
-        elif self.__discarded_card.get("color", None) == "wild":
+        elif self.__discarded_card.get("color") == "wild":
             # self.__players[self.__current_turn].choose_color(self)
-            if self.__discarded_card.get("type", None) == "draw4":
+            if self.__discarded_card.get("type") == "draw4":
                 self.__force_draw += 4
-            if self.__discarded_card.get("type", None) == "shuffle":
+            if self.__discarded_card.get("type") == "shuffle":
                 for i in range(0, len(self.__players)):
                     shuffle_pile = []
                     shuffle_pile += self.__players[i].get_hand_cards()
                     self.__players[i].set_cards([])
                 random.shuffle(shuffle_pile)
                 while len(shuffle_pile) == 0:
-                    self.__players[(self.__current_turn + 1) % len(self.__players)].get_cards([shuffle_pile.pop(0)])
+                    self.__players[
+                        (self.__current_turn + 1) % len(self.__players)
+                    ].get_cards([shuffle_pile.pop(0)])
 
         self.__next_turn()
+        pass
+
+    def check_winner(self):
+        if len(self.__players[self.__current_turn].get_hand_cards()) == 0:
+            self.__end_game()
+        pass
+
+    def __end_game(self):
+        points = 0
+        for i in range(0, len(self.__players)):
+            if i != self.__current_turn:
+                points += self.__calc_points(
+                    self.__players[self.__current_turn].get_hand_cards()
+                )
+        self.__players[self.__current_turn].add_points(points)
+        pass
+
+    def __calc_points(self, cards_list):
+        points = 0
+        for card in cards_list:
+            card_info = cards.check_card(card)
+            if card_info.get("number") <= 9:
+                points += card_info.get("number")
+            elif card_info.get("number") <= 12:
+                points += 20
+            elif card_info.get("number") <= 14:
+                points += 50
+            elif card_info.get("number") <= 16:
+                points += 40
+        return points
+
+    def check_uno(self, player):
+        if (
+            len(player.get_hand_cards()) == 2
+            and len(player.get_discardable_cards_index()) >= 1
+        ):
+            pass
+        else:
+            self.draw_cards(3, player)
+        pass
 
     # 턴 종료시 호출 함수
     def end_turn(self):
@@ -173,155 +216,6 @@ class Game:
             else:
                 self.__current_turn = (self.__current_turn - 2) % len(self.__players)
         return None
-    
+
     # def set_color(self):
     #     return
-
-
-class Player:
-    def __new__(cls, *args, **kwargs):
-        return super().__new__(cls)
-
-    def __init__(self, game, name):
-        self.__game = game
-        self.__name = name
-        self.__cards = []
-        self.__turn = False
-        self.__yelled_uno = False
-        return super().__init__()
-
-    def draw_cards(self, count):
-        self.__game.draw_cards(count)
-        return len(self.__cards)
-
-    def get_cards(self, cards_list):
-        self.__cards += cards_list
-        self.__cards.sort()
-        return len(cards_list)
-    
-    def set_cards(self, cards_list):
-        self.__cards = copy.deepcopy(cards_list)
-        return len(self.__cards)
-
-    def get_name(self):
-        return self.__name
-
-    def is_uno(self):
-        return self.__yelled_uno
-
-    def get_hand_cards(self):
-        return copy.deepcopy(self.__cards)
-
-    def turn_start(self):
-        self.__turn = True
-
-    def turn_end(self):
-        self.__turn = False
-        self.__game.next_turn()
-
-    def discard_card(self, index):
-        self.__game.discard_card(self.__cards[index])
-        del self.__cards[index]
-
-    def end_turn(self):
-        self.__game.end_turn()
-
-    # def choose_color(self):
-    #     self.__game.set_color()
-
-    # def ask_discard(self):
-
-
-# class Game:
-#     def __new__(cls):
-#         return super().__new__(cls)
-
-#     def __init__(self):
-
-#         self.running = True  # 게임 실행
-
-#         self.players = []  # 게임에 참여하는 players 리스트
-
-#         # 인간 플레이어 추가...
-
-#         # 봇 플레이어 추가...
-
-#         self.turn = -1  # players 리스트의 인덱스를 턴 넘버로 사용
-#         self.reverse = False  # 턴 방향
-
-#         return super().__init__()
-
-#     def turn(self):  # 턴
-#         if not self.reverse:  # 정방향
-#             self.turn += 1  # 그 다음 사람 턴
-#             if self.turn >= len(self.players):  # 턴 넘버가 리스트 인덱스 넘어간다면
-#                 self.turn = 0  # 다시 첫 번째 player로 턴 변경
-#         else:  # 역방향
-#             self.turn -= 1  # 역방향이므로 그 전 사람 턴
-#             if self.turn < 0:  # 턴 넘버가 음수 된다면
-#                 self.turn = len(self.players) - 1  # 제일 마지막 player로 턴 변경
-
-#     def whoisFirst(self):  # 플레이어 순서 정하기
-#         random.shuffle(self.players)  # players 순서 섞기
-#         return self.players[0]  # 첫 번째 플레이어 반환
-
-
-class Hand:
-    def __init__(self):
-        self.hand = []
-
-    # 패에 카드 넣기
-    def add_card(self, card):
-        self.hand.append(card)
-
-    # 가지고 있는 카드 나타내기
-    def has_card(self):
-        return self.hand
-
-    # 패에서 카드 내기
-    def play_card(self, card_index):
-        card = self.hand[card_index]
-        del self.hand[card_index]
-        return card
-
-    # 패에서 카드 개수 확인
-    def count(self):
-        return len(self.hand)
-
-    # 낼 수 있는 카드 확인
-    def get_playable_cards(self, top_card):
-        playable_cards = []
-        for card in self.hand:
-            if (
-                card.color == top_card.color
-                or card.number == top_card.number
-                or card.color == "wild"
-            ):
-                playable_cards.append(card)
-
-        return playable_cards
-
-class Check(Player,Hand): # 다중 상속, Hand calss 작동 확인 필요
-    def __init__(self) -> None:
-        pass
-
-    # 승리 조건 확인
-    def winner(self):
-        if len(self.__cards) == 0 and self.__yelled_uno:
-            return True
-        else:
-            return False
-
-    # uno 외칠수 있는 조건 확인
-    def uno(self):
-        if len(self.__cards) == 2 and len(self.get_playable_cards) >= 1 :
-            return True
-        else:
-            return False
-    
-    # 기술카드 확인, 사용 상황 확인 필요
-    def technic(self):
-        for card in self.__cards:
-            if isinstance(card, int):
-                break
-            return True
