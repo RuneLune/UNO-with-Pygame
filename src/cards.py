@@ -1,9 +1,57 @@
 import math
+import pygame
 
 
-# Card functions
-def check_card(card):
-    color = math.floor(card / 100)
+class Cards:
+    def __new__(cls, *args, **kwargs):
+        return super(Cards, cls).__new__(cls)
+
+    def __init__(self, settings):
+        self.__settings = settings
+        self.__card_images = {}
+        self.__render()
+        return super(Cards, self).__init__()
+
+    def refresh(self):
+        self.__render()
+        pass
+
+    def __render(self):
+        if self.__settings.get_settings().get("colorblind_mode") is False:
+            image_directory = "res/img/default/"
+        else:
+            image_directory = "res/img/colorblind/"
+
+        card_height = round(self.__settings.get_screen_resolution()[1] / 8)
+        card_width = round(card_height * 409 / 585)
+
+        card_code_list = (
+            [0, 999]  # 카드 뒷면 및 ? 카드
+            + list(range(wild_normal, wild_draw4 + 1))
+            + list(range(blue_0, blue_skip + 1))
+            + list(range(green_0, green_skip + 1))
+            + list(range(red_0, red_skip + 1))
+            + list(range(yellow_0, yellow_skip + 1))
+        )
+
+        for card_code in card_code_list:
+            card_image = pygame.image.load(
+                image_directory + str(card_code).zfill(3) + ".png"
+            )
+            self.__card_images.update(
+                {
+                    card_code: pygame.transform.scale(
+                        card_image, (card_width, card_height)
+                    )
+                }
+            )
+
+    def get_card_image(self, card_num):
+        return self.__card_images.get(card_num)
+
+
+def check_card(self, card_code):
+    color = math.floor(card_code / 100)
     if color == 1:
         color = "blue"
     elif color == 2:
@@ -16,7 +64,7 @@ def check_card(card):
         color = "wild"
 
     type = "normal"
-    number = card % 100
+    number = card_code % 100
     if number == 10:
         type = "draw2"
     elif number == 11:
@@ -46,7 +94,7 @@ blue_6 = 106
 blue_7 = 107
 blue_8 = 108
 blue_9 = 109
-blue_draw = 110
+blue_draw2 = 110
 blue_reverse = 111
 blue_skip = 112
 
@@ -61,7 +109,7 @@ green_6 = 206
 green_7 = 207
 green_8 = 208
 green_9 = 209
-green_draw = 210
+green_draw2 = 210
 green_reverse = 211
 green_skip = 212
 
@@ -76,7 +124,7 @@ red_6 = 306
 red_7 = 307
 red_8 = 308
 red_9 = 309
-red_draw = 310
+red_draw2 = 310
 red_reverse = 311
 red_skip = 312
 
@@ -91,12 +139,12 @@ yellow_6 = 406
 yellow_7 = 407
 yellow_8 = 408
 yellow_9 = 409
-yellow_draw = 410
+yellow_draw2 = 410
 yellow_reverse = 411
 yellow_skip = 412
 
 # Wild cards
 wild_normal = 13
-wild_draw = 14
+wild_draw4 = 14
 wild_shuffle = 15
 wild_custom = 16
