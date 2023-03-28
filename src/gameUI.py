@@ -45,12 +45,21 @@ class Game_UI:
         self.user_card_space = # user space 중앙에 배치
         self.bot_card_space
 
-    def refresh(self, player_count=4):
-        self.game = Game(player_count)
-        self.players = self.game.get_players()
+    # def refresh(self, player_count):
+    #     self.game = Game(player_count)
+    #     self.players = self.game.get_players()
 
         
     def draw(self):
+        if self.pause is False:
+            self.__draw_game()
+            pass
+        else:
+            self.__darw_pause_menu()
+            pass
+        pass
+
+    def __draw_game(self):
         self.screen.fill(colors.black)
         self.screen.blit()
         
@@ -71,7 +80,31 @@ class Game_UI:
 
         for i in range(len(user_card_list)):
             self.screen.blit(user_card_image[i],)
+        
+        pass
+
+    def __darw_pause_menu(self):
+        pass
 
     def handle(self, event):
-        None
-        
+        if self.pause is False:
+            self.__handle_game(event)
+            pass
+        else:  # self.pause is True
+            self.__handle_pause_menu(event)
+            pass
+        pass
+    
+    def __handle_game(self, event):
+        # 인게임 이벤트 처리(일시정지 버튼 포함)
+        # 일시정지 버튼 클릭하면(또는 Esc 누르면)
+        # 1. self.pause를 True로
+        # 2. 모든 타이머 정지(self.game.pause_timer())
+        pass
+
+    def __handle_pause_menu(self, event):
+        # 일시정지 메뉴 이벤트 처리
+        # 계속하기 버튼 클릭하면
+        # 1. self.pause를 False로
+        # 2. 모든 타이머 시작(self.game.resume_timer())
+        pass

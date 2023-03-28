@@ -220,5 +220,13 @@ class Game:
                 self.__current_turn = (self.__current_turn - 2) % len(self.__players)
         return None
 
+    def pause_timer(self):
+        # 모든 타이머 정지
+        pass
+
+    def resume_timer(self):
+        # 모든 타이머 재개
+        pass
+
     # def set_color(self):
     #     return
