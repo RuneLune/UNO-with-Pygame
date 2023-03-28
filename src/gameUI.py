@@ -4,12 +4,13 @@ import colors
 from user import User
 from bot import Bot
 from cards import Cards
+from game import Game
 
 class Game_UI:
-    def __init__(self,settings):
+    def __init__(self, settings):
         self.user = User()
         self.bot = Bot()
-        self.cards = Cards()
+        self.cards = Cards(settings)
         self.settings = settings
 
         self.cards.refresh()
@@ -43,6 +44,10 @@ class Game_UI:
 
         self.user_card_space = # user space 중앙에 배치
         self.bot_card_space
+
+    def refresh(self, player_count=4):
+        self.game = Game(player_count)
+        self.players = self.game.get_players()
 
         
     def draw(self):

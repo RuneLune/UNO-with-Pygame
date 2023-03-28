@@ -194,6 +194,9 @@ class Game:
             self.draw_cards(3, player)
         pass
 
+    def get_players(self):
+        return self.__players
+
     # 턴 종료시 호출 함수
     def end_turn(self):
         while self.__player_drawed is False:
