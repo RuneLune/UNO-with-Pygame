@@ -8,17 +8,29 @@ from game import Game
 
 class Game_UI:
     def __init__(self, settings):
-        self.user = User()
-        self.bot = Bot()
+        # self.user = User()
+        # self.bot = Bot()
+        self.game = Game(settings)
         self.cards = Cards(settings)
         self.settings = settings
+
+        # load user and bot object
+        self.players = self.game.get_players()
+        self.bots = []
+
+        # discrete user and computer
+        for player in self.players:
+            if player.get_name() == "User":
+                self.user = player
+            else:
+                self.bots.append(player)
 
         self.cards.refresh()
 
         self.screen_size = settings.get_screen_resolution()
         self.screen = pygame.display.set_mode(self.screen_size)
 
-        self.user_card_list = self.user.get_cards()
+        self.user_card_list = self.game.get_cards()
         self.bot_card_list = self.bot.get_cards()
 
     def render(self):
@@ -42,7 +54,7 @@ class Game_UI:
         self.user_name_text = self.font.render("insert_User_name", True, colors.white)
         self.bot_name_text =[self.font.render("computer " + i, True, colors.white) for i in range(0,4)]
 
-        self.user_card_space = # user space 중앙에 배치
+        self.user_card_space = None# user space 중앙에 배치
         self.bot_card_space
 
     # def refresh(self, player_count):
