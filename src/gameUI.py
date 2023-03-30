@@ -8,8 +8,6 @@ from game import Game
 
 class Game_UI:
     def __init__(self, settings):
-        # self.user = User()
-        # self.bot = Bot()
         self.game = Game(settings)
         self.cards = Cards(settings)
         self.settings = settings
@@ -20,7 +18,7 @@ class Game_UI:
 
         # discrete user and computer
         for player in self.players:
-            if player.get_name() == "User":
+            if player.get_name() == "User": # 이름 변경에따른 코드 수정 필요
                 self.user = player
             else:
                 self.bots.append(player)
@@ -30,8 +28,7 @@ class Game_UI:
         self.screen_size = settings.get_screen_resolution()
         self.screen = pygame.display.set_mode(self.screen_size)
 
-        self.user_card_list = self.game.get_cards()
-        self.bot_card_list = self.bot.get_cards()
+        self.card_size = self.cards.get_card_image(1).get_rect().size
 
     def render(self):
         # each space's size,position definition
@@ -41,7 +38,7 @@ class Game_UI:
         user_space_size = (self.screen_size[0]*(3/4), self.screen_size[1]*(1/3))
         self.user_space_pos = (0,self.screen_size[1]*(1/3))
         
-        bots_space_size = (self.screen_size[0]*(1/4), self.screen_size[1]*(9/4))
+        bots_space_size = (self.screen_size[0]*(1/4), self.screen_size[1]*(1/5))
         self.bots_space_pos = [(user_space_size[0],i * bots_space_size[1]) for i in range(0,4)]
 
         # space rectangular definition
@@ -54,8 +51,9 @@ class Game_UI:
         self.user_name_text = self.font.render("insert_User_name", True, colors.white)
         self.bot_name_text =[self.font.render("computer " + i, True, colors.white) for i in range(0,4)]
 
-        self.user_card_space = None# user space 중앙에 배치
-        self.bot_card_space
+        self.user_card_center_pos = (self.user_space.centerx - self.card_size[0]/2,
+                                     self.user_space.centery - self.card_size[1]/2 )# user space 중앙에 배치
+        self.bot_card_space = None
 
     # def refresh(self, player_count):
     #     self.game = Game(player_count)
@@ -86,14 +84,21 @@ class Game_UI:
         
         # draw card space
         user_card_list = self.user.get_cards()
-        bot_card_list = self.bot.get_cards()
+        user_card_num = len(user_card_list)
+        bot_card_num = [len(self.bots[i].get_cards()) for i in range(len(self.bots))]
 
+        # 플레이어가 가지고 있는 카드 이미지 로드
         user_card_image = [self.cards.get_card_image(num) for num in user_card_list]
-
-        for i in range(len(user_card_list)):
-            self.screen.blit(user_card_image[i],)
         
-        pass
+        # 플레이어의 카드 그리기
+        if user_card_num%2 == 0:
+            for i in range(user_card_num):
+                self.screen.blit(user_card_image[i],(self.user_card_center_pos[0]-(user_card_num/2)+self.card_size[0]*i,
+                                                     self.user_card_center_pos[1]))
+        else:
+            for i in range(user_card_num):
+                self.screen.blit(user_card_image[i],(self.user_card_center_pos[0]-(user_card_num//2)+self.card_size[0]*i,
+                                                     self.user_card_center_pos[1]))
 
     def __darw_pause_menu(self):
         pass
