@@ -22,7 +22,9 @@ class Game_Lobby:
         screen_size = self.__settings.get_screen_resolution()
 
         # 폰트 생성
-        self.font = pygame.font.Font("res/font/Travel.ttf", round(screen_size[1] / 15))
+        self.__game_font = pygame.font.Font("res/font/Travel.ttf", round(screen_size[1] / 15))
+        self.__back_font = pygame.font.Font("res/font/MainFont.ttf", round(screen_size[1] / 20))
+        self.__start_font = pygame.font.Font("res/font/MainFont.ttf", round(screen_size[1] / 10))
 
         # 덱/유저/봇 공간 사이즈와 위치 정의
         deck_space_size = (screen_size[0]*(2/3),screen_size[1]*(3/5))
@@ -51,13 +53,13 @@ class Game_Lobby:
         pygame.draw.rect(self.__screen, (80, 120, 80), self.user_space)
         pygame.draw.rect(self.__screen, (50, 50, 50), self.bots_space)
 
-        self.__button_text.append(self.font.render("◀ Back", True, colors.white))
+        self.__button_text.append(self.__back_font.render("◀ Back", True, colors.white))
         self.__button_rect.append(self.__button_text[-1].get_rect())
         self.__button_rect[-1].right = self.__screen.get_rect().centerx / 3
         self.__button_rect[-1].bottom = self.__screen.get_rect().centery / 5
 
-        self.__button_text.append(self.font.render("Start Game", True, colors.white))
-        self.__button_rect.append(self.__button_text[-1].get_rect())
+        self.__button_text.append(self.__start_font.render("Start Game", True, colors.white))
+        self.__button_rect.append(pygame.Rect(0,0,self.user_space.width / 2, self.user_space.height * 2/3))
         self.__button_rect[-1].centerx = self.user_space.centerx
         self.__button_rect[-1].centery = self.user_space.centery
 
@@ -76,6 +78,8 @@ class Game_Lobby:
     def draw(self):
         # 화면 검은색 채우기
         self.__screen.fill(colors.black)
+        for i in range(len(self.__button_text)):
+            self.__screen.blit(self.__button_text[i], self.__button_rect[i])
         self.draw_bot_names(self.bots_space, self.bot_names_rects, self.bot_names, self.bot_name_inputs)
         self.edit_bot_name(pygame.mouse.get_pos, self.bot_names_rects, self.bot_names, self.bot_name_inputs)
 
@@ -85,7 +89,7 @@ class Game_Lobby:
     # 봇 이름 수정을 위한 입력 박스 생성 함수
     def create_input_box(self, pos, size, text):
         input_box = pygame.Rect(pos, size)
-        input_text = self.font.render(text, True, colors.black)
+        input_text = self.__game_font.render(text, True, colors.black)
         return input_box, input_text
     
     # 봇 이름 수정 함수
@@ -102,7 +106,7 @@ class Game_Lobby:
     def draw_bot_names(self, bot_areas, bot_name_areas, bot_names, bot_name_inputs):
         for i in range(len(bot_areas)):
             # 봇 이름 출력
-            bot_name_text = self.font.render(bot_names[i], True, colors.black)
+            bot_name_text = self.__game_font.render(bot_names[i], True, colors.black)
             bot_name_pos = bot_name_areas[i].topleft
             self.__screen.blit(bot_name_text, bot_name_pos)
 
