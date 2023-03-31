@@ -2,15 +2,16 @@ import pygame
 
 import colors
 import events
+from game import Game
 
 
-class Start_Scene:
+class Game_Scene:
     MAX_Inst = 1
     Inst_created = 0
 
     def __new__(cls, *args, **kwargs):
         if cls.Inst_created >= cls.MAX_Inst:
-            raise ValueError("Cannot create more Start Scene")
+            raise ValueError("Cannot create more Game Scene")
         cls.Inst_created += 1
         return super().__new__(cls)
 
@@ -30,7 +31,7 @@ class Start_Scene:
             "res/font/MainFont.ttf", round(screen_size[1] / 20)
         )
 
-        self.__title_text = self.__title_font.render("Start Scene", True, colors.white)
+        self.__title_text = self.__title_font.render("Game Scene", True, colors.white)
         self.__title_rect = self.__title_text.get_rect()
         self.__title_rect.centerx = self.__screen.get_rect().centerx
         self.__title_rect.bottom = self.__screen.get_rect().centery
@@ -49,7 +50,7 @@ class Start_Scene:
         return None
 
     def refresh(self):
-        pygame.display.set_caption("Start")
+        pygame.display.set_caption("Game")
         flag = 0
         if self.__settings.get_settings().get("fullscreen", False) is True:
             flag |= pygame.FULLSCREEN
@@ -80,7 +81,9 @@ class Start_Scene:
 
     def __menu_func(self, i):
         if i == 0:  # Back
-            return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="main"))
+            return pygame.event.post(
+                pygame.event.Event(events.CHANGE_SCENE, target="main")
+            )
         else:
             print(self.__menu_options[i] + " clicked")
         return None
