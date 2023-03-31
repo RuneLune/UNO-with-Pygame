@@ -1,14 +1,18 @@
+from __future__ import annotations
+
 import copy
-from typing import List, Iterable
+from typing import List, Iterable, TYPE_CHECKING
 
 import cards
-from game import Game
+
+if TYPE_CHECKING:
+    from game import Game
 
 
 class Player:
     # Player 클래스 생성자
     def __new__(cls, *args, **kwargs):
-        return super(Player, cls).__new__(cls, *args, **kwargs)
+        return super(Player, cls).__new__(cls)
 
     # Player 객체 초기화 메서드
     def __init__(self, game: Game, name: str) -> None:

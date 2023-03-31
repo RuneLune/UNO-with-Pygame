@@ -28,6 +28,7 @@ class Game:
         max_rounds: int = -1,
         target_score: int = 500,
     ) -> None:
+        from player import Player
         # 봇 및 플레이어 추가
         self.__players = []
         for i in range(0, players_count - 1):
