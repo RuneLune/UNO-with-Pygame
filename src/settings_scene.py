@@ -170,6 +170,22 @@ class Settings_Scene:
                 self.__setting_text.append(
                     self.__menu_font.render(text, True, colors.white)
                 )
+                self.__button_text.append(
+                    self.__menu_font.render("◀", True, colors.white)
+                )
+                self.__button_rect.append(self.__button_text[-1].get_rect())
+                self.__button_rect[-1].left = self.__screen.get_rect().centerx
+                self.__button_rect[-1].top = (
+                    self.__screen.get_rect().centery / 3 + i * screen_size[1] / 16
+                )
+                self.__button_text.append(
+                    self.__menu_font.render("▶", True, colors.white)
+                )
+                self.__button_rect.append(self.__button_text[-1].get_rect())
+                self.__button_rect[-1].right = self.__screen.get_rect().centerx * 1.5
+                self.__button_rect[-1].top = (
+                    self.__screen.get_rect().centery / 3 + i * screen_size[1] / 16
+                )
             else:
                 self.__setting_text.append(
                     self.__menu_font.render("", True, colors.white)
@@ -238,7 +254,9 @@ class Settings_Scene:
                 self.__settings.higher_screen_size()
         if i == 2 or i == 3:  # Change Fullscreen Option
             self.__settings.change_fullscreen()
-        elif i == 4:  # Back to main
+        if i == 4 or i == 5:  # Change Colorblind Mode Option
+            self.__settings.change_colorblind_mode()
+        elif i == 6:  # Back to main
             return pygame.event.post(
                 pygame.event.Event(events.CHANGE_SCENE, target="main")
             )
