@@ -5,7 +5,7 @@ from typing import List, Dict, Iterable
 import cards
 from player import Player
 from bot import Bot
-from user import User
+# from user import User
 
 
 class Game:
@@ -28,12 +28,11 @@ class Game:
         max_rounds: int = -1,
         target_score: int = 500,
     ) -> None:
-        from player import Player
         # 봇 및 플레이어 추가
         self.__players = []
         for i in range(0, players_count - 1):
-            self.__players.append(Player(self, "Player " + str(i + 1)))
-        self.__players.append(Player(self, "User"))
+            self.__players.append(Bot(self, "Bot " + str(i + 1)))
+        self.__players.append(Player(self, "Player"))
         random.shuffle(self.__players)
 
         self.__turn_seconds = turn_seconds
@@ -82,8 +81,8 @@ class Game:
             self.__reverse_direction = True
         elif self.__discarded_card.get("type", None) == "skip":
             self.__current_turn = 2 % len(self.__players)
-        # elif self.__discarded_card.get("color", None) == "wild":  # 미구현
-        #     # self.__players[1].choose_color(self)
+        elif self.__discarded_card.get("color", None) == "wild":
+            self.__players[1].choose_color(self)
 
         self.__player_drawed = False
 
@@ -105,7 +104,7 @@ class Game:
         }
 
     # player에게 Draw pile에서 count만큼 카드를 주는 메서드
-    def draw_cards(self, count: int, player: Player | Bot | User) -> None:
+    def draw_cards(self, count: int, player: Player | Bot) -> None:
         # 강제 드로우 수 확인
         if self.__force_draw > 0:
             if count != self.__force_draw:
@@ -119,14 +118,14 @@ class Game:
         player.get_cards(drawing_cards)
         self.__player_drawed = True
         # 뽑은 카드가 낼 수 있는 경우 처리(미구현)
-        # if len(drawing_cards) == 1:
-        #     draw_card = cards.check_card(drawing_cards[0])
-        #     if (
-        #         draw_card.get("color") == "wild"
-        #         or draw_card.get("color") == self.__discarded_card.get("color")
-        #         or draw_card("number") == self.__discarded_card.get("number")
-        #     ):
-        #         self.__players[self.__current_turn].ask_discard()
+        if len(drawing_cards) == 1:
+            draw_card = cards.check_card(drawing_cards[0])
+            if (
+                draw_card.get("color") == "wild"
+                or draw_card.get("color") == self.__discarded_card.get("color")
+                or draw_card("number") == self.__discarded_card.get("number")
+            ):
+                self.__players[self.__current_turn].ask_discard()
         self.__force_draw = 0
         return None
 
@@ -144,7 +143,7 @@ class Game:
         elif self.__discarded_card.get("type") == "skip":
             self.__skip_turn = True
         elif self.__discarded_card.get("color") == "wild":
-            # self.__players[self.__current_turn].choose_color(self)
+            self.__players[self.__current_turn].choose_color(self)
             if self.__discarded_card.get("type") == "draw4":
                 self.__force_draw += 4
             if self.__discarded_card.get("type") == "shuffle":
@@ -194,7 +193,7 @@ class Game:
         return points
 
     # player가 우노를 외칠 수 있는 상황인지 확인하고 처리하는 메서드
-    def check_uno(self, player: Player | Bot | User) -> None:
+    def check_uno(self, player: Player | Bot) -> None:
         if (
             len(player.get_hand_cards()) == 2
             and len(player.get_discardable_cards_index()) >= 1
@@ -205,7 +204,7 @@ class Game:
         return None
 
     # Game 객체 내의 플레이어 배열을 반환하는 메서드
-    def get_players(self) -> List[Player | Bot | User]:
+    def get_players(self) -> List[Player | Bot]:
         return self.__players
 
     # 플레이어가 턴 종료 시 호출하는 메서드
@@ -242,5 +241,19 @@ class Game:
         # 모든 타이머 재개
         return None
 
-    # def set_color(self):
-    #     return
+    def set_color(self, color: int | str) -> None:
+        if color == 1 or color == "blue":
+            self.__discarded_card.update(color="blue")
+            pass
+        elif color == 2 or color == "green":
+            self.__discarded_card.update(color="green")
+            pass
+        elif color == 3 or color == "red":
+            self.__discarded_card.update(color="red")
+            pass
+        elif color == 4 or color == "yellow":
+            self.__discarded_card.update(color="yellow")
+            pass
+        else:
+            raise ValueError("Invalid Color")
+        return None
