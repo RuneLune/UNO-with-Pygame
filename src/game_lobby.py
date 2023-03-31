@@ -18,16 +18,10 @@ class Game_Lobby:
         self.screen_size = settings.get_screen_resolution()
         # 스크린 생성
         self.screen = pygame.display.set_mode(self.screen_size)
-        # 폰트 생성
-        self.font = pygame.font.Font("res/font/Travel.ttf", round(self.screensize[1] / 15))
+
         return super().__init__()
     
-
-
-    def draw(self):
-        # 화면 검은색 채우기
-        self.__screen.fill(colors.black)
-
+    def render(self):
         # 덱/유저/봇 공간 사이즈와 위치 정의
         deck_space_size = (self.screen_size[0]*(2/3),self.screen_size[1]*(3/5))
         deck_space_pos = (0,0)
@@ -43,12 +37,27 @@ class Game_Lobby:
         self.user_space = pygame.Rect(self.user_space_pos, user_space_size)
         self.bots_space = [pygame.Rect(self.bots_space_pos[i], bots_space_size) for i in range(0,5)]
 
+        # 폰트 생성
+        self.font = pygame.font.Font("res/font/Travel.ttf", round(self.screensize[1] / 15))
+
         # 봇 이름 리스트 및 이름 공간 사각형 정의
         self.bot_names = ["Computer1", "Computer2", "Computer3", "Computer4", "Computer5"]
         self.bot_names_rects = [self.bot_names[i].get_rect() for i in range(len(self.bot_names))]
 
         # self.user_name_text = self.font.render("insert_User_name", True, colors.white)
         # self.bot_name_text =[self.font.render("computer " + i, True, colors.white) for i in range(0,5)]
+
+        pygame.draw.rect(self.screen, (50, 100, 80), self.deck_space)
+        pygame.draw.rect(self.screen, (80, 120, 80), self.user_space)
+        pygame.draw.rect(self.screen, (50, 100, 80), self.deck_space)
+
+        
+
+    def draw(self):
+        # 화면 검은색 채우기
+        self.__screen.fill(colors.black)
+
+        
 
 
     # 봇 이름 수정을 위한 입력 박스 생성 함수
