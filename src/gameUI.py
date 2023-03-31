@@ -8,10 +8,10 @@ from game import Game
 
 class Game_UI:
     def __init__(self, settings):
-        self.game = Game(5) # 임시 플레이어 수
+        self.game = Game(6) # 임시 플레이어 수
         self.cards = Cards(settings)
         self.settings = settings
-
+        self.pause = False
         # load user and bot object
         self.players = self.game.get_players()
         self.bots = []
@@ -27,8 +27,11 @@ class Game_UI:
 
         self.screen_size = settings.get_screen_resolution()
         self.screen = pygame.display.set_mode(self.screen_size)
+        self.surface = pygame.Surface(self.screen_size)
 
-        self.card_size = self.cards.get_card_image(1).get_rect().size
+        self.card_size = self.cards.get_card_image(100).get_rect().size
+
+        self.render()
 
     def render(self):
         # each space's size,position definition
@@ -39,25 +42,25 @@ class Game_UI:
         self.user_space_pos = (0,self.screen_size[1]*(1/3))
         
         bots_space_size = (self.screen_size[0]*(1/4), self.screen_size[1]*(1/5))
-        self.bots_space_pos = [(user_space_size[0],i * bots_space_size[1]) for i in range(0,4)]
+        self.bots_space_pos = [(user_space_size[0],i * bots_space_size[1]) for i in range(len(self.players))]
 
         # space rectangular definition
-        self.deck_space = pygame.rect(deck_space_pos, deck_space_size)
-        self.user_space = pygame.rect(self.user_space_pos, user_space_size)
-        self.bots_space = [pygame.rect(self.bots_space_pos[i], bots_space_size) for i in range(0,4)]
+        self.deck_space = pygame.Rect(deck_space_pos, deck_space_size)
+        self.user_space = pygame.Rect(self.user_space_pos, user_space_size)
+        self.bots_space = [pygame.Rect(self.bots_space_pos[i], bots_space_size) for i in range(len(self.players))]
 
         # font for user, bot name
         self.font = pygame.font.Font("res/font/Travel.ttf", 20)
         self.user_name_text = self.font.render("insert_User_name", True, colors.white)
-        self.bot_name_text =[self.font.render("computer " + i, True, colors.white) for i in range(0,4)]
+        self.bot_name_text =[self.font.render("computer " + str(i), True, colors.white) for i in range(len(self.players))]
 
         self.user_card_center_pos = (self.user_space.centerx - self.card_size[0]/2,
-                                     self.user_space.centery - self.card_size[1]/2 )# user space 중앙에 배치
-        self.bot_card_space = None
+                                     self.user_space.centery - self.card_size[1]/2 )# user space 중앙 좌표
+        self.bot_card_center_pos = [(self.bots_space[i].centerx - self.card_size[0]/2,
+                                    self.bots_space[i].centery - self.card_size[1]/2) for i in range(len(self.players))]
 
-    # def refresh(self, player_count):
-    #     self.game = Game(player_count)
-    #     self.players = self.game.get_players()
+    def refresh(self, player_count):
+        self.players = self.game.get_players()
 
         
     def draw(self):
@@ -71,21 +74,21 @@ class Game_UI:
 
     def __draw_game(self):
         self.screen.fill(colors.black)
-        self.screen.blit()
+        self.screen.blit(self.screen,(0,0))
         
         # draw spaces and text
-        self.screen.blit(self.deck_space)
-        self.screen.blit(self.user_space)
+        pygame.draw.rect(self.surface,(0,255,0),rect=self.deck_space,border_radius=2)
+        pygame.draw.rect(self.surface,(0,0,255),self.user_space,border_radius=2)
         self.screen.blit(self.user_name_text, self.user_space_pos)
 
         for i in range(0,4):
-            self.screen.blit(self.bots_space[i])
+            pygame.draw.rect(self.surface,(255,0,0),self.bots_space[i],border_radius=2)
             self.screen.blit(self.bot_name_text[i],self.bots_space_pos[i])
         
         # draw card space
-        user_card_list = self.user.get_cards()
+        user_card_list = self.user.get_hand_cards()
         user_card_num = len(user_card_list)
-        bot_card_num = [len(self.bots[i].get_cards()) for i in range(len(self.bots))]
+        bot_card_num = [len(self.bots[i].get_hand_cards()) for i in range(len(self.bots))]
 
         # 플레이어가 가지고 있는 카드 이미지 로드
         user_card_image = [self.cards.get_card_image(num) for num in user_card_list]
@@ -99,6 +102,8 @@ class Game_UI:
             for i in range(user_card_num):
                 self.screen.blit(user_card_image[i],(self.user_card_center_pos[0]-(user_card_num//2)+self.card_size[0]*i,
                                                      self.user_card_center_pos[1]))
+
+        # 봇의 카드그리기
 
     def __darw_pause_menu(self):
         pass
