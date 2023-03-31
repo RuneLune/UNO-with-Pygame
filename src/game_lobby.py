@@ -49,7 +49,7 @@ class Game_Lobby:
 
         pygame.draw.rect(self.__screen, (50, 100, 80), self.deck_space)
         pygame.draw.rect(self.__screen, (80, 120, 80), self.user_space)
-        pygame.draw.rect(self.__screen, (50, 100, 80), self.deck_space)
+        pygame.draw.rect(self.__screen, (50, 50, 50), self.bots_space)
 
         self.__button_text.append(self.font.render("◀ Back", True, colors.white))
         self.__button_rect.append(self.__button_text[-1].get_rect())
