@@ -8,6 +8,7 @@ from main_scene import Main_Scene
 from game_scene import Game_Scene
 from settings_scene import Settings_Scene
 from gameUI import Game_UI
+from game_lobby import Game_Lobby
 
 pygame.init()
 
