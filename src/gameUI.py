@@ -8,7 +8,7 @@ from game import Game
 
 class Game_UI:
     def __init__(self, settings):
-        self.game = Game(settings)
+        self.game = Game(5) # 임시 플레이어 수
         self.cards = Cards(settings)
         self.settings = settings
 
