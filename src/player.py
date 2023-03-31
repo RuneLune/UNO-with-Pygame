@@ -1,5 +1,5 @@
 import copy
-from typing import List
+from typing import List, Iterable
 
 import cards
 from game import Game
@@ -26,14 +26,14 @@ class Player:
         return None
 
     # 플레이어에게 cards_list에 있는 카드를 주는 메서드
-    def get_cards(self, cards_list: List[int]) -> None:
-        self.__cards += cards_list
+    def get_cards(self, cards_list: Iterable[int]) -> None:
+        self.__cards += list(cards_list)
         self.__cards.sort()
         return None
 
     # (주의) 플레이어의 기존 카드를 없애고 카드를 cards_list로 설정하는 메서드
-    def set_cards(self, cards_list: List[int]) -> None:
-        self.__cards = copy.deepcopy(cards_list)
+    def set_cards(self, cards_list: Iterable[int]) -> None:
+        self.__cards = list(cards_list)
         return None
 
     # 플레이어의 이름을 반환하는 메서드
@@ -79,9 +79,9 @@ class Player:
             discarded_card = discard_info.get("discarded_card")
             for i in range(0, len(self.__cards)):
                 card = cards.check_card(self.__cards[i])
-                if card.get("color") == discarded_card.get("color") or card.get(
-                    "number"
-                ) == discarded_card.get("number"):
+                if card.get("color") == discarded_card.get("color") or (
+                    card.get("number") == discarded_card.get("number")
+                ):
                     self.__discardable_cards_index.append(i)
         return None
 
