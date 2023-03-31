@@ -36,6 +36,11 @@ class Game:
         self.__max_rounds = max_rounds
         self.__target_score = target_score
 
+        self.__force_draw = 0
+        self.__reverse_direction = False
+        self.__current_turn = 1
+        self.__skip_turn = False
+
         # 카드 추가, 셔플 및 패 분배
         self.__draw_pile = (
             list(range(cards.blue_0, cards.blue_skip + 1))
@@ -65,10 +70,6 @@ class Game:
             self.__discarded_card = cards.check_card(self.__discard_pile[0])
 
         # 기술카드 처리
-        self.__force_draw = 0
-        self.__reverse_direction = False
-        self.__current_turn = 1
-        self.__skip_turn = False
         if self.__discarded_card.get("type", None) == "draw2":
             self.__force_draw = 2
         elif self.__discarded_card.get("type", None) == "reverse":

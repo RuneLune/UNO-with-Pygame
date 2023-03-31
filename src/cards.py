@@ -46,11 +46,11 @@ class Cards:
                 }
             )
 
-    def get_card_image(self, card_num):
-        return self.__card_images.get(card_num)
+    def get_card_image(self, card_code):
+        return self.__card_images.get(card_code)
 
 
-def check_card(self, card_code):
+def check_card(card_code):
     color = math.floor(card_code / 100)
     if color == 1:
         color = "blue"
