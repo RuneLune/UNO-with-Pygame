@@ -27,7 +27,7 @@ class Game:
         # 봇 및 플레이어 추가
         self.__players = []
         for i in range(0, players_count - 1):
-            self.__players.append(Player(self, "Player " + (i + 1)))
+            self.__players.append(Player(self, "Player " + str(i + 1)))
         self.__players.append(Player(self, "User"))
         random.shuffle(self.__players)
 
@@ -46,7 +46,7 @@ class Game:
             + list(range(cards.red_1, cards.red_skip + 1))
             + list(range(cards.yellow_0, cards.yellow_skip + 1))
             + list(range(cards.yellow_1, cards.yellow_skip + 1))
-            + list(range(cards.wild_normal, cards.wild_draw + 1)) * 4
+            + list(range(cards.wild_normal, cards.wild_draw4 + 1)) * 4
         )
         random.shuffle(self.__draw_pile)
         for i in range(0, len(self.__players)):

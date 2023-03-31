@@ -17,7 +17,7 @@ class Player:
         return super(Player, self).__init__()
 
     def draw_cards(self, count):
-        self.__game.draw_cards(count)
+        self.__game.draw_cards(count,self)
         return len(self.__cards)
 
     def get_cards(self, cards_list):
