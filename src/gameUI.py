@@ -26,6 +26,7 @@ class Game_UI:
         self.cards.refresh()
 
         self.screen_size = settings.get_screen_resolution()
+        print(self.screen_size)
         self.screen = pygame.display.set_mode(self.screen_size)
         self.surface = pygame.Surface(self.screen_size)
 
@@ -39,8 +40,8 @@ class Game_UI:
         deck_space_pos = (0,0)
 
         user_space_size = (self.screen_size[0]*(3/4), self.screen_size[1]*(1/3))
-        self.user_space_pos = (0,self.screen_size[1]*(1/3))
-        
+        self.user_space_pos = (0,self.screen_size[1]*(2/3))
+
         bots_space_size = (self.screen_size[0]*(1/4), self.screen_size[1]*(1/5))
         self.bots_space_pos = [(user_space_size[0],i * bots_space_size[1]) for i in range(len(self.players))]
 
@@ -74,15 +75,15 @@ class Game_UI:
 
     def __draw_game(self):
         self.screen.fill(colors.black)
-        self.screen.blit(self.screen,(0,0))
+        self.screen.blit(self.surface,(0,0))
         
         # draw spaces and text
-        pygame.draw.rect(self.surface,(0,255,0),rect=self.deck_space,border_radius=2)
-        pygame.draw.rect(self.surface,(0,0,255),self.user_space,border_radius=2)
+        pygame.draw.rect(self.surface,colors.green,rect=self.deck_space,border_radius=1)
+        pygame.draw.rect(self.surface,colors.black,rect=self.user_space,border_radius=1)
         self.screen.blit(self.user_name_text, self.user_space_pos)
 
-        for i in range(0,4):
-            pygame.draw.rect(self.surface,(255,0,0),self.bots_space[i],border_radius=2)
+        for i in range(len(self.players)):
+            pygame.draw.rect(self.surface,colors.red,self.bots_space[i],border_radius=1)
             self.screen.blit(self.bot_name_text[i],self.bots_space_pos[i])
         
         # draw card space
@@ -96,11 +97,11 @@ class Game_UI:
         # 플레이어의 카드 그리기
         if user_card_num%2 == 0:
             for i in range(user_card_num):
-                self.screen.blit(user_card_image[i],(self.user_card_center_pos[0]-(user_card_num/2)+self.card_size[0]*i,
+                self.screen.blit(user_card_image[i],(self.user_card_center_pos[0] + self.card_size[0]*(i-user_card_num/2) + i*10,
                                                      self.user_card_center_pos[1]))
         else:
             for i in range(user_card_num):
-                self.screen.blit(user_card_image[i],(self.user_card_center_pos[0]-(user_card_num//2)+self.card_size[0]*i,
+                self.screen.blit(user_card_image[i],(self.user_card_center_pos[0] + self.card_size[0]*(i-user_card_num//2) + i*10,
                                                      self.user_card_center_pos[1]))
 
         # 봇의 카드그리기
