@@ -118,6 +118,13 @@ class Settings:
         self.set_screen_resolution()
         self.save_settings()
 
+    def change_colorblind_mode(self):
+        if self.__settings.get("colorblind_mode", False) is False:
+            self.__settings.update(colorblind_mode=True)
+        else:
+            self.__settings.update(colorblind_mode=False)
+        self.save_settings()
+
     # 800*600 Screen
     def __SVGA(self):
         self.__screen_resolution = (800, 600)

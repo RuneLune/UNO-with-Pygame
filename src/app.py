@@ -5,8 +5,10 @@ from settings_function import Settings
 import events
 
 from main_scene import Main_Scene
-from start_scene import Start_Scene
+from game_scene import Game_Scene
 from settings_scene import Settings_Scene
+from gameUI import Game_UI
+from game_lobby import Game_Lobby
 
 pygame.init()
 
@@ -18,8 +20,9 @@ current_scene = "main"
 
 scenes = {
     "main": Main_Scene(settings),
-    "start": Start_Scene(settings),
+    "game": Game_Scene(settings),
     "settings": Settings_Scene(settings),
+    "gameui": Game_UI(settings),
 }
 
 pygame.display.set_caption("Main Menu")
@@ -36,7 +39,10 @@ while running:
             sys.exit()
         elif event.type == events.CHANGE_SCENE:
             current_scene = event.target
-            scenes[current_scene].refresh()
+            if event.target == "gameui":
+                scenes[current_scene].refresh(5)
+            else:
+                scenes[current_scene].refresh()
             continue
         else:
             res = scenes[current_scene].handle(event)
