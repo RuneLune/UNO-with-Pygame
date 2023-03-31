@@ -1,26 +1,38 @@
+from __future__ import annotations
+
 import math
 import pygame
+from typing import TYPE_CHECKING, Dict
+
+if TYPE_CHECKING:
+    from settings_function import Settings
 
 
 class Cards:
+    # Cards 클래스 생성자
     def __new__(cls, *args, **kwargs):
         return super(Cards, cls).__new__(cls)
 
-    def __init__(self, settings):
+    # Cards 객체 초기화 메서드
+    def __init__(self, settings: Settings) -> None:
         self.__settings = settings
         self.__card_images = {}
         self.__render()
         return super(Cards, self).__init__()
 
-    def refresh(self):
+    # refresh 메서드
+    def refresh(self) -> None:
         self.__render()
-        pass
+        return None
 
-    def __render(self):
+    # 카드 이미지 렌더링 메서드
+    def __render(self) -> None:
         if self.__settings.get_settings().get("colorblind_mode") is False:
             image_directory = "res/img/default/"
+            pass
         else:
             image_directory = "res/img/colorblind/"
+            pass
 
         card_height = round(self.__settings.get_screen_resolution()[1] / 8)
         card_width = round(card_height * 409 / 585)
@@ -45,12 +57,16 @@ class Cards:
                     )
                 }
             )
+            continue
+        return None
 
-    def get_card_image(self, card_code):
+    # card_code에 해당하는 이미지 Surface를 반환하는 메서드
+    def get_card_image(self, card_code: int) -> pygame.Surface:
         return self.__card_images.get(card_code)
 
 
-def check_card(card_code):
+# card_code에 해당하는 카드 정보를 반환하는 함수
+def check_card(card_code: int) -> Dict[str: str | int]:
     color = math.floor(card_code / 100)
     if color == 1:
         color = "blue"
