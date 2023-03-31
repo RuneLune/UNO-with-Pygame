@@ -39,7 +39,7 @@ while running:
         elif event.type == events.CHANGE_SCENE:
             current_scene = event.target
             if event.target == "gameui":
-                scenes[current_scene].refresh(event.player_count)
+                scenes[current_scene].refresh(5)
             else:
                 scenes[current_scene].refresh()
             continue
