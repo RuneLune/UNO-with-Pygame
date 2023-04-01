@@ -102,16 +102,16 @@ class Game_UI:
 
         # draw spaces and text
         pygame.draw.rect(
-            self.surface, colors.green, rect=self.deck_space, border_radius=1
+            self.surface, (0, 150, 100), rect=self.deck_space
         )
         pygame.draw.rect(
-            self.surface, colors.black, rect=self.user_space, border_radius=1
+            self.surface, colors.white, rect=self.user_space, width=2
         )
         self.screen.blit(self.user_name_text, self.user_space_pos)
 
         for i in range(len(self.bots)):
             pygame.draw.rect(
-                self.surface, colors.red, self.bots_space[i], border_radius=1
+                self.surface, colors.red, self.bots_space[i], width=2
             )
             self.screen.blit(self.bot_name_text[i], self.bots_space_pos[i])
 
@@ -120,7 +120,8 @@ class Game_UI:
         user_card_num = len(user_card_list)
 
         # 플레이어가 가지고 있는 카드 이미지 로드
-        user_card_image = [self.cards.get_card_image(num) for num in user_card_list]
+        user_card_image = [self.cards.get_card_image(num)
+                           for num in user_card_list]
 
         # 플레이어의 카드 그리기
         if user_card_num % 2 == 0:
@@ -130,7 +131,7 @@ class Game_UI:
                     (
                         self.user_card_center_pos[0]
                         + self.card_size[0] * (i - user_card_num / 2)
-                        + i * 10,
+                        - i * 20,
                         self.user_card_center_pos[1],
                     ),
                 )
@@ -141,7 +142,7 @@ class Game_UI:
                     (
                         self.user_card_center_pos[0]
                         + self.card_size[0] * (i - user_card_num // 2)
-                        + i * 10,
+                        - i * 20,
                         self.user_card_center_pos[1],
                     ),
                 )
@@ -157,7 +158,6 @@ class Game_UI:
                             self.bot_card_center_pos[i][0]
                             + self.card_size[0] * (j - bot_card_num / 2) // 2,
                             self.bot_card_center_pos[i][1]
-                            + self.bots_space_size[1] * i,
                         ),
                     )
             else:
@@ -168,7 +168,6 @@ class Game_UI:
                             self.bot_card_center_pos[i][0]
                             + self.card_size[0] * (j - bot_card_num // 2) // 2,
                             self.bot_card_center_pos[i][1]
-                            + self.bots_space_size[1] * i,
                         ),
                     )
 
