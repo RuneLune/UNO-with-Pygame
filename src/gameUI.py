@@ -23,18 +23,17 @@ class Game_UI:
                 self.bots.append(player)
 
         self.cards.refresh()
-
-        self.card_size = self.cards.get_card_image(100).get_rect().size
+        self.card_size = self.cards.get_card_image(000).get_rect().size
+        self.card_back_image = self.cards.get_card_image(000)
 
         self.title_font = pygame.font.Font(None, 60)
         self.menu_font = pygame.font.Font(None, 40)
         self.mouse_pos = pygame.mouse.get_pos()
 
-        self.card_size = self.cards.get_card_image(000).get_rect().size
-        self.card_back_image = self.cards.get_card_image(000)
         self.render()
 
     def render(self):
+        # screen definition
         self.settings = Settings()
         self.screen_size = self.settings.get_screen_resolution()
         self.screen = pygame.display.set_mode(self.screen_size)
