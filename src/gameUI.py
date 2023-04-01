@@ -2,6 +2,7 @@ import pygame
 import colors
 from cards import Cards
 from game import Game
+from settings_function import Settings
 
 
 class Game_UI:
@@ -23,10 +24,6 @@ class Game_UI:
 
         self.cards.refresh()
 
-        self.screen_size = settings.get_screen_resolution()
-        self.screen = pygame.display.set_mode(self.screen_size)
-        self.surface = pygame.Surface(self.screen_size)
-
         self.card_size = self.cards.get_card_image(100).get_rect().size
 
         self.title_font = pygame.font.Font(None, 60)
@@ -38,11 +35,18 @@ class Game_UI:
         self.render()
 
     def render(self):
+        self.settings = Settings()
+        self.screen_size = self.settings.get_screen_resolution()
+        self.screen = pygame.display.set_mode(self.screen_size)
+        self.surface = pygame.Surface(self.screen_size)
+
         # each space's size,position definition
-        deck_space_size = (self.screen_size[0] * (3 / 4), self.screen_size[1] * (2 / 3))
+        deck_space_size = (self.screen_size[0] * (3 / 4),
+                           self.screen_size[1] * (2 / 3))
         deck_space_pos = (0, 0)
 
-        user_space_size = (self.screen_size[0] * (3 / 4), self.screen_size[1] * (1 / 3))
+        user_space_size = (self.screen_size[0] * (3 / 4),
+                           self.screen_size[1] * (1 / 3))
         self.user_space_pos = (0, self.screen_size[1] * (2 / 3))
 
         self.bots_space_size = (
