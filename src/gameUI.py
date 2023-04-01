@@ -1,9 +1,5 @@
 import pygame
 import colors
-import sys
-
-from user import User
-from bot import Bot
 from cards import Cards
 from game import Game
 
@@ -176,7 +172,6 @@ class Game_UI:
                     )
 
     def __darw_pause_menu(self):
-
         title_text = self.title_font.render("Pause Menu", True, (255, 255, 255))
         continue_text = self.menu_font.render("Continue", True, (255, 255, 255))
         settings_text = self.menu_font.render("Settings", True, (255, 255, 255))
