@@ -5,7 +5,7 @@ from typing import List, Dict, Iterable
 import cards
 from player import Player
 from bot import Bot
-# from user import User
+from timer import Timer
 
 
 class Game:
@@ -17,7 +17,7 @@ class Game:
         # if cls.Inst_created >= cls.MAX_Inst:
         #     raise ValueError("Cannot create more Game object")
         # cls.Inst_created += 1
-        return super().__new__(cls)
+        return super(Game, cls).__new__(cls)
 
     # Game 객체 초기화 메서드
     def __init__(
@@ -34,6 +34,9 @@ class Game:
             self.__players.append(Bot(self, "Bot " + str(i + 1)))
         self.__players.append(Player(self, "Player"))
         random.shuffle(self.__players)
+
+        self.__turn_timer = Timer()
+        self.__round_timer = Timer()
 
         self.__turn_seconds = turn_seconds
         self.__round_seconds = round_seconds
@@ -233,12 +236,14 @@ class Game:
 
     # Game 객체 내의 모든 타이머를 일시정지하는 메서드
     def pause_timer(self) -> None:
-        # 모든 타이머 정지
+        self.__turn_timer.pause()
+        self.__round_timer.pause()
         return None
 
     # Game 객체 내의 모든 일시정지된 타이머를 재개하는 메서드
     def resume_timer(self) -> None:
-        # 모든 타이머 재개
+        self.__turn_timer.resume()
+        self.__round_timer.resume()
         return None
 
     def set_color(self, color: int | str) -> None:
