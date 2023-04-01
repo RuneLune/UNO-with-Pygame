@@ -85,6 +85,7 @@ class Game_UI:
     def refresh(self, player_count):
         self.players = self.game.get_players()
         self.cards.refresh()
+        self.render()
 
     def draw(self):
         if self.pause is False:
