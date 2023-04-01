@@ -20,7 +20,7 @@ class Game_UI:
 
         # discrete user and computer
         for player in self.players:
-            if player.get_name() == "User":  # 이름 변경에따른 코드 수정 필요
+            if player.get_name() == "Player":  # 이름 변경에따른 코드 수정 필요
                 self.user = player
             else:
                 self.bots.append(player)
@@ -31,18 +31,14 @@ class Game_UI:
         self.screen = pygame.display.set_mode(self.screen_size)
         self.surface = pygame.Surface(self.screen_size)
 
-<<<<<<< HEAD
         self.card_size = self.cards.get_card_image(100).get_rect().size
 
-        
         self.title_font = pygame.font.Font(None, 60)
         self.menu_font = pygame.font.Font(None, 40)
         self.mouse_pos = pygame.mouse.get_pos()
 
-=======
         self.card_size = self.cards.get_card_image(000).get_rect().size
         self.card_back_image = self.cards.get_card_image(000)
->>>>>>> c6de46e9281bf0a7273322a08e37fb4c3e7947ab
         self.render()
 
     def render(self):
@@ -180,7 +176,7 @@ class Game_UI:
                     )
 
     def __darw_pause_menu(self):
-        
+
         title_text = self.title_font.render("Pause Menu", True, (255, 255, 255))
         continue_text = self.menu_font.render("Continue", True, (255, 255, 255))
         settings_text = self.menu_font.render("Settings", True, (255, 255, 255))
@@ -192,10 +188,22 @@ class Game_UI:
 
         # Set the position of the menu options
         title_pos = (self.screen.get_width() // 2 - title_text.get_width() // 2, 50)
-        continue_pos = (screen_width // 2 - continue_text.get_width() // 2, screen_height // 2 - 75)
-        settings_pos = (screen_width // 2 - settings_text.get_width() // 2, screen_height // 2 - 25)
-        start_menu_pos = (screen_width // 2 - start_menu_text.get_width() // 2, screen_height // 2 + 25)
-        exit_pos = (screen_width // 2 - exit_text.get_width() // 2, screen_height // 2 + 75)
+        continue_pos = (
+            screen_width // 2 - continue_text.get_width() // 2,
+            screen_height // 2 - 75,
+        )
+        settings_pos = (
+            screen_width // 2 - settings_text.get_width() // 2,
+            screen_height // 2 - 25,
+        )
+        start_menu_pos = (
+            screen_width // 2 - start_menu_text.get_width() // 2,
+            screen_height // 2 + 25,
+        )
+        exit_pos = (
+            screen_width // 2 - exit_text.get_width() // 2,
+            screen_height // 2 + 75,
+        )
 
         # Draw the menu options on the screen
         self.screen.fill((0, 0, 0))
@@ -205,7 +213,6 @@ class Game_UI:
         self.screen.blit(start_menu_text, start_menu_pos)
         self.screen.blit(exit_text, exit_pos)
 
-       
         # # 정지 메뉴 이벤트
         # for event in pygame.event.get():
         #     if event.type == pygame.QUIT:
@@ -224,7 +231,6 @@ class Game_UI:
         #         elif exit_text.get_rect(center=exit_pos).collidepoint(self.mouse_pos):
         #             pygame.quit()
         #             sys.exit()
-
 
     def handle(self, event):
         if self.pause is False:
@@ -247,7 +253,6 @@ class Game_UI:
         # 계속하기 버튼 클릭하면
         # 1. self.pause를 False로
         # 2. 모든 타이머 시작(self.game.resume_timer())
-                # Check if any of the menu options are hovered over
-
+        # Check if any of the menu options are hovered over
 
         pass
