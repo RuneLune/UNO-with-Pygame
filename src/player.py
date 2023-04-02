@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import copy
 from typing import List, Iterable, TYPE_CHECKING
+import pygame
 
 import cards
+import events
 
 if TYPE_CHECKING:
     from game import Game
@@ -107,5 +109,10 @@ class Player:
 
     # 와일드 카드를 냈을 때 호출되는 메서드
     def choose_color(self) -> None:
-        # self.__game.set_color(1)
+        pygame.event.post(pygame.event.Event(events.ASK_COLOR))
+        return None
+
+    # 색을 정하는 메서드
+    def set_color(self, color: int | str) -> None:
+        self.__game.set_color(color)
         return None

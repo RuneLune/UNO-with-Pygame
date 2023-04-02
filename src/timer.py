@@ -38,6 +38,7 @@ class Timer:
         self.__paused = False
         return None
 
+    # 타이머의 현재 시간을 반환하는 메서드
     def get(self) -> None:
         if self.__timestarted is None:
             raise ValueError("Timer not started")

@@ -1,24 +1,25 @@
 import pygame
 import sys
+from typing import Dict
 
 from settings_function import Settings
 import events
 
+# from game_scene import Game_Scene
 from main_scene import Main_Scene
-#from game_scene import Game_Scene
 from settings_scene import Settings_Scene
 from gameUI import Game_UI
 from game_lobby import Game_Lobby
 
 pygame.init()
 
-settings = Settings()
+settings: Settings = Settings()
 
-fps = 30
-clock = pygame.time.Clock()
-current_scene = "main"
+fps: int = 30
+clock: pygame.time.Clock = pygame.time.Clock()
+current_scene: str = "main"
 
-scenes = {
+scenes: Dict[str : Main_Scene | Game_Lobby | Settings_Scene | Game_UI] = {
     "main": Main_Scene(settings),
     "gamelobby": Game_Lobby(settings),
     "settings": Settings_Scene(settings),
@@ -28,7 +29,7 @@ scenes = {
 pygame.display.set_caption("Main Menu")
 
 # Main loop
-running = True
+running: bool = True
 while running:
     scenes[current_scene].draw()
 
