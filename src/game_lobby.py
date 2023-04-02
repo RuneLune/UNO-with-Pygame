@@ -88,13 +88,16 @@ class Game_Lobby:
 
     def draw(self):
         # 스크린 채우기
-        self.__screen.fill((50,50,50))
+        self.__screen.fill(colors.black)
         self.__screen.blit(self.surface, (0, 0))
 
         # 각 공간 그리기
         pygame.draw.rect(self.__screen, (50, 100, 80), self.deck_space)
         pygame.draw.rect(self.__screen, (80, 120, 80), self.user_space)
+        pygame.draw.rect(self.__screen, colors.white, self.user_space, width=2)
+        # 봇 영역 - 회색, 빨간색 테두리, 하얀색 봇 이름
         for i in range(len(self.bots_space)):
+            pygame.draw.rect(self.__screen, (50, 50, 50), self.bots_space[i])
             pygame.draw.rect(self.__screen, colors.red, self.bots_space[i], width=2)
             self.__screen.blit(self.bot_names_text[i], self.__button_rect[i+2])
 
@@ -116,13 +119,6 @@ class Game_Lobby:
         input_box = pygame.Rect(pos, size)
         input_text = self.__game_font.render(text, True, colors.black)
         return input_box, input_text
-
-    # 봇 이름 봇 영역 위에 출력하는 함수
-    def draw_bot_names(self, bot_names_text):
-        for i in range(len(self.bot_names)):
-            self.__bot_surface.append(pygame.Surface((self.bots_space_size)))
-            self.__bot_surface[i].fill((50,50,50))
-            self.__bot_surface[i].blit(bot_names_text[i], self.bot_names_rects[i])
 
             # # 봇 이름 수정 입력 박스 출력
             # if bot_name_inputs[i]:
