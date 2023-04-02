@@ -29,27 +29,27 @@ class Game:
         target_score: int = 500,
     ) -> None:
         # 봇 및 플레이어 추가
-        self.__players = []
+        self.__players: List[Player | Bot] = []
         for i in range(0, players_count - 1):
             self.__players.append(Bot(self, "Bot " + str(i + 1)))
         self.__players.append(Player(self, "Player"))
         random.shuffle(self.__players)
 
-        self.__turn_timer = Timer()
-        self.__round_timer = Timer()
+        self.__turn_timer: Timer = Timer()
+        self.__round_timer: Timer = Timer()
 
-        self.__turn_seconds = turn_seconds
-        self.__round_seconds = round_seconds
-        self.__max_rounds = max_rounds
-        self.__target_score = target_score
+        self.__turn_seconds: int = turn_seconds
+        self.__round_seconds: int = round_seconds
+        self.__max_rounds: int = max_rounds
+        self.__target_score: int = target_score
 
-        self.__force_draw = 0
-        self.__reverse_direction = False
-        self.__current_turn = 1
-        self.__skip_turn = False
+        self.__force_draw: int = 0
+        self.__reverse_direction: bool = False
+        self.__current_turn: int = 1
+        self.__skip_turn: bool = False
 
         # 카드 추가, 셔플 및 패 분배
-        self.__draw_pile = (
+        self.__draw_pile: List[int] = (
             list(range(cards.blue_0, cards.blue_skip + 1))
             + list(range(cards.blue_1, cards.blue_skip + 1))
             + list(range(cards.green_0, cards.green_skip + 1))
@@ -65,9 +65,11 @@ class Game:
             self.__players[i].draw_cards(7)
 
         # 패산에서 한 장 뒤집기
-        self.__discard_pile = self.__draw_pile[:1]
+        self.__discard_pile: List[int] = self.__draw_pile[:1]
         self.__draw_pile = self.__draw_pile[1:]
-        self.__discarded_card = cards.check_card(self.__discard_pile[0])
+        self.__discarded_card: Dict[str, str | int] = cards.check_card(
+            self.__discard_pile[0]
+        )
 
         # 4장 드로우 카드는 덱으로 되돌리고 다시 뒤집기
         while self.__discarded_card.get("type", None) == "draw4":
@@ -87,20 +89,20 @@ class Game:
         elif self.__discarded_card.get("color", None) == "wild":
             self.__players[1].choose_color(self)
 
-        self.__player_drawed = False
+        self.__player_drawed: bool = False
 
         return super().__init__()
 
     # Discard pile에 있는 카드를 섞고 Draw pile에 추가하는 메서드
     def __shuffle(self) -> None:
-        discarded_cards = self.__discard_pile[1:]
+        discarded_cards: List[int] = self.__discard_pile[1:]
         random.shuffle(discarded_cards)
         self.__draw_pile += discarded_cards
         self.__discard_pile = self.__discard_pile[:1]
         return None
 
     # 마지막으로 낸 카드 정보를 반환하는 메서드
-    def get_discard_info(self) -> Dict[str, int | List[int]]:
+    def get_discard_info(self) -> Dict[str, int | Dict[str, str | int]]:
         return {
             "force_draw": self.__force_draw,
             "discarded_card": copy.deepcopy(self.__discarded_card),
@@ -116,7 +118,7 @@ class Game:
         # 남은 카드가 부족하면 패 섞고 드로우
         if count >= len(self.__draw_pile):
             self.__shuffle()
-        drawing_cards = copy.deepcopy(self.__draw_pile[:count])
+        drawing_cards: List[int] = copy.deepcopy(self.__draw_pile[:count])
         self.__draw_pile = self.__draw_pile[count:]
         player.get_cards(drawing_cards)
         self.__player_drawed = True
@@ -146,12 +148,11 @@ class Game:
         elif self.__discarded_card.get("type") == "skip":
             self.__skip_turn = True
         elif self.__discarded_card.get("color") == "wild":
-            self.__players[self.__current_turn].choose_color(self)
             if self.__discarded_card.get("type") == "draw4":
                 self.__force_draw += 4
-            if self.__discarded_card.get("type") == "shuffle":
+            elif self.__discarded_card.get("type") == "shuffle":
+                shuffle_pile: List[int] = []
                 for i in range(0, len(self.__players)):
-                    shuffle_pile = []
                     shuffle_pile += self.__players[i].get_hand_cards()
                     self.__players[i].set_cards([])
                 random.shuffle(shuffle_pile)
@@ -159,6 +160,7 @@ class Game:
                     self.__players[
                         (self.__current_turn + 1) % len(self.__players)
                     ].get_cards([shuffle_pile.pop(0)])
+            self.__players[self.__current_turn].choose_color(self)
 
         self.__next_turn()
         return None
@@ -171,7 +173,7 @@ class Game:
 
     # 라운드 종료 후 점수를 계산하는 메서드
     def __end_round(self) -> None:
-        points = 0
+        points: int = 0
         for i in range(0, len(self.__players)):
             if i != self.__current_turn:
                 points += self.__calc_points(
@@ -182,9 +184,9 @@ class Game:
 
     # cards_list에 있는 카드들의 점수를 계산하는 메서드
     def __calc_points(self, cards_list: Iterable[int]) -> int:
-        points = 0
+        points: int = 0
         for card in cards_list:
-            card_info = cards.check_card(card)
+            card_info: Dict[str, str | int] = cards.check_card(card)
             if card_info.get("number") <= 9:
                 points += card_info.get("number")
             elif card_info.get("number") <= 12:

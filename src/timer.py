@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 
 class Timer:
@@ -8,9 +9,9 @@ class Timer:
 
     # Timer 객체 초기화 메서드
     def __init__(self) -> None:
-        self.__timestarted = None
-        self.__timepaused = None
-        self.__paused = False
+        self.__timestarted: Optional[datetime] = None
+        self.__timepaused: Optional[datetime] = None
+        self.__paused: bool = False
 
     # 타이머 시작 메서드
     def start(self) -> None:
@@ -38,6 +39,7 @@ class Timer:
         self.__paused = False
         return None
 
+    # 타이머의 현재 시간을 반환하는 메서드
     def get(self) -> None:
         # if self.__timestarted is None:
         #     raise ValueError("Timer not started")

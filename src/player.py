@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import copy
-from typing import List, Iterable, TYPE_CHECKING
+from typing import List, Iterable, TYPE_CHECKING, Dict
+import pygame
 
 import cards
+import events
 
 if TYPE_CHECKING:
     from game import Game
@@ -16,12 +18,12 @@ class Player:
 
     # Player 객체 초기화 메서드
     def __init__(self, game: Game, name: str) -> None:
-        self.__game = game
-        self.__name = name
-        self.__cards = []
-        self.__turn = False
-        self.__yelled_uno = False
-        self.__points = 0
+        self.__game: Game = game
+        self.__name: str = name
+        self.__cards: list[int] = []
+        self.__turn: bool = False
+        self.__yelled_uno: bool = False
+        self.__points: int = 0
         return super(Player, self).__init__()
 
     # Draw pile로부터 count만큼 카드를 뽑아오는 메서드
@@ -69,14 +71,16 @@ class Player:
 
     # 플레이어가 낼 수 있는 카드의 인덱스를 확인하는 메서드
     def __check_discardable_cards(self) -> None:
-        discard_info = self.__game.get_discard_info()
+        discard_info: Dict[
+            str, int | Dict[str, str | int]
+        ] = self.__game.get_discard_info()
         self.__discardable_cards_index = []
         if discard_info.get("force_draw") > 0:
             pass
         else:
-            discarded_card = discard_info.get("discarded_card")
+            discarded_card: Dict[str, str | int] = discard_info.get("discarded_card")
             for i in range(0, len(self.__cards)):
-                card = cards.check_card(self.__cards[i])
+                card: Dict[str, str | int] = cards.check_card(self.__cards[i])
                 if card.get("color") == discarded_card.get("color") or (
                     card.get("number") == discarded_card.get("number")
                 ):
@@ -107,5 +111,10 @@ class Player:
 
     # 와일드 카드를 냈을 때 호출되는 메서드
     def choose_color(self) -> None:
-        # self.__game.set_color(1)
+        pygame.event.post(pygame.event.Event(events.ASK_COLOR))
+        return None
+
+    # 색을 정하는 메서드
+    def set_color(self, color: int | str) -> None:
+        self.__game.set_color(color)
         return None
