@@ -33,6 +33,10 @@ class Game_UI:
         self.render()
 
     def render(self):
+        # if full screen
+        flag = 0
+        if self.settings.get_settings().get("fullscreen", False) is True:
+            flag |= pygame.FULLSCREEN 
         # screen definition
         self.settings = Settings()
         self.screen_size = self.settings.get_screen_resolution()
