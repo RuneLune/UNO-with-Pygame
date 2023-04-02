@@ -202,7 +202,7 @@ class Settings_Scene:
         self.__button_rect[-1].bottom = self.__screen.get_rect().centery / 5
 
         # 메인 메뉴 돌아가기 버튼 추가
-        if self.__settings.get_settings().get("previous_scene", False) is "gameui": # if previous scene is gameui
+        if self.__settings.get_settings().get("previous_scene", False) is not "main": # if previous scene is not main
             self.__button_text.append(self.__title_font.render("Back to Main menu", True, colors.white))
             self.__button_rect.append(self.__button_text[-1].get_rect())
             self.__button_rect[-1].centerx = self.__screen.get_rect().centerx
@@ -274,13 +274,11 @@ class Settings_Scene:
         elif i == 6:  # Back
             # if previous scene is main
             if self.__settings.get_settings().get("previous_scene", False) is "main":
-                self.__settings.get_real_settings().update(previous_scene="settings")
                 return pygame.event.post(
                     pygame.event.Event(events.CHANGE_SCENE, target="main")
                 )
             # if previous scene is gameui
-            elif self.__settings.get_settings().get("previous_scene", False) is "gameui":
-                self.__settings.get_real_settings().update(previous_scene="settings")
+            else:
                 return pygame.event.post(
                     pygame.event.Event(events.CHANGE_SCENE, target="gameui")
                 )

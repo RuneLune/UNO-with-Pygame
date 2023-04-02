@@ -35,17 +35,9 @@ class Game_UI:
         # 타이머 스타트
         self.game.start_timer()
 
-        self.render()
+        self.refresh(6) # 임시 플레이어 수
 
     def render(self):
-        # if full screen
-        flag = 0
-        if self.settings.get_settings().get("fullscreen", False) is True:
-            flag |= pygame.FULLSCREEN 
-        # screen definition
-        self.screen_size = self.settings.get_screen_resolution()
-        self.screen = pygame.display.set_mode(self.screen_size)
-        self.surface = pygame.Surface(self.screen_size)
 
         # each space's size,position definition
         deck_space_size = (self.screen_size[0] * (3 / 4),
@@ -94,6 +86,16 @@ class Game_UI:
         ]
 
     def refresh(self, player_count):
+         # if full screen
+        flag = 0
+        if self.settings.get_settings().get("fullscreen", False) is True:
+            flag |= pygame.FULLSCREEN 
+
+        # screen definition
+        self.screen_size = self.settings.get_screen_resolution()
+        self.screen = pygame.display.set_mode(self.screen_size)
+        self.surface = pygame.Surface(self.screen_size)
+
         self.players = self.game.get_players()
         self.cards.refresh()
         self.render()
