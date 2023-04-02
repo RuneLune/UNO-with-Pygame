@@ -5,7 +5,7 @@ from settings_function import Settings
 import events
 
 from main_scene import Main_Scene
-from game_scene import Game_Scene
+#from game_scene import Game_Scene
 from settings_scene import Settings_Scene
 from gameUI import Game_UI
 from game_lobby import Game_Lobby
@@ -20,7 +20,7 @@ current_scene = "main"
 
 scenes = {
     "main": Main_Scene(settings),
-    "game": Game_Scene(settings),
+    "gamelobby": Game_Lobby(settings),
     "settings": Settings_Scene(settings),
     "gameui": Game_UI(settings),
 }
