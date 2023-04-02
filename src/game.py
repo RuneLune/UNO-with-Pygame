@@ -234,6 +234,12 @@ class Game:
                 self.__current_turn = (self.__current_turn - 2) % len(self.__players)
         return None
 
+    # Game 객체 내의 모든 타이머를 활성화하는 메서드
+    def start_timer(self) -> None:
+        self.__turn_timer.start()
+        self.__round_timer.start()
+        return None
+
     # Game 객체 내의 모든 타이머를 일시정지하는 메서드
     def pause_timer(self) -> None:
         self.__turn_timer.pause()

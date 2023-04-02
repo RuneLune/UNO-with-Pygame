@@ -47,7 +47,7 @@ class Main_Scene:
             ].top = self.__screen.get_rect().centery + i * screen_size[1] / (
                 3 * len(self.__menu_options)
             )
-        self.__select_rect = pygame.Rect(
+        self.__selected_rect = pygame.Rect(
             0, 0, screen_size[0] / 3, screen_size[1] / (3 * len(self.__menu_options))
         )
         return None
@@ -69,8 +69,8 @@ class Main_Scene:
     def draw(self):
         self.__screen.fill(colors.white)
         self.__screen.blit(self.__title_text, self.__title_rect)
-        self.__select_rect.center = self.__menu_rect[self.__selected_menu].center
-        pygame.draw.rect(self.__screen, colors.black, self.__select_rect, 2)
+        self.__selected_rect.center = self.__menu_rect[self.__selected_menu].center
+        pygame.draw.rect(self.__screen, colors.black, self.__selected_rect, 2)
         for i in range(len(self.__menu_text)):
             self.__screen.blit(self.__menu_text[i], self.__menu_rect[i])
 
@@ -104,10 +104,13 @@ class Main_Scene:
 
     def __menu_func(self, i):
         if i == 0:  # Start
+            self.__settings.get_real_settings().update(previous_scene="main")
             return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="gamelobby"))
         elif i == 1:  # Settings
+            self.__settings.get_real_settings().update(previous_scene="main")
             return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="settings"))
         elif i == 2:  # Exit
+            self.__settings.get_real_settings().update(previous_scene=None)
             return pygame.event.post(pygame.event.Event(pygame.QUIT))
         else:
             print(self.__menu_options[i] + " clicked")

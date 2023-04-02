@@ -151,9 +151,11 @@ class Game_Lobby:
     def __button_func(self, i):
         # 뒤로 가기 버튼
         if i == 0:
+            self.__settings.get_real_settings().update(previous_scene="gamelobby")
             return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="main"))
         # 게임 시작 버튼
         elif i == 1:
+            self.__settings.get_real_settings().update(previous_scene="gamelobby")
             return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="gameui"))
         # 봇 추가/삭제 버튼. 없을 때도 버튼이 활성화 되어 있음. 봇 1~5
         elif 1 < i < 7:

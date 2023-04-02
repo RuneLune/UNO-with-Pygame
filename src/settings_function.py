@@ -17,6 +17,7 @@ initial_settings = {
         "cancel": pygame.K_ESCAPE,
     },
     "colorblind_mode": False,
+    "previous_scene": None
 }
 
 
@@ -67,6 +68,10 @@ class Settings:
 
     def get_settings(self):
         return copy.deepcopy(self.__settings)
+    
+    # 진짜 세팅 값에 접근할 수 있는 메소드 추가
+    def get_real_settings(self):
+        return self.__settings
 
     def set_screen_resolution(self):
         if self.__settings.get("fullscreen", False) is False:

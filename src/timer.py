@@ -34,13 +34,13 @@ class Timer:
         if not self.__paused:
             raise ValueError("Timer is not paused")
         pausetime = datetime.now() - self.__timepaused
-        self.__timestarted = self.__timestarted + pausetime
+        self.__timestarted += pausetime
         self.__paused = False
         return None
 
     def get(self) -> None:
-        if self.__timestarted is None:
-            raise ValueError("Timer not started")
+        # if self.__timestarted is None:
+        #     raise ValueError("Timer not started")
         if self.__paused:
             return self.__timepaused - self.__timestarted
         else:

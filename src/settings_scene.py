@@ -195,10 +195,20 @@ class Settings_Scene:
             self.__setting_rect[i].top = (
                 self.__screen.get_rect().centery / 3 + i * screen_size[1] / 16
             )
+        # 뒤로 가기 버튼 추가
         self.__button_text.append(self.__menu_font.render("◀ Back", True, colors.white))
         self.__button_rect.append(self.__button_text[-1].get_rect())
         self.__button_rect[-1].right = self.__screen.get_rect().centerx / 3
         self.__button_rect[-1].bottom = self.__screen.get_rect().centery / 5
+
+        # 메인 메뉴 돌아가기 버튼 추가
+        if self.__settings.get_settings().get("previous_scene", False) is "gameui": # if previous scene is gameui
+            self.__button_text.append(self.__title_font.render("Back to Main menu", True, colors.white))
+            self.__button_rect.append(self.__button_text[-1].get_rect())
+            self.__button_rect[-1].centerx = self.__screen.get_rect().centerx
+            self.__title_rect.bottom = self.__screen.get_rect().centery / 4
+            self.__button_rect[-1].top = self.__screen.get_rect().centery * 7 / 4
+
         return None
 
     def refresh(self):
@@ -220,11 +230,16 @@ class Settings_Scene:
 
     def draw(self):
         self.__screen.fill(colors.black)
+        # Setting Scene 제목 출력
         self.__screen.blit(self.__title_text, self.__title_rect)
+        # 세팅 메뉴 출력
         for i in range(len(self.__menu_text)):
             self.__screen.blit(self.__menu_text[i], self.__menu_rect[i])
+        # 현 세팅 출력 (세팅 메뉴 옆)
         for i in range(len(self.__setting_text)):
             self.__screen.blit(self.__setting_text[i], self.__setting_rect[i])
+
+        # 버튼 출력
         for i in range(len(self.__button_text)):
             self.__screen.blit(self.__button_text[i], self.__button_rect[i])
 
@@ -254,11 +269,26 @@ class Settings_Scene:
                 self.__settings.higher_screen_size()
         if i == 2 or i == 3:  # Change Fullscreen Option
             self.__settings.change_fullscreen()
-        if i == 4 or i == 5:  # Change Colorblind Mode Option
+        elif i == 4 or i == 5:  # Change Colorblind Mode Option
             self.__settings.change_colorblind_mode()
-        elif i == 6:  # Back to main
+        elif i == 6:  # Back
+            # if previous scene is main
+            if self.__settings.get_settings().get("previous_scene", False) is "main":
+                self.__settings.get_real_settings().update(previous_scene="settings")
+                return pygame.event.post(
+                    pygame.event.Event(events.CHANGE_SCENE, target="main")
+                )
+            # if previous scene is gameui
+            elif self.__settings.get_settings().get("previous_scene", False) is "gameui":
+                self.__settings.get_real_settings().update(previous_scene="settings")
+                return pygame.event.post(
+                    pygame.event.Event(events.CHANGE_SCENE, target="gameui")
+                )
+        elif i == 7: # Back to Main menu
+            self.__settings.get_real_settings().update(previous_scene="settings")
             return pygame.event.post(
                 pygame.event.Event(events.CHANGE_SCENE, target="main")
             )
+
         self.refresh()
         return None

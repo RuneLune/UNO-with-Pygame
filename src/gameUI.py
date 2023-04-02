@@ -1,5 +1,7 @@
 import pygame
 import colors
+import events
+
 from cards import Cards
 from game import Game
 from settings_function import Settings
@@ -30,6 +32,9 @@ class Game_UI:
         self.menu_font = pygame.font.Font(None, 40)
         self.mouse_pos = pygame.mouse.get_pos()
 
+        # 타이머 스타트
+        self.game.start_timer()
+
         self.render()
 
     def render(self):
@@ -38,7 +43,6 @@ class Game_UI:
         if self.settings.get_settings().get("fullscreen", False) is True:
             flag |= pygame.FULLSCREEN 
         # screen definition
-        self.settings = Settings()
         self.screen_size = self.settings.get_screen_resolution()
         self.screen = pygame.display.set_mode(self.screen_size)
         self.surface = pygame.Surface(self.screen_size)
@@ -99,7 +103,7 @@ class Game_UI:
             self.__draw_game()
             pass
         else:
-            self.__darw_pause_menu()
+            self.__draw_pause_menu()
             pass
         pass
 
@@ -178,7 +182,7 @@ class Game_UI:
                         ),
                     )
 
-    def __darw_pause_menu(self):
+    def __draw_pause_menu(self):
         title_text = self.title_font.render("Pause Menu", True, (255, 255, 255))
         continue_text = self.menu_font.render("Continue", True, (255, 255, 255))
         settings_text = self.menu_font.render("Settings", True, (255, 255, 255))
@@ -234,6 +238,17 @@ class Game_UI:
         #             pygame.quit()
         #             sys.exit()
 
+    def get_pause(self):
+        return self.pause
+
+    def set_pause(self, pause):
+        # 일시정지일 때
+        if pause:
+            self.pause = False
+        # 일시정지 아닐 때
+        else :
+            self.pause = True
+
     def handle(self, event):
         if self.pause is False:
             self.__handle_game(event)
@@ -248,6 +263,12 @@ class Game_UI:
         # 일시정지 버튼 클릭하면(또는 Esc 누르면)
         # 1. self.pause를 True로
         # 2. 모든 타이머 정지(self.game.pause_timer())
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self.set_pause(self.pause)
+                self.game.pause_timer()
+                self.settings.get_real_settings().update(previous_scene="gameui")
+                return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="settings"))
         pass
 
     def __handle_pause_menu(self, event):
@@ -256,5 +277,7 @@ class Game_UI:
         # 1. self.pause를 False로
         # 2. 모든 타이머 시작(self.game.resume_timer())
         # Check if any of the menu options are hovered over
+        self.set_pause(self.pause)
+        self.game.resume_timer()
 
         pass
