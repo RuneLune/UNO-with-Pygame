@@ -23,6 +23,7 @@ class Game_Lobby:
     def render(self):
         # 스크린 사이즈
         screen_size = self.__settings.get_screen_resolution()
+        self.surface = pygame.Surface(screen_size)
 
         # 폰트 생성
         self.__game_font = pygame.font.Font("res/font/Travel.ttf", round(screen_size[1] / 15))
@@ -47,12 +48,6 @@ class Game_Lobby:
         # self.user_name_text = self.font.render("insert_User_name", True, colors.white)
         # self.bot_name_text =[self.font.render("computer " + i, True, colors.white) for i in range(0,5)]
 
-        # 각 공간 그리기
-        pygame.draw.rect(self.__screen, (50, 100, 80), self.deck_space)
-        pygame.draw.rect(self.__screen, (80, 120, 80), self.user_space)
-        for i in range(len(self.bots_space)):
-            pygame.draw.rect(self.__screen, (colors.white), self.bots_space[i])
-
         # 뒤로가기 버튼 추가
         self.__button_text.append(self.__back_font.render("◀ Back", True, colors.white))
         self.__button_rect.append(self.__button_text[-1].get_rect())
@@ -69,9 +64,15 @@ class Game_Lobby:
         self.__start_text_rect = self.__button_text[-1].get_rect(center=self.__start_surface.get_rect().center)
         self.__start_surface.blit(self.__button_text[-1], self.__start_text_rect)
 
-        # 봇 영역 누르는 버튼 추가
+        # 봇 이름 리스트 및 이름 공간 사각형 정의
+        self.bot_names = ["Computer One", "Computer Two", "Computer Three", "Computer Four", "Computer Five"]
+        self.bot_names_text = [self.__game_font.render(self.bot_names[i], True, colors.white) for i in range(len(self.bot_names))]
+        self.bot_names_rects = [self.bot_names_text[i].get_rect(topleft=self.bots_space[i].topleft) for i in range(len(self.bot_names))]
+        self.bot_name_inputs = [(self.bot_names_rects[i], self.bot_names_text[i]) for i in range(5)]
+
+        # 봇 영역 버튼 리스트에 추가
         for i in range(len(self.bots_space)):
-            self.__button_rect.append(pygame.Rect(self.bots_space[i]))
+            self.__button_rect.append(self.bots_space[i])
 
     def refresh(self):
         pygame.display.set_caption("Game Lobby")
@@ -82,33 +83,33 @@ class Game_Lobby:
         self.__screen = pygame.display.set_mode(self.__settings.get_screen_resolution(), flag)
         self.__button_text = []
         self.__button_rect = []
-        self.__bot_surface = []
-        self.__bot_text_rect = []
         self.render()
         return None
 
     def draw(self):
-        # 봇 이름 리스트 및 이름 공간 사각형 정의
-        self.bot_names = ["Computer One", "Computer Two", "Computer Three", "Computer Four", "Computer Five"]
-        self.bot_names_text = [self.__game_font.render(self.bot_names[i], True, colors.white) for i in range(len(self.bot_names))]
-        self.bot_names_rects = [self.bot_names_text[i].get_rect() for i in range(len(self.bot_names))]
-        self.bot_name_inputs = [(self.bot_names_rects[i], self.bot_names_text[i]) for i in range(5)]
-        
-        # 봇 이름 봇 영역 위에 출력
-        self.draw_bot_names(self.bots_space, self.bot_names_text)
+        # 스크린 채우기
+        self.__screen.fill((50,50,50))
+        self.__screen.blit(self.surface, (0, 0))
 
-        # 봇 이름 영역 버튼 리스트에 추가
-        for i in range(len(self.__bot_text_rect)):
-            self.__button_rect.append(self.__bot_text_rect[i])
+        # 각 공간 그리기
+        pygame.draw.rect(self.__screen, (50, 100, 80), self.deck_space)
+        pygame.draw.rect(self.__screen, (80, 120, 80), self.user_space)
+        for i in range(len(self.bots_space)):
+            pygame.draw.rect(self.__screen, colors.red, self.bots_space[i], width=2)
+            self.__screen.blit(self.bot_names_text[i], self.__button_rect[i+2])
 
-        # 스크린 위에 뒤로가기 버튼, 스타트 버튼, 활성화된 봇 영역 전부 그리기
+        # 스크린 위에 뒤로가기 버튼, 스타트 버튼 그리기
         self.__screen.blit(self.__button_text[0], self.__button_rect[0])
         self.__screen.blit(self.__start_surface, self.__button_rect[1])
-        for i in range(len(self.__bot_surface)):
-            self.__screen.blit(self.__bot_surface[i], self.__button_rect[i+7])
+
+        # 봇 이름 봇 영역 위에 출력하고 스크린에 바로 출력
+        # for i in range(len(self.bot_names)):
+        #     self.__bot_surface = pygame.Surface((self.bots_space_size))
+        #     self.__bot_surface.fill((50,50,50))
+        #     self.__bot_surface.blit(self.bot_names_text[i], self.bot_names_rects[i])
+        #     self.__screen.blit(self.__bot_surface, self.__button_rect[i+2])
 
         return None
-
 
     # 봇 이름 수정을 위한 입력 박스 생성 함수
     def create_input_box(self, pos, size, text):
@@ -117,25 +118,22 @@ class Game_Lobby:
         return input_box, input_text
 
     # 봇 이름 봇 영역 위에 출력하는 함수
-    def draw_bot_names(self, bot_areas, bot_names_text):
+    def draw_bot_names(self, bot_names_text):
         for i in range(len(self.bot_names)):
             self.__bot_surface.append(pygame.Surface((self.bots_space_size)))
             self.__bot_surface[i].fill((50,50,50))
-            self.__bot_text_rect.append(bot_names_text[i].get_rect(topleft=bot_areas[i].topleft))
-            self.__bot_surface[i].blit(bot_names_text[i], self.__bot_text_rect[i])
+            self.__bot_surface[i].blit(bot_names_text[i], self.bot_names_rects[i])
 
             # # 봇 이름 수정 입력 박스 출력
             # if bot_name_inputs[i]:
             #     pygame.draw.rect(self.__screen, colors.white, bot_name_inputs[i][0])
             #     self.__screen.blit(bot_name_inputs[i][1], bot_name_inputs[i][0].topleft)
 
+    # 봇 이름 수정 가능 입력 박스 출력하는 함수
     def draw_bot_names_modify(self, bot_name_inputs):
-        # 봇 이름 수정 입력 박스 출력
         if bot_name_inputs:
             pygame.draw.rect(self.__screen, colors.white, bot_name_inputs[0])
             self.__screen.blit(bot_name_inputs[1], bot_name_inputs[0].topleft)
-
-
     
     def handle(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -144,13 +142,13 @@ class Game_Lobby:
                 if self.__button_rect[i].collidepoint(mouse_pos):
                     return self.__button_func(i)
             # 봇 이름 수정
-            for i in range(len(self.bot_names_rects)):
-                if self.bot_names_rects[i].collidepoint(mouse_pos):
-                    # 마우스 클릭시 봇 이름 수정 가능한 입력 박스 생성
-                    self.bot_name_inputs[i] = self.create_input_box(self.bots_space[i].topleft, self.bot_names_rects[0].size, self.bot_names[i])
-                else:
-                    # 다른 곳을 클릭하면 입력 박스 삭제
-                    self.bot_name_inputs[i] = None
+            # for i in range(len(self.bot_names_rects)):
+            #     if self.bot_names_rects[i].collidepoint(mouse_pos):
+            #         # 마우스 클릭시 봇 이름 수정 가능한 입력 박스 생성
+            #         self.bot_name_inputs[i] = self.create_input_box(self.bots_space[i].topleft, self.bot_names_rects[0].size, self.bot_names[i])
+            #     else:
+            #         # 다른 곳을 클릭하면 입력 박스 삭제
+            #         self.bot_name_inputs[i] = None
 
         return "continue"
     
@@ -170,5 +168,4 @@ class Game_Lobby:
             # 이름 수정하는 함수 정의 필요
             pass
 
-        
         return None
