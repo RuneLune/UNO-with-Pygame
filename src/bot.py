@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from overrides import overrides
 import random
-from typing import TYPE_CHECKING, Dict, List
+from typing import TYPE_CHECKING, Dict
 
 from player import Player
 
@@ -20,23 +20,19 @@ class Bot(Player):
     @overrides
     def __init__(self, game: Game, name: str = "Computer") -> None:
         super(Bot, self).__init__(game, name)
-        self.__game: Game = super(Bot, self).get_game()
         return None
 
     # turn_start 오버라이딩
     @overrides
     def turn_start(self) -> None:
         super(Bot, self).turn_start()
-        self.__discardable_cards_index: List[int] = super(
-            Bot, self
-        ).get_discardable_cards_index()
-        self.__play()
+        self._play()
         return None
 
     # 자동으로 턴을 진행하는 메서드
-    def __play(self) -> None:
-        if len(self.__discardable_cards_index):
-            self.discard_card(random.choice(self.__discardable_cards_index))
+    def _play(self) -> None:
+        if len(self._discardable_cards_index):
+            self.discard_card(random.choice(self._discardable_cards_index))
             pass
         else:
             discarded_card_info: Dict[str, int | Dict[str, str | int]] = (
@@ -61,5 +57,5 @@ class Bot(Player):
     # choose_color 오버라이딩
     @overrides
     def choose_color(self) -> None:
-        self.__game.set_color(random.choice([1, 2, 3, 4]))
+        self._game.set_color(random.choice([1, 2, 3, 4]))
         return None
