@@ -202,7 +202,7 @@ class Settings_Scene:
         self.__button_rect[-1].bottom = self.__screen.get_rect().centery / 5
 
         # 메인 메뉴 돌아가기 버튼 추가
-        if self.__settings.get_settings().get("previous_scene", False) is not "main": # if previous scene is not main
+        if self.__settings.get_settings().get("previous_scene", None) is "gameui": # if previous scene is gameui
             self.__button_text.append(self.__title_font.render("Back to Main menu", True, colors.white))
             self.__button_rect.append(self.__button_text[-1].get_rect())
             self.__button_rect[-1].centerx = self.__screen.get_rect().centerx
@@ -251,6 +251,11 @@ class Settings_Scene:
             for i in range(len(self.__button_text)):
                 if self.__button_rect[i].collidepoint(mouse_pos):
                     return self.__button_func(i)
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                return pygame.event.post(
+                    pygame.event.Event(events.CHANGE_SCENE, target=self.__settings.get_settings().get("previous_scene", None))
+                )
 
         return "continue"
 
@@ -272,18 +277,17 @@ class Settings_Scene:
         elif i == 4 or i == 5:  # Change Colorblind Mode Option
             self.__settings.change_colorblind_mode()
         elif i == 6:  # Back
-            # if previous scene is main
-            if self.__settings.get_settings().get("previous_scene", False) is "main":
-                return pygame.event.post(
-                    pygame.event.Event(events.CHANGE_SCENE, target="main")
-                )
             # if previous scene is gameui
-            else:
+            if self.__settings.get_settings().get("previous_scene", None) is "gameui":
                 return pygame.event.post(
                     pygame.event.Event(events.CHANGE_SCENE, target="gameui")
                 )
+            # if previous scene is main
+            else:
+                return pygame.event.post(
+                    pygame.event.Event(events.CHANGE_SCENE, target="main")
+                )
         elif i == 7: # Back to Main menu
-            self.__settings.get_real_settings().update(previous_scene="settings")
             return pygame.event.post(
                 pygame.event.Event(events.CHANGE_SCENE, target="main")
             )
