@@ -1,10 +1,11 @@
-import random
 import copy
+import random
+from overrides import overrides
 from typing import List, Dict, Iterable
 
+from bot import Bot
 import cards
 from player import Player
-from bot import Bot
 from timer import Timer
 
 
@@ -23,17 +24,39 @@ class Game:
     def __init__(
         self,
         players_count: int,
+        username: str = "Player",
         turn_seconds: int = 10,
-        round_seconds: int = -1,
-        max_rounds: int = -1,
+        round_seconds: int = 0,
+        max_rounds: int = 0,
         target_score: int = 500,
     ) -> None:
+        self.__init_variables(turn_seconds, round_seconds, max_rounds, target_score)
+
         # 봇 및 플레이어 추가
-        self.__players: List[Player | Bot] = []
-        for i in range(0, players_count - 1):
-            self.__players.append(Bot(self, "Bot " + str(i + 1)))
-        self.__players.append(Player(self, "Player"))
+        self.__user: Player = Player(self, username)
+        self.__players.append(self.__user)
+        for i in range(1, players_count):
+            self.__players.append(Bot(self, "Computer " + str(i)))
+            continue
         random.shuffle(self.__players)
+
+        self.__make_draw_pile()
+        self.__deal_hands()
+        self.__flip_top()
+
+        self.__players[self.__current_turn].turn_start()
+
+        return super().__init__()
+
+    # 멤버 변수 초기화 메서드
+    def __init_variables(
+        self,
+        turn_seconds: int = 10,
+        round_seconds: int = 0,
+        max_rounds: int = 0,
+        target_score: int = 500,
+    ) -> None:
+        self.__players: List[Player | Bot] = []
 
         self.__turn_timer: Timer = Timer()
         self.__round_timer: Timer = Timer()
@@ -47,8 +70,12 @@ class Game:
         self.__reverse_direction: bool = False
         self.__current_turn: int = 1
         self.__skip_turn: bool = False
+        self.__player_drawed: bool = False
 
-        # 카드 추가, 셔플 및 패 분배
+        return None
+
+    # Draw pile에 카드를 추가하고 섞는 메서드
+    def __make_draw_pile(self) -> None:
         self.__draw_pile: List[int] = (
             list(range(cards.blue_0, cards.blue_skip + 1))
             + list(range(cards.blue_1, cards.blue_skip + 1))
@@ -61,37 +88,45 @@ class Game:
             + list(range(cards.wild_normal, cards.wild_draw4 + 1)) * 4
         )
         random.shuffle(self.__draw_pile)
-        for i in range(0, len(self.__players)):
-            self.__players[i].draw_cards(7)
+        return None
 
-        # 패산에서 한 장 뒤집기
+    # 플레이어에게 패를 분배하는 메서드
+    def __deal_hands(self, count: int = 7) -> None:
+        for i in range(0, len(self.__players)):
+            self.__players[i].draw_cards(count)
+            continue
+        return None
+
+    # Draw pile 맨 위에서 카드를 뒤집어 시작 카드를 정하는 메서드
+    def __flip_top(self) -> None:
         self.__discard_pile: List[int] = self.__draw_pile[:1]
         self.__draw_pile = self.__draw_pile[1:]
         self.__discarded_card: Dict[str, str | int] = cards.check_card(
             self.__discard_pile[0]
         )
 
-        # 4장 드로우 카드는 덱으로 되돌리고 다시 뒤집기
         while self.__discarded_card.get("type", None) == "draw4":
             self.__draw_pile += self.__discard_pile
             self.__discard_pile = self.__draw_pile[:1]
             self.__draw_pile = self.__draw_pile[1:]
             self.__discarded_card = cards.check_card(self.__discard_pile[0])
+            continue
 
-        # 기술카드 처리
         if self.__discarded_card.get("type", None) == "draw2":
             self.__force_draw = 2
+            pass
         elif self.__discarded_card.get("type", None) == "reverse":
             self.__current_turn = 0
             self.__reverse_direction = True
+            pass
         elif self.__discarded_card.get("type", None) == "skip":
             self.__current_turn = 2 % len(self.__players)
+            pass
         elif self.__discarded_card.get("color", None) == "wild":
             self.__players[1].choose_color(self)
+            pass
 
-        self.__player_drawed: bool = False
-
-        return super().__init__()
+        return None
 
     # Discard pile에 있는 카드를 섞고 Draw pile에 추가하는 메서드
     def __shuffle(self) -> None:
@@ -128,7 +163,7 @@ class Game:
             if (
                 draw_card.get("color") == "wild"
                 or draw_card.get("color") == self.__discarded_card.get("color")
-                or draw_card("number") == self.__discarded_card.get("number")
+                or draw_card.get("number") == self.__discarded_card.get("number")
             ):
                 self.__players[self.__current_turn].ask_discard()
         self.__force_draw = 0
@@ -227,13 +262,21 @@ class Game:
         if self.__skip_turn is False:
             if self.__reverse_direction is False:
                 self.__current_turn = (self.__current_turn + 1) % len(self.__players)
+                pass
             else:
                 self.__current_turn = (self.__current_turn - 1) % len(self.__players)
+                pass
+            pass
         else:
             if self.__reverse_direction is False:
                 self.__current_turn = (self.__current_turn + 2) % len(self.__players)
+                pass
             else:
                 self.__current_turn = (self.__current_turn - 2) % len(self.__players)
+                pass
+            pass
+        self.__players[self.__current_turn].turn_start()
+
         return None
 
     # Game 객체 내의 모든 타이머를 활성화하는 메서드

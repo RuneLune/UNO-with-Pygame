@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import copy
-from typing import List, Iterable, TYPE_CHECKING, Dict
+from overrides import overrides
 import pygame
+from typing import List, Iterable, TYPE_CHECKING, Dict
 
 import cards
 import events
@@ -17,7 +18,7 @@ class Player:
         return super(Player, cls).__new__(cls)
 
     # Player 객체 초기화 메서드
-    def __init__(self, game: Game, name: str) -> None:
+    def __init__(self, game: Game, name: str = "Player") -> None:
         self.__game: Game = game
         self.__name: str = name
         self.__cards: list[int] = []
@@ -29,12 +30,12 @@ class Player:
     # Draw pile로부터 count만큼 카드를 뽑아오는 메서드
     def draw_cards(self, count: int) -> None:
         self.__game.draw_cards(count, self)
+        self.__cards.sort()
         return None
 
     # 플레이어에게 cards_list에 있는 카드를 주는 메서드
     def get_cards(self, cards_list: Iterable[int]) -> None:
         self.__cards += list(cards_list)
-        # self.__cards.sort()
         return None
 
     # (주의) 플레이어의 기존 카드를 없애고 카드를 cards_list로 설정하는 메서드
@@ -90,6 +91,10 @@ class Player:
     # 플레이어가 낼 수 있는 카드의 인덱스를 반환하는 메서드
     def get_discardable_cards_index(self) -> List[int]:
         return copy.deepcopy(self.__discardable_cards_index)
+
+    # 본인이 참조중인 게임 객체를 반환하는 메서드
+    def get_game(self) -> Game:
+        return self.__game
 
     # 플레이어가 가진 카드의 리스트에서 index의 카드를 내는 메서드
     def discard_card(self, index: int) -> None:
