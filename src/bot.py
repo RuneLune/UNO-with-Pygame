@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from overrides import overrides
 import random
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING, Dict, Type
 
 from player import Player
 
@@ -18,7 +18,7 @@ class Bot(Player):
 
     # Bot 객체 초기화 메서드
     @overrides
-    def __init__(self, game: Game, name: str = "Computer") -> None:
+    def __init__(self, game: Type[Game], name: str = "Computer") -> None:
         super(Bot, self).__init__(game, name)
         return None
 

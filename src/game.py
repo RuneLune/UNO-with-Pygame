@@ -1,6 +1,6 @@
 import copy
 import random
-from typing import List, Dict, Iterable
+from typing import List, Dict, Iterable, Type
 
 from bot import Bot
 import cards
@@ -47,7 +47,7 @@ class Game:
         max_rounds: int = 0,
         target_score: int = 500,
     ) -> None:
-        self._players: List[Player | Bot] = []
+        self._players: List[Type[Player]] = []
 
         self._turn_timer: Timer = Timer()
         self._round_timer: Timer = Timer()
@@ -145,7 +145,7 @@ class Game:
         }
 
     # player에게 Draw pile에서 count만큼 카드를 주는 메서드
-    def draw_cards(self, count: int, player: Player | Bot) -> None:
+    def draw_cards(self, count: int, player: Type[Player]) -> None:
         # 강제 드로우 수 확인
         if self._force_draw > 0:
             if count != self._force_draw:
@@ -234,7 +234,7 @@ class Game:
         return points
 
     # player가 우노를 외칠 수 있는 상황인지 확인하고 처리하는 메서드
-    def check_uno(self, player: Player | Bot) -> None:
+    def check_uno(self, player: Type[Player]) -> None:
         if (
             len(player.get_hand_cards()) == 2
             and len(player.get_discardable_cards_index()) >= 1
@@ -245,7 +245,7 @@ class Game:
         return None
 
     # Game 객체 내의 플레이어 배열을 반환하는 메서드
-    def get_players(self) -> List[Player | Bot]:
+    def get_players(self) -> List[Type[Player]]:
         return self._players
 
     # 플레이어가 턴 종료 시 호출하는 메서드

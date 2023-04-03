@@ -1,6 +1,6 @@
 import random
 from overrides import overrides
-from typing import Final
+from typing import Final, Type
 
 from game import Game
 from player import Player
@@ -56,7 +56,7 @@ class Stage_A(Game):
         return None
 
     # 기술 카드 드로우 메서드
-    def _draw_functional_card(self, player: Player | Bot, count: int = 1) -> None:
+    def _draw_functional_card(self, player: Type[Player], count: int = 1) -> None:
         draw_count: int = 0
         for card in self._draw_pile:
             if card % 100 < 10:

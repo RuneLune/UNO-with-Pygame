@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import copy
 import pygame
-from typing import List, Iterable, TYPE_CHECKING, Dict
+from typing import List, Iterable, TYPE_CHECKING, Dict, Type
 
 import cards
 import events
@@ -17,8 +17,8 @@ class Player:
         return super(Player, cls).__new__(cls)
 
     # Player 객체 초기화 메서드
-    def __init__(self, game: Game, name: str = "Player") -> None:
-        self._game: Game = game
+    def __init__(self, game: Type[Game], name: str = "Player") -> None:
+        self._game: Type[Game] = game
         self._name: str = name
         self._cards: list[int] = []
         self._turn: bool = False
