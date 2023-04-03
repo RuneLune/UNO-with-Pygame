@@ -36,7 +36,7 @@ class Bot(Player):
             pass
         else:
             discarded_card_info: Dict[str, int | Dict[str, str | int]] = (
-                super(Bot, self).get_game().get_discard_info()
+                self._game.get_discard_info()
             )
             force_draw: int = discarded_card_info.get("force_draw")
             if force_draw > 0:

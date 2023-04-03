@@ -30,15 +30,7 @@ class Game:
         target_score: int = 500,
     ) -> None:
         self._init_variables(turn_seconds, round_seconds, max_rounds, target_score)
-
-        # 봇 및 플레이어 추가
-        self._user: Player = Player(self, username)
-        self._players.append(self._user)
-        for i in range(1, players_count):
-            self._players.append(Bot(self, "Computer " + str(i)))
-            continue
-        random.shuffle(self._players)
-
+        self._add_players(username, players_count)
         self._make_draw_pile()
         self._deal_hands()
         self._flip_top()
@@ -71,6 +63,16 @@ class Game:
         self._skip_turn: bool = False
         self._player_drawed: bool = False
 
+        return None
+
+    # 봇 및 플레이어를 추가하는 메서드
+    def _add_players(self, username: str = "Player", players_count: int = 4) -> None:
+        self._user: Player = Player(self, username)
+        self._players.append(self._user)
+        for i in range(1, players_count):
+            self._players.append(Bot(self, "Computer " + str(i)))
+            continue
+        random.shuffle(self._players)
         return None
 
     # Draw pile에 카드를 추가하고 섞는 메서드
@@ -122,7 +124,7 @@ class Game:
             self._current_turn = 2 % len(self._players)
             pass
         elif self._discarded_card.get("color", None) == "wild":
-            self._players[1].choose_color(self)
+            self._players[1].choose_color()
             pass
 
         return None

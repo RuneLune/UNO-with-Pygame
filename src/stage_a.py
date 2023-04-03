@@ -7,30 +7,32 @@ from player import Player
 from bot import Bot
 
 
-class Stage_01(Game):
-    # Stage_01 클래스 생성자
+class Stage_A(Game):
+    # Stage_A 클래스 생성자
     @overrides
     def __new__(cls, *args, **kwargs):
-        return super(Stage_01, cls).__new__(cls)
+        return super(Stage_A, cls).__new__(cls)
 
-    # Stage_01 객체 초기화 메서드
+    # Stage_A 객체 초기화 메서드
     @overrides
     def __init__(self, username: str = "Player") -> None:
         self._init_variables(10, 0, 1, 0)
-
-        # 봇 및 플레이어 추가
-        self._user: Player = Player(self, username)
-        self._computer: Bot = Bot(self, "Computer 1")
-        self._players.append(self._user)
-        self._players.append(self._computer)
-        random.shuffle(self._players)
-
+        self._add_players()
         self._make_draw_pile()
         self._deal_hands()
         self._flip_top()
 
         self._players[self._current_turn].turn_start()
 
+        return None
+
+    @overrides
+    def _add_players(self, username: str = "Player", players_count: int = 4) -> None:
+        self._user: Player = Player(self, username)
+        self._computer: Bot = Bot(self, "Computer 1")
+        self._players.append(self._user)
+        self._players.append(self._computer)
+        random.shuffle(self._players)
         return None
 
     @overrides
