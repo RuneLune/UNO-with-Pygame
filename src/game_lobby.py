@@ -137,6 +137,11 @@ class Game_Lobby:
             for i in range(len(self.__button_rect)):
                 if self.__button_rect[i].collidepoint(mouse_pos):
                     return self.__button_func(i)
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                return pygame.event.post(
+                    pygame.event.Event(events.CHANGE_SCENE, target=self.__settings.get_settings().get("previous_scene", None))
+                )
             # 봇 이름 수정
             # for i in range(len(self.bot_names_rects)):
             #     if self.bot_names_rects[i].collidepoint(mouse_pos):
@@ -159,7 +164,7 @@ class Game_Lobby:
             return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="gameui"))
         # 봇 추가/삭제 버튼. 없을 때도 버튼이 활성화 되어 있음. 봇 1~5
         elif 1 < i < 7:
-            # 클릭했을 때 봇 추가/삭제 함수 정의 필요
+            print(f"clicked {i}")
             pass
         # 이름 수정 버튼
         else:
