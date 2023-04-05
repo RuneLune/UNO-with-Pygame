@@ -27,6 +27,7 @@ class Game_UI:
         self.cards.refresh()
         self.card_size = self.cards.get_card_image(000).get_rect().size
         self.card_back_image = self.cards.get_card_image(000)
+        self.card_color = (0, 150, 100)
 
         self.title_font = pygame.font.Font(None, 60)
         self.menu_font = pygame.font.Font(None, 40)
@@ -35,17 +36,14 @@ class Game_UI:
         # 타이머 스타트
         self.game.start_timer()
 
-        self.refresh(6) # 임시 플레이어 수
+        self.refresh(6)  # 임시 플레이어 수
 
     def render(self):
-
         # each space's size,position definition
-        deck_space_size = (self.screen_size[0] * (3 / 4),
-                           self.screen_size[1] * (2 / 3))
+        deck_space_size = (self.screen_size[0] * (3 / 4), self.screen_size[1] * (2 / 3))
         deck_space_pos = (0, 0)
 
-        user_space_size = (self.screen_size[0] * (3 / 4),
-                           self.screen_size[1] * (1 / 3))
+        user_space_size = (self.screen_size[0] * (3 / 4), self.screen_size[1] * (1 / 3))
         self.user_space_pos = (0, self.screen_size[1] * (2 / 3))
 
         self.bots_space_size = (
@@ -73,10 +71,33 @@ class Game_UI:
             for i in range(len(self.bots))
         ]
 
+        # user space 중앙 좌표
         self.user_card_center_pos = (
             self.user_space.centerx - self.card_size[0] / 2,
             self.user_space.centery - self.card_size[1] / 2,
-        )  # user space 중앙 좌표
+        )
+        
+        # user card rendering
+        self.user_card_list = self.user.get_hand_cards()
+        self.user_card_num = len(self.user_card_list)
+        self.user_card_image = [
+            self.cards.get_card_image(num) for num in self.user_card_list
+        ]
+        self.user_card_pos = [
+            (
+                self.user_card_center_pos[0]
+                + self.card_size[0] * (i - self.user_card_num // 2),
+                self.user_card_center_pos[1]
+            )
+            for i in range(self.user_card_num)
+        ]
+        self.user_card_rect = [self.user_card_image[i].get_rect(
+                                x=self.user_card_pos[i][0],
+                                y=self.user_card_pos[i][1]+5
+                                ) for i in range(self.user_card_num)]
+        self.user_card_hover = [False for i in range(self.user_card_num)]
+        
+        # bot card position render
         self.bot_card_center_pos = [
             (
                 self.bots_space[i].centerx - self.card_size[0] / 2,
@@ -86,10 +107,10 @@ class Game_UI:
         ]
 
     def refresh(self, player_count):
-         # if full screen
+        # if full screen
         flag = 0
         if self.settings.get_settings().get("fullscreen", False) is True:
-            flag |= pygame.FULLSCREEN 
+            flag |= pygame.FULLSCREEN
 
         # screen definition
         self.screen_size = self.settings.get_screen_resolution()
@@ -114,75 +135,36 @@ class Game_UI:
         self.screen.blit(self.surface, (0, 0))
 
         # draw spaces and text
-        pygame.draw.rect(
-            self.surface, (0, 150, 100), rect=self.deck_space
-        )
-        pygame.draw.rect(
-            self.surface, colors.white, rect=self.user_space, width=2
-        )
+        pygame.draw.rect(self.surface, (0, 150, 100), rect=self.deck_space)
+        pygame.draw.rect(self.surface, colors.white, rect=self.user_space, width=2)
         self.screen.blit(self.user_name_text, self.user_space_pos)
 
         for i in range(len(self.bots)):
-            pygame.draw.rect(
-                self.surface, colors.red, self.bots_space[i], width=2
-            )
+            pygame.draw.rect(self.surface, colors.red, self.bots_space[i], width=2)
             self.screen.blit(self.bot_name_text[i], self.bots_space_pos[i])
 
-        # draw card space
-        user_card_list = self.user.get_hand_cards()
-        user_card_num = len(user_card_list)
-
-        # 플레이어가 가지고 있는 카드 이미지 로드
-        user_card_image = [self.cards.get_card_image(num)
-                           for num in user_card_list]
-
         # 플레이어의 카드 그리기
-        if user_card_num % 2 == 0:
-            for i in range(user_card_num):
-                self.screen.blit(
-                    user_card_image[i],
-                    (
-                        self.user_card_center_pos[0]
-                        + self.card_size[0] * (i - user_card_num / 2)
-                        - i * 20,
-                        self.user_card_center_pos[1],
-                    ),
-                )
-        else:
-            for i in range(user_card_num):
-                self.screen.blit(
-                    user_card_image[i],
-                    (
-                        self.user_card_center_pos[0]
-                        + self.card_size[0] * (i - user_card_num // 2)
-                        - i * 20,
-                        self.user_card_center_pos[1],
-                    ),
-                )
+        for i in range(self.user_card_num):
+            self.screen.blit(self.user_card_image[i], self.user_card_pos[i])
+            if self.user_card_hover[i] is True:
+                pygame.draw.rect(self.surface, colors.red,
+                                 self.user_card_rect[i], width=10)
+            else:
+                pygame.draw.rect(self.surface, colors.black,
+                                 self.user_card_rect[i], width=10)
 
         # 봇의 카드그리기
         for i in range(len(self.bots)):
             bot_card_num = len(self.bots[i].get_hand_cards())
-            if bot_card_num % 2 == 0:
-                for j in range(bot_card_num):
-                    self.screen.blit(
-                        self.card_back_image,
-                        (
-                            self.bot_card_center_pos[i][0]
-                            + self.card_size[0] * (j - bot_card_num / 2) // 2,
-                            self.bot_card_center_pos[i][1]
-                        ),
-                    )
-            else:
-                for j in range(bot_card_num):
-                    self.screen.blit(
-                        self.card_back_image,
-                        (
-                            self.bot_card_center_pos[i][0]
-                            + self.card_size[0] * (j - bot_card_num // 2) // 2,
-                            self.bot_card_center_pos[i][1]
-                        ),
-                    )
+            for j in range(bot_card_num):
+                self.screen.blit(
+                    self.card_back_image,
+                    (
+                        self.bot_card_center_pos[i][0]
+                        + self.card_size[0] * (j - bot_card_num / 2) // 2,
+                        self.bot_card_center_pos[i][1],
+                    ),
+                )
 
     def __draw_pause_menu(self):
         title_text = self.title_font.render("Pause Menu", True, (255, 255, 255))
@@ -248,7 +230,7 @@ class Game_UI:
         if pause:
             self.pause = False
         # 일시정지 아닐 때
-        else :
+        else:
             self.pause = True
 
     def handle(self, event):
@@ -270,8 +252,15 @@ class Game_UI:
                 self.set_pause(self.pause)
                 self.game.pause_timer()
                 self.settings.get_real_settings().update(previous_scene="gameui")
-                return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="settings"))
-        pass
+                return pygame.event.post(
+                    pygame.event.Event(events.CHANGE_SCENE, target="settings")
+                )
+        for i in range(self.user_card_num):
+            card = self.user_card_rect[i]
+            if card.collidepoint(pygame.mouse.get_pos()):
+                self.user_card_hover[i] = True
+            else:
+                self.user_card_hover[i] = False
 
     def __handle_pause_menu(self, event):
         # 일시정지 메뉴 이벤트 처리
@@ -281,5 +270,3 @@ class Game_UI:
         # Check if any of the menu options are hovered over
         self.set_pause(self.pause)
         self.game.resume_timer()
-
-        pass
