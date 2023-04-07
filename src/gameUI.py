@@ -35,8 +35,8 @@ class Game_UI:
 
         # 타이머 스타트
         self.game.start_timer()
-
         self.refresh(6)  # 임시 플레이어 수
+        self.card_render()
 
     def render(self):
         # each space's size,position definition
@@ -71,31 +71,31 @@ class Game_UI:
             for i in range(len(self.bots))
         ]
 
-        # user space 중앙 좌표
-        self.user_card_center_pos = (
-            self.user_space.centerx - self.card_size[0] / 2,
-            self.user_space.centery - self.card_size[1] / 2,
-        )
+        # # user space 중앙 좌표
+        # self.user_card_center_pos = (
+        #     self.user_space.centerx - self.card_size[0] / 2,
+        #     self.user_space.centery - self.card_size[1] / 2,
+        # )
         
-        # user card rendering
-        self.user_card_list = self.user.get_hand_cards()
-        self.user_card_num = len(self.user_card_list)
-        self.user_card_image = [
-            self.cards.get_card_image(num) for num in self.user_card_list
-        ]
-        self.user_card_pos = [
-            (
-                self.user_card_center_pos[0]
-                + self.card_size[0] * (i - self.user_card_num // 2),
-                self.user_card_center_pos[1]
-            )
-            for i in range(self.user_card_num)
-        ]
-        self.user_card_rect = [self.user_card_image[i].get_rect(
-                                x=self.user_card_pos[i][0],
-                                y=self.user_card_pos[i][1]+5
-                                ) for i in range(self.user_card_num)]
-        self.user_card_hover = [False for i in range(self.user_card_num)]
+        # # user card rendering
+        # self.user_card_list = self.user.get_hand_cards()
+        # self.user_card_num = len(self.user_card_list)
+        # self.user_card_image = [
+        #     self.cards.get_card_image(num) for num in self.user_card_list
+        # ]
+        # self.user_card_pos = [
+        #     (
+        #         self.user_card_center_pos[0]
+        #         + self.card_size[0] * (i - self.user_card_num // 2),
+        #         self.user_card_center_pos[1]
+        #     )
+        #     for i in range(self.user_card_num)
+        # ]
+        # self.user_card_rect = [self.user_card_image[i].get_rect(
+        #                         x=self.user_card_pos[i][0],
+        #                         y=self.user_card_pos[i][1]+5
+        #                         ) for i in range(self.user_card_num)]
+        # self.user_card_hover = [False for i in range(self.user_card_num)]
         
         # bot card position render
         self.bot_card_center_pos = [
@@ -105,6 +105,18 @@ class Game_UI:
             )
             for i in range(len(self.bots))
         ]
+
+        # # draw pile and discard pile render
+        # self.draw_pile_pos = (self.deck_space.centerx - self.card_size[0],
+        #                       self.deck_space.centery - self.card_size[1]/2)
+        # self.draw_pile = pygame.Rect(self.draw_pile_pos, self.card_size)
+        
+        # discard_code = self.game._discard_pile[0]
+        # self.discard = self.cards.get_card_image(discard_code)
+
+        # self.discard_pile_pos = (self.deck_space.centerx + self.card_size[0],
+        #                          self.deck_space.centery - self.card_size[1]/2)
+        # self.discard_pile = pygame.Rect(self.discard_pile_pos, self.card_size)
 
     def refresh(self, player_count):
         # if full screen
@@ -120,6 +132,7 @@ class Game_UI:
         self.players = self.game.get_players()
         self.cards.refresh()
         self.render()
+        self.card_render()
 
     def draw(self):
         if self.pause is False:
@@ -165,6 +178,10 @@ class Game_UI:
                         self.bot_card_center_pos[i][1],
                     ),
                 )
+
+        # 드로우카드,버린카드 더미 그리기
+        self.screen.blit(self.card_back_image, self.draw_pile_pos)
+        self.screen.blit(self.discard, self.discard_pile_pos)
 
     def __draw_pause_menu(self):
         title_text = self.title_font.render("Pause Menu", True, (255, 255, 255))
@@ -256,11 +273,18 @@ class Game_UI:
                     pygame.event.Event(events.CHANGE_SCENE, target="settings")
                 )
         for i in range(self.user_card_num):
-            card = self.user_card_rect[i]
-            if card.collidepoint(pygame.mouse.get_pos()):
+            index = i
+            rect = self.user_card_rect[i]
+            card = self.user_card_list[i]
+            if rect.collidepoint(pygame.mouse.get_pos()):
                 self.user_card_hover[i] = True
             else:
                 self.user_card_hover[i] = False
+
+        for index in self.user.get_discardable_cards_index():
+            if self.user_card_rect[index].collidepoint(pygame.mouse.get_pos()) and pygame.MOUSEBUTTONDOWN:
+                self.user.discard_card(index)
+                self.card_render()
 
     def __handle_pause_menu(self, event):
         # 일시정지 메뉴 이벤트 처리
@@ -270,3 +294,42 @@ class Game_UI:
         # Check if any of the menu options are hovered over
         self.set_pause(self.pause)
         self.game.resume_timer()
+
+    def card_render(self):
+        # user space 중앙 좌표
+        self.user_card_center_pos = (
+            self.user_space.centerx - self.card_size[0] / 2,
+            self.user_space.centery - self.card_size[1] / 2,
+        )
+
+        # user card rendering
+        self.user_card_list = self.user.get_hand_cards()
+        self.user_card_num = len(self.user_card_list)
+        self.user_card_image = [
+            self.cards.get_card_image(num) for num in self.user_card_list
+        ]
+        self.user_card_pos = [
+            (
+                self.user_card_center_pos[0]
+                + self.card_size[0] * (i - self.user_card_num // 2),
+                self.user_card_center_pos[1]
+            )
+            for i in range(self.user_card_num)
+        ]
+        self.user_card_rect = [self.user_card_image[i].get_rect(
+                                x=self.user_card_pos[i][0],
+                                y=self.user_card_pos[i][1]+5
+                                ) for i in range(self.user_card_num)]
+        self.user_card_hover = [False for i in range(self.user_card_num)]
+
+        # draw pile and discard pile render
+        self.draw_pile_pos = (self.deck_space.centerx - self.card_size[0],
+                              self.deck_space.centery - self.card_size[1]/2)
+        self.draw_pile = pygame.Rect(self.draw_pile_pos, self.card_size)
+
+        discard_code = self.game._discard_pile[0]
+        self.discard = self.cards.get_card_image(discard_code)
+
+        self.discard_pile_pos = (self.deck_space.centerx + self.card_size[0],
+                                 self.deck_space.centery - self.card_size[1]/2)
+        self.discard_pile = pygame.Rect(self.discard_pile_pos, self.card_size)
