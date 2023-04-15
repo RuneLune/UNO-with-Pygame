@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from overrides import overrides
 import random
-from threading import Timer
+from timer import Timer
 from typing import TYPE_CHECKING, Dict, Type
 
 from player import Player
@@ -21,14 +21,25 @@ class Bot(Player):
     @overrides
     def __init__(self, game: Type[Game], name: str = "Computer") -> None:
         super(Bot, self).__init__(game, name)
+        self._timer: Timer = Timer()
+        self._delay = 0
         return None
 
     # turn_start 오버라이딩
     @overrides
     def turn_start(self) -> None:
         super(Bot, self).turn_start()
-        
-        self._play()
+        self._delay = round(random.random() * 300000 + 200000)
+        self._timer.start()
+        # self._play()
+        return None
+
+    @overrides
+    def tick(self) -> None:
+        if self._turn is True:
+            print(self._timer.get().microseconds)
+            if self._timer.get().microseconds > self._delay:
+                self._play()
         return None
 
     # 자동으로 턴을 진행하는 메서드
@@ -37,9 +48,9 @@ class Bot(Player):
             self.discard_card(random.choice(self._discardable_cards_index))
             pass
         else:
-            discarded_card_info: Dict[str, int | Dict[str, str | int]] = (
-                self._game.get_discard_info()
-            )
+            discarded_card_info: Dict[
+                str, int | Dict[str, str | int]
+            ] = self._game.get_discard_info()
             force_draw: int = discarded_card_info.get("force_draw")
             if force_draw > 0:
                 self.draw_cards(force_draw)
@@ -53,6 +64,7 @@ class Bot(Player):
     # ask_discard 오버라이딩
     @overrides
     def ask_discard(self) -> None:
+        self._check_discardable_cards()
         self.discard_card(-1)
         return None
 

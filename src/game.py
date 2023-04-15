@@ -159,7 +159,7 @@ class Game:
         player.get_cards(drawing_cards)
         # self._player_drawed = True
         # 뽑은 카드가 낼 수 있는 경우 처리(미구현)
-        if len(drawing_cards) == 1:
+        if len(drawing_cards) == 1 and self._players[self._current_turn]._turn:
             draw_card = cards.check_card(drawing_cards[0])
             if (
                 draw_card.get("color") == "wild"
@@ -313,4 +313,8 @@ class Game:
             pass
         else:
             raise ValueError("Invalid Color")
+        return None
+
+    def tick(self) -> None:
+        self._players[self._current_turn].tick()
         return None
