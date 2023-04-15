@@ -179,7 +179,9 @@ class Game_UI:
                         self.bot_card_center_pos[i][1],
                     ),
                 )
-
+        if self.draw_pile_hover is True:
+            pygame.draw.rect(self.surface, colors.red,
+                             self.draw_pile_rect, width=10)
         # 드로우카드,버린카드 더미 그리기
         self.screen.blit(self.card_back_image, self.draw_pile_pos)
         self.screen.blit(self.discard, self.discard_pile_pos)
@@ -282,11 +284,22 @@ class Game_UI:
             else:
                 self.user_card_hover[i] = False
 
-        if self.user.get_discardable_cards_index is True:
-            for index in self.user.get_discardable_cards_index():
-                if self.user_card_rect[index].collidepoint(pygame.mouse.get_pos()) and pygame.MOUSEBUTTONDOWN:
+        if self.draw_pile.collidepoint(pygame.mouse.get_pos()):
+            self.draw_pile_hover = True
+        else:
+            self.draw_pile_hover = False
+
+        if self.user.get_discardable_cards_index():
+            for index in range(self.user_card_num):
+                if self.user_card_rect[index].collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN:
                     self.user.discard_card(index)
                     self.card_render()
+                    self.user.end_turn()
+                    break
+
+        if self.draw_pile_hover is True and event.type == pygame.MOUSEBUTTONDOWN:
+            self.user.draw_cards(1)
+            self.card_render()
 
     def __handle_pause_menu(self, event):
         # 일시정지 메뉴 이벤트 처리
@@ -328,8 +341,10 @@ class Game_UI:
         self.draw_pile_pos = (self.deck_space.centerx - self.card_size[0],
                               self.deck_space.centery - self.card_size[1]/2)
         self.draw_pile = pygame.Rect(self.draw_pile_pos, self.card_size)
+        self.draw_pile_rect = self.card_back_image.get_rect(x=self.draw_pile_pos[0], y=self.draw_pile_pos[1]+5)
+        self.draw_pile_hover = False
 
-        discard_code = self.game._discard_pile[0]
+        discard_code = self.game._discard_pile[-1]
         self.discard = self.cards.get_card_image(discard_code)
 
         self.discard_pile_pos = (self.deck_space.centerx + self.card_size[0],
