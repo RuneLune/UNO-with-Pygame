@@ -313,6 +313,7 @@ class Game_UI:
         self.card_render()
         self.card_lift()
 
+        # 일시정지 화면전환 처리
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 self.set_pause(self.pause)
@@ -321,28 +322,34 @@ class Game_UI:
                 return pygame.event.post(
                     pygame.event.Event(events.CHANGE_SCENE, target="settings")
                 )
+
+        # hover 체크
+        self.draw_pile_hover = self.hover_check(self.draw_pile_rect)
+        self.uno_btn_hover = self.hover_check(self.uno_btn_rect)
         for i in range(self.user_card_num):
             rect = self.user_card_rect[i]
             self.user_card_hover[i] = self.hover_check(rect)
 
-        self.draw_pile_hover = self.hover_check(self.draw_pile_rect)
-
+        # 카드 내기 처리
         index_list = self.user.get_discardable_cards_index()
         if index_list:
             for index in index_list:
                 if self.user_card_hover[index] and event.type == pygame.MOUSEBUTTONDOWN:
                     self.user.discard_card(index)
-                    self.user_card_hover.remove(index)
                     break
 
+        # 카드 뽑기 처리
         if self.draw_pile_hover is True and event.type == pygame.MOUSEBUTTONDOWN:
             self.user.draw_cards()
 
-        self.uno_btn_hover = self.hover_check(self.uno_btn_rect)
-
+        # 색깔 고르기 처리
         pointer = pygame.mouse.get_pos()
         if event.type == events.ASK_COLOR:
             self.color_choice = True
+
+        # 턴 종료시 하이라이팅 비활성화
+        if self.user._turn is False:
+            self.user_card_hover = [False for i in range(self.user_card_num)]
 
     def __handle_pause_menu(self, event):
         self.set_pause(self.pause)
