@@ -144,6 +144,7 @@ class Game_UI:
         pass
 
     def __draw_game(self):
+        self.game.tick()
         self.screen.fill(colors.black)
         self.screen.blit(self.surface, (0, 0))
 

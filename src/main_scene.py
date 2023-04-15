@@ -97,7 +97,7 @@ class Main_Scene:
     def __menu_func(self, i):
         if i == 0:  # Start
             self.__settings.get_real_settings().update(previous_scene="main")
-            return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="gamelobby"))
+            return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="gameui"))
         elif i == 1:  # Settings
             self.__settings.get_real_settings().update(previous_scene="main")
             return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="settings"))
