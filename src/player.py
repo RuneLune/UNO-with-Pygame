@@ -34,6 +34,8 @@ class Player:
     # Draw pile로부터 count만큼 카드를 뽑아오는 메서드
     def draw_cards(self, count: int = -1) -> None:
         if count == -1:
+            if self._turn is False:
+                return None
             if self._game.get_discard_info().get("force_draw"):
                 count = self._game.get_discard_info().get("force_draw")
                 pass
@@ -108,10 +110,14 @@ class Player:
 
     # 플레이어가 가진 카드의 리스트에서 index의 카드를 내는 메서드
     def discard_card(self, index: int) -> None:
+        if self._turn is False:
+            print("Not user's turn")
+            return None
         # print(self._cards)
         # print(self._discardable_cards_index)
         if index not in self._discardable_cards_index:
-            raise ValueError("Selected non-discardable card. ")
+            print("Selected non-discardable card. ")
+            return None
         self._discardable_cards_index.remove(index % len(self._cards))
         self._game.discard_card(self._cards[index])
         self._can_end_turn = True

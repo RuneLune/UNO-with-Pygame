@@ -127,6 +127,8 @@ class Game:
             self._players[1].choose_color()
             pass
 
+        self._game_status = True
+
         return None
 
     # Discard pile에 있는 카드를 섞고 Draw pile에 추가하는 메서드
@@ -150,6 +152,8 @@ class Game:
         if self._force_draw > 0:
             if count != self._force_draw:
                 raise ValueError("must draw " + str(self._force_draw) + " cards")
+            pass
+        self._force_draw = 0
 
         # 남은 카드가 부족하면 패 섞고 드로우
         if count >= len(self._draw_pile):
@@ -159,15 +163,15 @@ class Game:
         player.get_cards(drawing_cards)
         # self._player_drawed = True
         # 뽑은 카드가 낼 수 있는 경우 처리(미구현)
-        if len(drawing_cards) == 1 and self._players[self._current_turn]._turn:
-            draw_card = cards.check_card(drawing_cards[0])
-            if (
-                draw_card.get("color") == "wild"
-                or draw_card.get("color") == self._discarded_card.get("color")
-                or draw_card.get("number") == self._discarded_card.get("number")
-            ):
-                self._players[self._current_turn].ask_discard()
-        self._force_draw = 0
+        # if len(drawing_cards) == 1 and self._players[self._current_turn]._turn:
+        #     draw_card = cards.check_card(drawing_cards[0])
+        #     if (
+        #         draw_card.get("color") == "wild"
+        #         or draw_card.get("color") == self._discarded_card.get("color")
+        #         or draw_card.get("number") == self._discarded_card.get("number")
+        #     ):
+        #         self._players[self._current_turn].ask_discard()
+        # self._force_draw = 0
         return None
 
     # card를 Discard pile에 추가하고 처리하는 메서드
@@ -199,8 +203,10 @@ class Game:
             self._players[self._current_turn].choose_color(self)
         
         self._discard_pile = [card] + self._discard_pile
-        print("discard pile")
-        print(self._discard_pile)
+        # print("discard pile")
+        # print(self._discard_pile)
+
+        self.check_winner()
 
         # self._next_turn()
         return None
@@ -213,6 +219,7 @@ class Game:
 
     # 라운드 종료 후 점수를 계산하는 메서드
     def _end_round(self) -> None:
+        self._game_status = False
         points: int = 0
         for i in range(0, len(self._players)):
             if i != self._current_turn:
@@ -254,6 +261,8 @@ class Game:
 
     # 플레이어가 턴 종료 시 호출하는 메서드
     def end_turn(self) -> None:
+        if self._game_status is False:
+            return None
         while self._players[self._current_turn]._can_end_turn is False:
             self._players[self._current_turn].draw_cards(1)
         self._next_turn()
@@ -280,9 +289,10 @@ class Game:
             else:
                 self._current_turn = (self._current_turn - 2) % len(self._players)
                 pass
-            self._skip_turn = True
+            self._skip_turn = False
             pass
         # print("After" + str(self._current_turn))
+        self._turn_timer.start()
         self._players[self._current_turn].turn_start()
 
         return None
@@ -323,5 +333,10 @@ class Game:
         return None
 
     def tick(self) -> None:
-        self._players[self._current_turn].tick()
+        if self._turn_timer.get().total_seconds() > self._turn_seconds:
+            self._players[self._current_turn].end_turn()
+            pass
+        else:
+            self._players[self._current_turn].tick()
+            pass
         return None
