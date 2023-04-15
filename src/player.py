@@ -106,6 +106,7 @@ class Player:
 
     # 플레이어가 낼 수 있는 카드의 인덱스를 반환하는 메서드
     def get_discardable_cards_index(self) -> List[int]:
+        self._check_discardable_cards()
         return copy.deepcopy(self._discardable_cards_index)
 
     # 플레이어가 가진 카드의 리스트에서 index의 카드를 내는 메서드
