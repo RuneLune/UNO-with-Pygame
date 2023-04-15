@@ -93,15 +93,27 @@ class Player:
         ] = self._game.get_discard_info()
         self._discardable_cards_index = []
         if discard_info.get("force_draw") > 0:
+            for i in range(0, len(self._cards)):
+                card: Dict[str, str | int] = cards.check_card(self._cards[i])
+                if card.get("type") == "custom":
+                    self._discardable_cards_index.append(i)
+                    pass
+                pass
             pass
         else:
             discarded_card: Dict[str, str | int] = discard_info.get("discarded_card")
             for i in range(0, len(self._cards)):
                 card: Dict[str, str | int] = cards.check_card(self._cards[i])
-                if card.get("color") == discarded_card.get("color") or (
-                    card.get("number") == discarded_card.get("number")
-                ):
+                if card.get("color") == discarded_card.get("color") or card.get(
+                    "number"
+                ) == discarded_card.get("number"):
                     self._discardable_cards_index.append(i)
+                    pass
+                elif card.get("color") == "wild" and card.get("type") != "custom":
+                    self._discardable_cards_index.append(i)
+                    pass
+                pass
+            pass
         return None
 
     # 플레이어가 낼 수 있는 카드의 인덱스를 반환하는 메서드

@@ -89,6 +89,7 @@ class Game:
             + list(range(cards.yellow_0, cards.yellow_skip + 1))
             + list(range(cards.yellow_1, cards.yellow_skip + 1))
             + list(range(cards.wild_normal, cards.wild_draw4 + 1)) * 4
+            + [cards.wild_custom] * 4
         )
         random.shuffle(self._draw_pile)
         return None
@@ -182,27 +183,40 @@ class Game:
         # 기술 카드 처리
         if self._discarded_card.get("type") == "draw2":
             self._force_draw += 2
+            pass
         elif self._discarded_card.get("type") == "reverse":
             if self._reverse_direction is False:
                 self._reverse_direction = True
+                pass
             else:
                 self._reverse_direction = False
+                pass
+            pass
         elif self._discarded_card.get("type") == "skip":
             self._skip_turn = True
+            pass
+        elif self._discarded_card.get("type") == "custom":
+            self._force_draw = 0
+            pass
         elif self._discarded_card.get("color") == "wild":
             if self._discarded_card.get("type") == "draw4":
                 self._force_draw += 4
+                pass
             elif self._discarded_card.get("type") == "shuffle":
                 shuffle_pile: List[int] = []
                 for i in range(0, len(self._players)):
                     shuffle_pile += self._players[i].get_hand_cards()
                     self._players[i].set_cards([])
+                    continue
                 random.shuffle(shuffle_pile)
                 while len(shuffle_pile) == 0:
                     self._players[
                         (self._current_turn + 1) % len(self._players)
                     ].get_cards([shuffle_pile.pop(0)])
-            self._players[self._current_turn].choose_color(self)
+                    continue
+                pass
+            self._players[self._current_turn].choose_color()
+            pass
 
         self._discard_pile = [card] + self._discard_pile
         # print("discard pile")

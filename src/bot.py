@@ -29,7 +29,7 @@ class Bot(Player):
     @overrides
     def turn_start(self) -> None:
         super(Bot, self).turn_start()
-        self._delay = round(random.random() * 300000 + 200000)
+        self._delay = round(random.random() * 1 + 0.5)
         self._timer.start()
         # self._play()
         return None
@@ -37,8 +37,7 @@ class Bot(Player):
     @overrides
     def tick(self) -> None:
         if self._turn is True:
-            # print(self._timer.get().microseconds)
-            if self._timer.get().microseconds > self._delay:
+            if self._timer.get().total_seconds() > self._delay:
                 self._play()
         return None
 
