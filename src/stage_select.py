@@ -35,8 +35,12 @@ class Stage:
         self.__button_rect[0].bottom = self.__screen.get_rect().centery / 5
 
         # stage image
+        self.button_rects = self.__touchable[1:] # 1번 인덱스는 back에 관련된 것이므로 1번부터 슬라이싱
         for i in range(self.__stage_num):
-            image = pygame.image.load(f"res/img/stage/stage_{i+1}.png")
+            if self.button_rects[i]:
+                image = pygame.image.load(f"res/img/stage/stage_{i+1}.png")
+            else:
+                image = pygame.image.load(f"res/img/stage/stage_0.png")
             self.__stage_img.append(image)
             self.__button_rect.append(self.__stage_img[i].get_rect())
             self.__button_rect[i+1].centery = self.__screen.get_rect().centery
@@ -51,14 +55,7 @@ class Stage:
         
         self.__selected_rect = pygame.Rect(0, 0, 130, 130)
 
-        self.manager = pygame_gui.UIManager(screen_size)
-        self.dialog = pygame_gui.windows.UIConfirmationDialog(
-            rect=pygame.Rect(200, 150, 400, 200),
-            manager=self.manager,
-            window_title='Game Start',
-            action_long_desc='Are you sure you want to start the game?',
-            action_short_name='Start',
-        )
+        
             
             
 
@@ -73,6 +70,8 @@ class Stage:
         self.__button_text = []
         self.__button_rect = []
         self.__stage_img = []
+        # 첫번쨰 인덱스는 back 버튼을 위한 것. 2~5가 스테이지를 위한 엘리먼트들
+        self.__touchable = [True, True, True, False, False]
         self.render()
         return None
     
@@ -105,23 +104,31 @@ class Stage:
         if event.type == pygame.MOUSEMOTION:
             mouse_pos = pygame.mouse.get_pos()
             for i in range(len(self.__button_rect)):
-                if self.__button_rect[i].collidepoint(mouse_pos):
+                if self.__touchable[i] and self.__button_rect[i].collidepoint(mouse_pos):
                     self.__selected_stage = i
                     continue
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
             for i in range(len(self.__button_rect)):
-                if self.__button_rect[i].collidepoint(mouse_pos):
+                if self.__touchable[i] and self.__button_rect[i].collidepoint(mouse_pos):
                     return self.__menu_func(i)
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
+            if event.key == pygame.K_LEFT:
                 self.__selected_stage -= 1
                 if self.__selected_stage < 0:
                     self.__selected_stage = len(self.__button_rect) - 1
-            elif event.key == pygame.K_DOWN:
+                while not self.__touchable[self.__selected_stage]:
+                    self.__selected_stage -= 1
+                    if self.__selected_stage < 0:
+                        self.__selected_stage = len(self.__button_rect) - 1
+            elif event.key == pygame.K_RIGHT:
                 self.__selected_stage += 1
                 if self.__selected_stage >= len(self.__button_rect):
                     self.__selected_stage = 0
+                while not self.__touchable[self.__selected_stage]:
+                    self.__selected_stage += 1
+                    if self.__selected_stage >= len(self.__button_rect):
+                        self.__selected_stage = 0
             elif event.key == pygame.K_RETURN:
                 return self.__menu_func(self.__selected_stage)
 
@@ -131,14 +138,5 @@ class Stage:
             self.__settings.get_real_settings().update(previous_scene="stage")
             return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="main"))
         elif i == 1:
-            self.manager.update(0)
-            self.__screen.fill((255, 255, 255))
-            self.manager.draw_ui(self.__screen)
+            pass
             
-            for event in pygame.event.get():
-                # 다이얼로그 이벤트 처리
-                self.manager.process_events(event)
-
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                    # ESC 키를 누르면 다이얼로그를 닫음
-                    self.dialog.hide()
