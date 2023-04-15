@@ -33,8 +33,6 @@ pygame.display.set_caption("Main Menu")
 # Main loop
 running: bool = True
 while running:
-    scenes[current_scene].draw()
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -50,6 +48,8 @@ while running:
         else:
             res = scenes[current_scene].handle(event)
 
+    scenes[current_scene].draw()
+    
     # Update screen
     pygame.display.update()
     clock.tick(fps)
