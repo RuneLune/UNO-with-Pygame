@@ -15,7 +15,7 @@ class Main_Scene:
         return super().__new__(cls)
 
     def __init__(self, settings):
-        self.__menu_options = ["Start", "Settings", "Quit"]
+        self.__menu_options = ["Start", "Story", "Settings", "Quit"]
         self.__settings = settings
         self.refresh()
         return super().__init__()
@@ -100,8 +100,11 @@ class Main_Scene:
             return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="gameui"))
         elif i == 1:  # Settings
             self.__settings.get_real_settings().update(previous_scene="main")
+            return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="stage"))
+        elif i == 2:  # Settings
+            self.__settings.get_real_settings().update(previous_scene="main")
             return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="settings"))
-        elif i == 2:  # Exit
+        elif i == 3:  # Exit
             self.__settings.get_real_settings().update(previous_scene=None)
             return pygame.event.post(pygame.event.Event(pygame.QUIT))
         else:
