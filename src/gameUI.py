@@ -49,6 +49,7 @@ class Game_UI:
 
         # 타이머 스타트
         self.game.start_timer()
+
         self.refresh(6)  # 임시 플레이어 수
         self.card_render()
 
@@ -78,7 +79,7 @@ class Game_UI:
         ]
 
         # font for user, bot name
-        self.font = pygame.font.Font("res/font/Travel.ttf", 20)
+        self.font = pygame.font.Font("res/font/Travel.ttf", 25)
         self.user_name_text = self.font.render("insert_User_name", True, colors.white)
         self.bot_name_text = [
             self.font.render("computer " + str(i), True, colors.white)
@@ -86,9 +87,9 @@ class Game_UI:
         ]
 
         # bot card position render
-        self.bot_card_center_pos = [
+        self.bot_card_first_pos = [
             (
-                self.bots_space[i].centerx - self.card_size[0] / 2,
+                self.bots_space[i].x + 10,
                 self.bots_space[i].centery - self.card_size[1] / 2,
             )
             for i in range(len(self.bots))
@@ -173,30 +174,30 @@ class Game_UI:
         for i in range(self.user_card_num):
             self.screen.blit(self.user_card_image[i], self.user_card_pos[i])
             if self.user_card_hover[i] is True:
-                pygame.draw.rect(
-                    self.surface, colors.red, self.user_card_rect[i], width=10
-                )
+                pygame.draw.rect(self.surface, colors.red, self.user_card_rect[i])
             else:
-                pygame.draw.rect(
-                    self.surface, colors.black, self.user_card_rect[i], width=10
-                )
+                pygame.draw.rect(self.surface, colors.black, self.user_card_rect[i])
 
         # 봇의 카드그리기
         for i in range(len(self.bots)):
             bot_card_num = len(self.bots[i].get_hand_cards())
             for j in range(bot_card_num):
-                self.screen.blit(
-                    self.card_back_image,
-                    (
-                        self.bot_card_center_pos[i][0]
-                        + self.card_size[0] * (j - bot_card_num / 2) // 2,
-                        self.bot_card_center_pos[i][1],
-                    ),
-                )
+                if j > 5:
+                    break
+                x = self.bot_card_first_pos[i][0] + j * self.card_size[0] * 1 / 2
+                y = self.bot_card_first_pos[i][1]
+                self.screen.blit(self.card_back_image, (x, y))
+
+            card_num_text = self.font.render(str(bot_card_num), True, colors.white)
+            self.screen.blit(
+                card_num_text,
+                (x + 70, self.bots_space_pos[i][1]),
+            )
 
         # 드로우카드 더미 하이라이팅
         if self.draw_pile_hover is True:
             pygame.draw.rect(self.surface, colors.red, self.draw_pile_rect, width=10)
+
         # 드로우카드,버린카드 더미 그리기
         discard_code = self.game._discard_pile[0]
         self.discard = self.cards.get_card_image(discard_code)
@@ -327,11 +328,11 @@ class Game_UI:
         self.draw_pile_hover = self.hover_check(self.draw_pile_rect)
 
         index_list = self.user.get_discardable_cards_index()
-        print(index_list)
         if index_list:
             for index in index_list:
                 if self.user_card_hover[index] and event.type == pygame.MOUSEBUTTONDOWN:
                     self.user.discard_card(index)
+                    self.user_card_hover.remove(index)
                     break
 
         if self.draw_pile_hover is True and event.type == pygame.MOUSEBUTTONDOWN:
@@ -348,9 +349,9 @@ class Game_UI:
         self.game.resume_timer()
 
     def card_render(self):
-        # user space 중앙 좌표
-        self.user_card_center_pos = (
-            self.user_space.centerx - self.card_size[0] / 2,
+        # user card 처음 좌표
+        self.user_card_first_pos = (
+            self.user_space.x + self.card_size[0] / 2,
             self.user_space.centery - self.card_size[1] / 2,
         )
 
@@ -362,12 +363,13 @@ class Game_UI:
         ]
         self.user_card_pos = [
             [
-                self.user_card_center_pos[0]
-                + self.card_size[0] * (i - self.user_card_num // 2),
-                self.user_card_center_pos[1],
+                self.user_card_first_pos[0] + i * self.card_size[0] * 4 / 5,
+                self.user_card_first_pos[1],
             ]
             for i in range(self.user_card_num)
         ]
+
+        # 유저 카드 rect 렌더링
         self.user_card_rect = [
             self.user_card_image[i].get_rect(
                 x=self.user_card_pos[i][0], y=self.user_card_pos[i][1] + 5
@@ -387,10 +389,12 @@ class Game_UI:
         )
         self.draw_pile_hover = False
 
+        # 최근에 버린 카드 정보 불러오기
         self.discard_color = self.game.get_discard_info().get("color")
         self.discard_code = self.game._discard_pile[0]
         self.discard = self.cards.get_card_image(self.discard_code)
 
+        # 버린카드 위치
         self.discard_pile_pos = (
             self.deck_space.centerx + self.card_size[0],
             self.deck_space.centery - self.card_size[1] / 2,
@@ -409,5 +413,6 @@ class Game_UI:
         if self.user._turn:
             for index in self.user.get_discardable_cards_index():
                 self.user_card_pos[index][1] -= 10
+                self.user_card_rect[index][1] -= 10
         else:
-            self.user_card_pos[:][1] = self.user_card_center_pos[1]  #
+            self.user_card_pos[:][1] = self.user_card_first_pos[1]
