@@ -79,6 +79,15 @@ class Game_UI:
             )
             for i in range(len(self.bots))
         ]
+        uno_img = pygame.image.load("res/img/uno.png")
+        self.uno_btn = pygame.transform.scale_by(uno_img, 0.1)
+        self.uno_btn_gray = pygame.transform.grayscale(self.uno_btn)
+        self.uno_btn_size = self.uno_btn.get_rect().size
+        self.uno_btn_pos = (deck_space_size[0] - self.uno_btn_size[0] - 10,
+                            deck_space_size[1] - self.uno_btn_size[1] - 10)
+        self.uno_btn_rect = self.uno_btn.get_rect(x=self.uno_btn_pos[0], 
+                                                  y=self.uno_btn_pos[1])
+        self.uno_btn_hover = False
 
     def refresh(self, player_count):
         # if full screen
@@ -145,9 +154,16 @@ class Game_UI:
             pygame.draw.rect(self.surface, colors.red,
                              self.draw_pile_rect, width=10)
         # 드로우카드,버린카드 더미 그리기
+        discard_code = self.game._discard_pile[0]
+        self.discard = self.cards.get_card_image(discard_code)
         self.screen.blit(self.card_back_image, self.draw_pile_pos)
         self.screen.blit(self.discard, self.discard_pile_pos)
-        self.card_render()
+
+        # uno버튼 그리기
+        if self.uno_btn_hover is True:
+            self.screen.blit(self.uno_btn, self.uno_btn_pos)
+        else:
+            self.screen.blit(self.uno_btn_gray, self.uno_btn_pos)
 
     def __draw_pause_menu(self):
         title_text = self.title_font.render("Pause Menu", True, (255, 255, 255))
@@ -230,6 +246,9 @@ class Game_UI:
         # 일시정지 버튼 클릭하면(또는 Esc 누르면)
         # 1. self.pause를 True로
         # 2. 모든 타이머 정지(self.game.pause_timer())
+
+        self.card_render()
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 self.set_pause(self.pause)
@@ -240,26 +259,22 @@ class Game_UI:
                 )
         for i in range(self.user_card_num):
             rect = self.user_card_rect[i]
-            if rect.collidepoint(pygame.mouse.get_pos()):
-                self.user_card_hover[i] = True
-            else:
-                self.user_card_hover[i] = False
+            self.user_card_hover[i] = hover_check(rect)
 
-        if self.draw_pile.collidepoint(pygame.mouse.get_pos()):
-            self.draw_pile_hover = True
-        else:
-            self.draw_pile_hover = False
+        self.draw_pile_hover = hover_check(self.draw_pile_rect)
 
-        if self.user.get_discardable_cards_index():
-            for index in range(self.user_card_num):
-                if self.user_card_rect[index].collidepoint(pygame.mouse.get_pos()) and event.type == pygame.MOUSEBUTTONDOWN:
+        index_list = self.user.get_discardable_cards_index()
+        print(index_list)
+        if index_list:
+            for index in index_list:
+                if self.user_card_hover[index] and event.type == pygame.MOUSEBUTTONDOWN:
                     self.user.discard_card(index)
-                    self.card_render()
                     break
 
         if self.draw_pile_hover is True and event.type == pygame.MOUSEBUTTONDOWN:
-            self.user.draw_cards(1)
-            self.card_render()
+            self.user.draw_cards()
+
+        self.uno_btn_hover = hover_check(self.uno_btn_rect)
 
     def __handle_pause_menu(self, event):
         # 일시정지 메뉴 이벤트 처리
@@ -310,3 +325,9 @@ class Game_UI:
         self.discard_pile_pos = (self.deck_space.centerx + self.card_size[0],
                                  self.deck_space.centery - self.card_size[1]/2)
         self.discard_pile = pygame.Rect(self.discard_pile_pos, self.card_size)
+
+def hover_check(rect):
+    if rect.collidepoint(pygame.mouse.get_pos()):
+        return True
+    else:
+        return False
