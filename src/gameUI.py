@@ -286,6 +286,7 @@ class Game_UI:
         # 2. 모든 타이머 정지(self.game.pause_timer())
 
         self.card_render()
+        self.card_lift()
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
@@ -297,9 +298,9 @@ class Game_UI:
                 )
         for i in range(self.user_card_num):
             rect = self.user_card_rect[i]
-            self.user_card_hover[i] = hover_check(rect)
+            self.user_card_hover[i] = self.hover_check(rect)
 
-        self.draw_pile_hover = hover_check(self.draw_pile_rect)
+        self.draw_pile_hover = self.hover_check(self.draw_pile_rect)
 
         index_list = self.user.get_discardable_cards_index()
         print(index_list)
@@ -312,18 +313,13 @@ class Game_UI:
         if self.draw_pile_hover is True and event.type == pygame.MOUSEBUTTONDOWN:
             self.user.draw_cards()
 
-        self.uno_btn_hover = hover_check(self.uno_btn_rect)
+        self.uno_btn_hover = self.hover_check(self.uno_btn_rect)
 
         pointer = pygame.mouse.get_pos()
         if event.type == events.ASK_COLOR:
             self.color_choice = True
 
     def __handle_pause_menu(self, event):
-        # 일시정지 메뉴 이벤트 처리
-        # 계속하기 버튼 클릭하면
-        # 1. self.pause를 False로
-        # 2. 모든 타이머 시작(self.game.resume_timer())
-        # Check if any of the menu options are hovered over
         self.set_pause(self.pause)
         self.game.resume_timer()
 
@@ -341,11 +337,11 @@ class Game_UI:
             self.cards.get_card_image(num) for num in self.user_card_list
         ]
         self.user_card_pos = [
-            (
+            [
                 self.user_card_center_pos[0]
                 + self.card_size[0] * (i - self.user_card_num // 2),
                 self.user_card_center_pos[1]
-            )
+            ]
             for i in range(self.user_card_num)
         ]
         self.user_card_rect = [self.user_card_image[i].get_rect(
@@ -369,8 +365,17 @@ class Game_UI:
                                  self.deck_space.centery - self.card_size[1]/2)
         self.discard_pile = pygame.Rect(self.discard_pile_pos, self.card_size)
 
-def hover_check(rect):
-    if rect.collidepoint(pygame.mouse.get_pos()):
-        return True
-    else:
-        return False
+    # 마우스 충돌 확인 함수
+    def hover_check(self, rect):
+        if rect.collidepoint(pygame.mouse.get_pos()):
+            return True
+        else:
+            return False
+
+    # 낼 수 있는 카드 위치 변경 함수
+    def card_lift(self):
+        if self.user._turn:
+            for index in self.user.get_discardable_cards_index():
+                self.user_card_pos[index][1] -= 10
+        else:
+            self.user_card_pos[:][1] = self.user_card_center_pos[1]
