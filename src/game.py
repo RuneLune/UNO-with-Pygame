@@ -1,9 +1,11 @@
 import copy
+import pygame
 import random
 from typing import List, Dict, Iterable, Type
 
 from bot import Bot
 import cards
+import events
 from player import Player
 from timer import Timer
 
@@ -336,6 +338,7 @@ class Game:
     def tick(self) -> None:
         if self._turn_timer.get().total_seconds() > self._turn_seconds:
             self._players[self._current_turn].draw_cards()
+            pygame.event.post(pygame.event.Event(events.TURN_TIMEOUT))
             pass
         else:
             self._players[self._current_turn].tick()
