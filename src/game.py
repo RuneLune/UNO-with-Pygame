@@ -61,7 +61,7 @@ class Game:
         self._reverse_direction: bool = False
         self._current_turn: int = 1
         self._skip_turn: bool = False
-        self._player_drawed: bool = False
+        # self._player_drawed: bool = False
 
         return None
 
@@ -149,7 +149,7 @@ class Game:
         # 강제 드로우 수 확인
         if self._force_draw > 0:
             if count != self._force_draw:
-                raise ValueError("must draw " + self._force_draw + " cards")
+                raise ValueError("must draw " + str(self._force_draw) + " cards")
 
         # 남은 카드가 부족하면 패 섞고 드로우
         if count >= len(self._draw_pile):
@@ -157,7 +157,7 @@ class Game:
         drawing_cards: List[int] = copy.deepcopy(self._draw_pile[:count])
         self._draw_pile = self._draw_pile[count:]
         player.get_cards(drawing_cards)
-        self._player_drawed = True
+        # self._player_drawed = True
         # 뽑은 카드가 낼 수 있는 경우 처리(미구현)
         if len(drawing_cards) == 1:
             draw_card = cards.check_card(drawing_cards[0])
@@ -198,7 +198,7 @@ class Game:
                     ].get_cards([shuffle_pile.pop(0)])
             self._players[self._current_turn].choose_color(self)
 
-        self._next_turn()
+        # self._next_turn()
         return None
 
     # 우승자(즉, 손에 카드가 없는 플레이어)가 있는지 확인하는 메서드
@@ -250,14 +250,14 @@ class Game:
 
     # 플레이어가 턴 종료 시 호출하는 메서드
     def end_turn(self) -> None:
-        while self._player_drawed is False:
+        while self._players[self._current_turn]._can_end_turn is False:
             self._players[self._current_turn].draw_cards(1)
         self._next_turn()
         return None
 
     # 다음 턴의 플레이어를 계산하는 메서드
     def _next_turn(self) -> None:
-        self._player_drawed = False
+        # self._player_drawed = False
 
         # 스킵 및 방향 확인해 턴 넘기기
         if self._skip_turn is False:

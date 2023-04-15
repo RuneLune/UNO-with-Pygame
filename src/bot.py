@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from overrides import overrides
 import random
+from threading import Timer
 from typing import TYPE_CHECKING, Dict, Type
 
 from player import Player
@@ -26,6 +27,7 @@ class Bot(Player):
     @overrides
     def turn_start(self) -> None:
         super(Bot, self).turn_start()
+        
         self._play()
         return None
 

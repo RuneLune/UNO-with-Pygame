@@ -24,12 +24,17 @@ class Player:
         self._turn: bool = False
         self._yelled_uno: bool = False
         self._points: int = 0
+        self._discardable_cards_index = []
+        self._can_end_turn = False
         return super(Player, self).__init__()
 
     # Draw pile로부터 count만큼 카드를 뽑아오는 메서드
     def draw_cards(self, count: int) -> None:
         self._game.draw_cards(count, self)
+        self._can_end_turn = True
         self._cards.sort()
+        if self._turn is True:
+            self.end_turn()
         return None
 
     # 플레이어에게 cards_list에 있는 카드를 주는 메서드
@@ -57,6 +62,7 @@ class Player:
     # 플레이어의 턴 시작 시 호출되는 메서드
     def turn_start(self) -> None:
         self._turn = True
+        self._can_end_turn = False
         self._check_discardable_cards()
         return None
 
@@ -93,9 +99,11 @@ class Player:
 
     # 플레이어가 가진 카드의 리스트에서 index의 카드를 내는 메서드
     def discard_card(self, index: int) -> None:
+        self._discardable_cards_index.remove(index % len(self._cards))
         self._game.discard_card(self._cards[index])
-        self._discardable_cards_index.remove(index)
+        self._can_end_turn = True
         del self._cards[index]
+        self.end_turn()
         return None
 
     # 플레이어가 뽑은 카드가 낼 수 있는 경우 물어보는 메서드
@@ -106,6 +114,7 @@ class Player:
     def end_turn(self) -> None:
         self._turn = False
         self._game.end_turn()
+        self._can_end_turn = False
         self._cards.sort()
         return None
 

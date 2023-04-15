@@ -10,12 +10,12 @@ from game import Game
 
 class Game_Lobby:
     def __init__(self, settings):
-        self.game = Game(6) # 임시 플레이어 수
+        # self.game = Game(6) # 임시 플레이어 수
         self.__settings = settings
         self.refresh()
 
         # load user and bot object
-        self.players = self.game.get_players()
+        # self.players = self.game.get_players()
         self.bots = []
 
         return super().__init__()
