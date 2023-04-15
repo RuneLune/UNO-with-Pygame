@@ -264,7 +264,7 @@ class Game:
         if self._game_status is False:
             return None
         while self._players[self._current_turn]._can_end_turn is False:
-            self._players[self._current_turn].draw_cards(1)
+            self._players[self._current_turn].draw_cards()
         self._next_turn()
         return None
 
