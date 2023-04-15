@@ -197,6 +197,10 @@ class Game:
                         (self._current_turn + 1) % len(self._players)
                     ].get_cards([shuffle_pile.pop(0)])
             self._players[self._current_turn].choose_color(self)
+        
+        self._discard_pile = [card] + self._discard_pile
+        print("discard pile")
+        print(self._discard_pile)
 
         # self._next_turn()
         return None
