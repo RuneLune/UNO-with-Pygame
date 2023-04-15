@@ -281,10 +281,11 @@ class Game_UI:
             else:
                 self.user_card_hover[i] = False
 
-        for index in self.user.get_discardable_cards_index():
-            if self.user_card_rect[index].collidepoint(pygame.mouse.get_pos()) and pygame.MOUSEBUTTONDOWN:
-                self.user.discard_card(index)
-                self.card_render()
+        if self.user.get_discardable_cards_index is True:
+            for index in self.user.get_discardable_cards_index():
+                if self.user_card_rect[index].collidepoint(pygame.mouse.get_pos()) and pygame.MOUSEBUTTONDOWN:
+                    self.user.discard_card(index)
+                    self.card_render()
 
     def __handle_pause_menu(self, event):
         # 일시정지 메뉴 이벤트 처리
