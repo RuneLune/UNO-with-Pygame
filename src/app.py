@@ -10,6 +10,7 @@ from main_scene import Main_Scene
 from settings_scene import Settings_Scene
 from gameUI import Game_UI
 from game_lobby import Game_Lobby
+from stage_select import Stage
 
 pygame.init()
 
@@ -24,6 +25,7 @@ scenes: Dict[str, Main_Scene | Game_Lobby | Settings_Scene | Game_UI] = {
     "gamelobby": Game_Lobby(settings),
     "settings": Settings_Scene(settings),
     "gameui": Game_UI(settings),
+    "stage": Stage(settings)
 }
 
 pygame.display.set_caption("Main Menu")

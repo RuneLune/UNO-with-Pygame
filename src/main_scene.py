@@ -37,19 +37,11 @@ class Main_Scene:
         self.__title_rect.bottom = self.__screen.get_rect().centery
 
         for i in range(len(self.__menu_options)):
-            self.__menu_text.append(
-                self.__menu_font.render(self.__menu_options[i], True, colors.black)
-            )
+            self.__menu_text.append(self.__menu_font.render(self.__menu_options[i], True, colors.black))
             self.__menu_rect.append(self.__menu_text[i].get_rect())
             self.__menu_rect[i].centerx = self.__screen.get_rect().centerx
-            self.__menu_rect[
-                i
-            ].top = self.__screen.get_rect().centery + i * screen_size[1] / (
-                3 * len(self.__menu_options)
-            )
-        self.__selected_rect = pygame.Rect(
-            0, 0, screen_size[0] / 3, screen_size[1] / (3 * len(self.__menu_options))
-        )
+            self.__menu_rect[i].top = self.__screen.get_rect().centery + i * screen_size[1] / (3 * len(self.__menu_options))
+        self.__selected_rect = pygame.Rect(0, 0, screen_size[0] / 3, screen_size[1] / (3 * len(self.__menu_options)))
         return None
 
     def refresh(self):
@@ -105,7 +97,7 @@ class Main_Scene:
     def __menu_func(self, i):
         if i == 0:  # Start
             self.__settings.get_real_settings().update(previous_scene="main")
-            return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="gamelobby"))
+            return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="stage"))
         elif i == 1:  # Settings
             self.__settings.get_real_settings().update(previous_scene="main")
             return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="settings"))
