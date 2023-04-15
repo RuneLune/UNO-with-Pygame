@@ -1,13 +1,11 @@
 import pygame
 import colors
 import events
-import pygame_gui
 
 class Stage:
     def __init__(self, settings):
         self.__stage_num = 4
         self.__settings = settings
-        self.__selected_stage = 0
         self.refresh()
 
         return super().__init__()
@@ -21,6 +19,7 @@ class Stage:
         # font
         self.__title_font = pygame.font.Font("res/font/MainFont.ttf", round(screen_size[1] / 6))
         self.__back_font = pygame.font.Font("res/font/MainFont.ttf", round(screen_size[1] / 20))
+        self.__imformation_font = pygame.font.Font("res/font/MainFont.ttf", round(screen_size[1] / 30))
 
         # title
         self.__title_text = self.__title_font.render("STAGE", True, colors.white)
@@ -34,7 +33,17 @@ class Stage:
         self.__button_rect[0].right = self.__screen.get_rect().centerx / 3
         self.__button_rect[0].bottom = self.__screen.get_rect().centery / 5
 
-        # stage image
+        # 게임 정보
+        self.__imformation_text.append(self.__imformation_font.render("첫분배에 컴퓨터가 기술 카드를 50% 더 높은 확률로 받음", True, colors.white))
+        self.__imformation_text.append(self.__imformation_font.render("3명의 컴퓨터 플레이어와 대전, 카드는 같은 수로 분배 (첫 카드 제외)", True, colors.white))
+        self.__imformation_text.append(self.__imformation_font.render("2명의 컴퓨터 플레이어와 대전, 매 5턴마다 낼 수 있는 카드 색 무작위 변경", True, colors.white))
+        self.__imformation_text.append(self.__imformation_font.render("Stage D", True, colors.white))
+        self.__imformation_rect = self.__imformation_text[-1].get_rect()
+        self.__imformation_rect.top = self.__screen.get_rect().centery + 70
+        self.__imformation_rect.left = self.__screen.get_rect().right/10
+
+
+        # stage 
         self.button_rects = self.__touchable[1:] # 1번 인덱스는 back에 관련된 것이므로 1번부터 슬라이싱
         for i in range(self.__stage_num):
             if self.button_rects[i]:
@@ -52,7 +61,8 @@ class Stage:
                 self.__button_rect[i+1].left =  self.__screen.get_rect().right/2
             elif i == 3:
                 self.__button_rect[i+1].right =  self.__screen.get_rect().right/1.2
-        
+                
+        # 하이라이팅
         self.__selected_rect = pygame.Rect(0, 0, 130, 130)
 
         
@@ -70,8 +80,10 @@ class Stage:
         self.__button_text = []
         self.__button_rect = []
         self.__stage_img = []
+        self.__imformation_text = []
         # 첫번쨰 인덱스는 back 버튼을 위한 것. 2~5가 스테이지를 위한 엘리먼트들
-        self.__touchable = [True, True, True, False, False]
+        self.__touchable = [True, True, True, True, True]
+        self.__selected_stage = 0
         self.render()
         return None
     
@@ -98,8 +110,11 @@ class Stage:
             selected_rect.center = button_rects[self.__selected_stage - 1].center
             # 화면에 선택된 메뉴 옵션에 흰색 테두리를 그림
             pygame.draw.rect(self.__screen, colors.white, selected_rect, 2)
+            self.__screen.blit(self.__imformation_text[self.__selected_stage - 1], self.__imformation_rect)
         return None
-    
+
+        
+            
     def handle(self, event):
         if event.type == pygame.MOUSEMOTION:
             mouse_pos = pygame.mouse.get_pos()

@@ -20,7 +20,7 @@ fps: int = 30
 clock: pygame.time.Clock = pygame.time.Clock()
 current_scene: str = "main"
 
-scenes: Dict[str, Main_Scene | Game_Lobby | Settings_Scene | Game_UI] = {
+scenes: Dict[str, Main_Scene | Game_Lobby | Settings_Scene | Game_UI | Stage] = {
     "main": Main_Scene(settings),
     "gamelobby": Game_Lobby(settings),
     "settings": Settings_Scene(settings),
