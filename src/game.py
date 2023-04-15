@@ -264,6 +264,7 @@ class Game:
         # self._player_drawed = False
 
         # 스킵 및 방향 확인해 턴 넘기기
+        # print("Before" + str(self._current_turn))
         if self._skip_turn is False:
             if self._reverse_direction is False:
                 self._current_turn = (self._current_turn + 1) % len(self._players)
@@ -279,7 +280,9 @@ class Game:
             else:
                 self._current_turn = (self._current_turn - 2) % len(self._players)
                 pass
+            self._skip_turn = True
             pass
+        # print("After" + str(self._current_turn))
         self._players[self._current_turn].turn_start()
 
         return None

@@ -37,7 +37,7 @@ class Bot(Player):
     @overrides
     def tick(self) -> None:
         if self._turn is True:
-            print(self._timer.get().microseconds)
+            # print(self._timer.get().microseconds)
             if self._timer.get().microseconds > self._delay:
                 self._play()
         return None
