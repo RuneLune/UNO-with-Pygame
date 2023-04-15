@@ -28,6 +28,14 @@ class Game_UI:
         self.card_size = self.cards.get_card_image(000).get_rect().size
         self.card_back_image = self.cards.get_card_image(000)
         self.card_color = (0, 150, 100)
+        # self.current_color = {"red": colors.red,
+        #                       "blue": colors.blue,
+        #                       "green": colors.green,
+        #                       "yellow": colors.yellow,
+        #                       "black": colors.black}
+        self.current_color = [colors.black, colors.blue, colors.green, colors.red, colors.yellow]
+        self.color_choice = False
+        # self.discard_color = 
 
         self.title_font = pygame.font.Font(None, 60)
         self.menu_font = pygame.font.Font(None, 40)
@@ -79,6 +87,8 @@ class Game_UI:
             )
             for i in range(len(self.bots))
         ]
+
+        # uno 버튼 렌더링
         uno_img = pygame.image.load("res/img/uno.png")
         self.uno_btn = pygame.transform.scale_by(uno_img, 0.1)
         self.uno_btn_gray = pygame.transform.grayscale(self.uno_btn)
@@ -88,6 +98,19 @@ class Game_UI:
         self.uno_btn_rect = self.uno_btn.get_rect(x=self.uno_btn_pos[0], 
                                                   y=self.uno_btn_pos[1])
         self.uno_btn_hover = False
+
+        # 색깔 표시 rect 렌더링
+        self.color_rect_size = (30, 30)
+        self.color_rect_pos = (self.deck_space.centerx + self.card_size[0] * 2,
+                               self.deck_space.centery - self.color_rect_size[1]/2)
+        self.color_rect = pygame.Rect(self.color_rect_pos, self.color_rect_size)
+
+        self.choice_rect_size = self.color_rect_size
+        self.choice_rect_pos = [(self.color_rect_pos[0] + self.card_size[0],
+                                self.color_rect_pos[1] - 90 + 60 * i)
+                                for i in range(4)]
+        self.choice_rect = [pygame.Rect(self.choice_rect_pos[i], self.choice_rect_size)
+                            for i in range(4)]
 
     def refresh(self, player_count):
         # if full screen
@@ -99,6 +122,7 @@ class Game_UI:
         self.screen_size = self.settings.get_screen_resolution()
         self.screen = pygame.display.set_mode(self.screen_size)
         self.surface = pygame.Surface(self.screen_size)
+        self.card_back_image = self.cards.get_card_image(000)
 
         self.players = self.game.get_players()
         self.cards.refresh()
@@ -150,6 +174,8 @@ class Game_UI:
                         self.bot_card_center_pos[i][1],
                     ),
                 )
+        
+        # 드로우카드 더미 하이라이팅
         if self.draw_pile_hover is True:
             pygame.draw.rect(self.surface, colors.red,
                              self.draw_pile_rect, width=10)
@@ -164,6 +190,18 @@ class Game_UI:
             self.screen.blit(self.uno_btn, self.uno_btn_pos)
         else:
             self.screen.blit(self.uno_btn_gray, self.uno_btn_pos)
+
+        # 색깔표시 rect 그리기
+        pygame.draw.rect(self.surface,
+                         color=self.current_color[self.discard_code//100],
+                         rect=self.color_rect, border_radius=5)
+
+        # 색 변경 버튼 그리기
+        if self.color_choice is True:
+            for i in range(0, 4):
+                pygame.draw.rect(self.surface,
+                                 color=self.current_color[i+1],
+                                 rect=self.choice_rect[i], border_radius=5)
 
     def __draw_pause_menu(self):
         title_text = self.title_font.render("Pause Menu", True, (255, 255, 255))
@@ -276,6 +314,10 @@ class Game_UI:
 
         self.uno_btn_hover = hover_check(self.uno_btn_rect)
 
+        pointer = pygame.mouse.get_pos()
+        if event.type == events.ASK_COLOR:
+            self.color_choice = True
+
     def __handle_pause_menu(self, event):
         # 일시정지 메뉴 이벤트 처리
         # 계속하기 버튼 클릭하면
@@ -319,8 +361,9 @@ class Game_UI:
         self.draw_pile_rect = self.card_back_image.get_rect(x=self.draw_pile_pos[0], y=self.draw_pile_pos[1]+5)
         self.draw_pile_hover = False
 
-        discard_code = self.game._discard_pile[0]
-        self.discard = self.cards.get_card_image(discard_code)
+        self.discard_color = self.game.get_discard_info().get("color")
+        self.discard_code = self.game._discard_pile[0]
+        self.discard = self.cards.get_card_image(self.discard_code)
 
         self.discard_pile_pos = (self.deck_space.centerx + self.card_size[0],
                                  self.deck_space.centery - self.card_size[1]/2)
