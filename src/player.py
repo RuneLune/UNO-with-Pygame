@@ -159,3 +159,9 @@ class Player:
     def set_color(self, color: int | str) -> None:
         self._game.set_color(color)
         return None
+
+    def pause_timer(self) -> None:
+        return None
+
+    def resume_timer(self) -> None:
+        return None

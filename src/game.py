@@ -324,12 +324,16 @@ class Game:
     def pause_timer(self) -> None:
         self._turn_timer.pause()
         self._round_timer.pause()
+        for player in self._players:
+            player.pause_timer()
         return None
 
     # Game 객체 내의 모든 일시정지된 타이머를 재개하는 메서드
     def resume_timer(self) -> None:
         self._turn_timer.resume()
         self._round_timer.resume()
+        for player in self._players:
+            player.resume_timer()
         return None
 
     def set_color(self, color: int | str) -> None:

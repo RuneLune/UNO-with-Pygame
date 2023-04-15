@@ -22,6 +22,7 @@ class Bot(Player):
     def __init__(self, game: Type[Game], name: str = "Computer") -> None:
         super(Bot, self).__init__(game, name)
         self._timer: Timer = Timer()
+        self._timer.start()
         self._delay = 0
         return None
 
@@ -39,6 +40,16 @@ class Bot(Player):
         if self._turn is True:
             if self._timer.get().total_seconds() > self._delay:
                 self._play()
+        return None
+
+    @overrides
+    def pause_timer(self) -> None:
+        self._timer.pause()
+        return None
+
+    @overrides
+    def resume_timer(self) -> None:
+        self._timer.resume()
         return None
 
     # 자동으로 턴을 진행하는 메서드
