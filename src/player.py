@@ -36,7 +36,7 @@ class Player:
         if count == -1:
             if self._turn is False:
                 return None
-            if self._game.get_discard_info().get("force_draw"):
+            if self._game.get_discard_info().get("force_draw") > 0:
                 count = self._game.get_discard_info().get("force_draw")
                 pass
             else:

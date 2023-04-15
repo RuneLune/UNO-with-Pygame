@@ -201,7 +201,7 @@ class Game:
                         (self._current_turn + 1) % len(self._players)
                     ].get_cards([shuffle_pile.pop(0)])
             self._players[self._current_turn].choose_color(self)
-        
+
         self._discard_pile = [card] + self._discard_pile
         # print("discard pile")
         # print(self._discard_pile)
@@ -265,7 +265,7 @@ class Game:
             return None
         if self._players[self._current_turn]._can_end_turn is False:
             self._players[self._current_turn].draw_cards()
-            return None
+            pass
         self._next_turn()
         return None
 
@@ -335,7 +335,7 @@ class Game:
 
     def tick(self) -> None:
         if self._turn_timer.get().total_seconds() > self._turn_seconds:
-            self._players[self._current_turn].end_turn()
+            self._players[self._current_turn].draw_cards()
             pass
         else:
             self._players[self._current_turn].tick()

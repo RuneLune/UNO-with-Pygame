@@ -25,7 +25,7 @@ scenes: Dict[str, Main_Scene | Game_Lobby | Settings_Scene | Game_UI] = {
     "gamelobby": Game_Lobby(settings),
     "settings": Settings_Scene(settings),
     "gameui": Game_UI(settings),
-    "stage": Stage(settings)
+    "stage": Stage(settings),
 }
 
 pygame.display.set_caption("Main Menu")
@@ -49,7 +49,7 @@ while running:
             res = scenes[current_scene].handle(event)
 
     scenes[current_scene].draw()
-    
+
     # Update screen
     pygame.display.update()
     clock.tick(fps)
