@@ -111,17 +111,14 @@ class Game_UI:
 
         # 색깔 표시 rect 렌더링
         self.color_rect_size = (30, 30)
-        self.color_rect_pos = (
-            self.deck_space.centerx + self.card_size[0] * 2,
-            self.deck_space.centery - self.color_rect_size[1] / 2,
-        )
+        self.color_rect_pos = (self.deck_space.centerx, self.deck_space.centery)
         self.color_rect = pygame.Rect(self.color_rect_pos, self.color_rect_size)
 
         self.choice_rect_size = self.color_rect_size
         self.choice_rect_pos = [
             (
-                self.color_rect_pos[0] + self.card_size[0],
-                self.color_rect_pos[1] - 90 + 60 * i,
+                self.deck_space.centerx + self.card_size[0] * 2 + self.card_size[0],
+                self.deck_space.centery - self.color_rect_size[1] / 2 - 90 + 60 * i,
             )
             for i in range(4)
         ]
@@ -211,11 +208,12 @@ class Game_UI:
             self.screen.blit(self.uno_btn_gray, self.uno_btn_pos)
 
         # 색깔표시 rect 그리기
-        pygame.draw.rect(
+        pygame.draw.circle(
             self.surface,
             color=self.current_color[self.discard_code // 100],
-            rect=self.color_rect,
-            border_radius=5,
+            center=self.deck_space.center,
+            radius=self.card_size[0] * 2.5,
+            width=20,
         )
 
         # 색 변경 버튼 그리기
@@ -387,7 +385,7 @@ class Game_UI:
 
         # draw pile and discard pile render
         self.draw_pile_pos = (
-            self.deck_space.centerx - self.card_size[0],
+            self.deck_space.centerx - self.card_size[0] * 1.5,
             self.deck_space.centery - self.card_size[1] / 2,
         )
         self.draw_pile = pygame.Rect(self.draw_pile_pos, self.card_size)
@@ -403,7 +401,7 @@ class Game_UI:
 
         # 버린카드 위치
         self.discard_pile_pos = (
-            self.deck_space.centerx + self.card_size[0],
+            self.deck_space.centerx + self.card_size[0] / 2,
             self.deck_space.centery - self.card_size[1] / 2,
         )
         self.discard_pile = pygame.Rect(self.discard_pile_pos, self.card_size)
