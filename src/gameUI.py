@@ -370,16 +370,14 @@ class Game_UI:
         if event.type == events.ASK_COLOR:
             self.color_choice = True
 
-        if self.color_choice is True:
-            for i, rect in enumerate(self.choice_rect):
-                self.choice_rect_hover[i] = self.hover_check(rect)
-                print(self.choice_rect_hover)
-                if (
-                    self.choice_rect_hover[i] is True
-                    and event.type == pygame.MOUSEBUTTONDOWN
-                ):
-                    self.user.set_color(i + 1)
-                    self.color_choice = False
+        for i, rect in enumerate(self.choice_rect):
+            self.choice_rect_hover[i] = self.hover_check(rect)
+            if (
+                self.choice_rect_hover[i] is True
+                and event.type == pygame.MOUSEBUTTONDOWN
+            ):
+                self.user.set_color(i + 1)
+                self.color_choice = False
 
         # uno 버튼 클릭 이벤트 진행
         if (
@@ -478,7 +476,7 @@ class Game_UI:
 
     # 마우스 충돌 확인 함수
     def hover_check(self, rect):
-        if rect.collidepoint(pygame.mouse.get_pos()) and self.user.is_turn():
+        if rect.collidepoint(pygame.mouse.get_pos()):
             return True
         else:
             return False
