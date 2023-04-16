@@ -126,6 +126,7 @@ class Game_UI:
             pygame.Rect(self.choice_rect_pos[i], self.choice_rect_size)
             for i in range(4)
         ]
+        self.choice_rect_hover = [False for i in range(4)]
 
     def refresh(self, player_count):
         # if full screen
@@ -178,13 +179,15 @@ class Game_UI:
         # 봇의 카드그리기
         for i in range(len(self.bots)):
             bot_card_num = len(self.bots[i].get_hand_cards())
+            if bot_card_num == 0:
+                x = self.bot_card_first_pos[i][0]
+                y = self.bot_card_first_pos[i][1]
             for j in range(bot_card_num):
                 if j > 5:
                     break
                 x = self.bot_card_first_pos[i][0] + j * self.card_size[0] * 1 / 2
                 y = self.bot_card_first_pos[i][1]
                 self.screen.blit(self.card_back_image, (x, y))
-
             card_num_text = self.font.render(str(bot_card_num), True, colors.white)
             self.screen.blit(
                 card_num_text,
@@ -323,7 +326,8 @@ class Game_UI:
 
         # hover 체크
         self.draw_pile_hover = self.hover_check(self.draw_pile_rect)
-        self.uno_btn_hover = self.hover_check(self.uno_btn_rect)
+        if self.user.is_uno() is False:
+            self.uno_btn_hover = self.hover_check(self.uno_btn_rect)
         for i in range(self.user_card_num):
             rect = self.user_card_rect[i]
             self.user_card_hover[i] = self.hover_check(rect)
@@ -341,9 +345,33 @@ class Game_UI:
             self.user.draw_cards()
 
         # 색깔 고르기 처리
-        pointer = pygame.mouse.get_pos()
         if event.type == events.ASK_COLOR:
             self.color_choice = True
+
+        for i, rect in enumerate(self.choice_rect):
+            self.choice_rect_hover[i] = self.hover_check(rect)
+
+        for i, rect in enumerate(self.choice_rect):
+            if self.choice_rect_hover[i] is True and pygame.MOUSEBUTTONDOWN:
+                self.user.set_color(i + 1)
+                self.color_choice = False
+
+        # uno 버튼 클릭 이벤트 진행
+        if (
+            self.user._turn
+            and self.uno_btn_hover is True
+            and event.type == pygame.MOUSEBUTTONDOWN
+        ):
+            if (
+                self.user_card_num <= 2
+                and len(self.user.get_discardable_cards_index()) > 0
+            ):
+                self.user._yelled_uno = True
+
+        if self.user._turn and self.user_card_num > 2:
+            self.user._yelled_uno = False
+
+        # 승리 조건 확인
 
         # 턴 종료시 하이라이팅 비활성화
         if self.user._turn is False:
@@ -355,10 +383,10 @@ class Game_UI:
 
     def card_render(self):
         # user card 처음 좌표
-        self.user_card_first_pos = (
-            self.user_space.x + self.card_size[0] / 2,
-            self.user_space.centery - self.card_size[1] / 2,
-        )
+        self.user_card_first_pos = [
+            self.user_space.x + self.card_size[0] // 2,
+            self.user_space.centery - self.card_size[1] // 2,
+        ]
 
         # user card rendering
         self.user_card_list = self.user.get_hand_cards()
@@ -373,14 +401,19 @@ class Game_UI:
             ]
             for i in range(self.user_card_num)
         ]
-
-        # 유저 카드 rect 렌더링
-        self.user_card_rect = [
-            self.user_card_image[i].get_rect(
-                x=self.user_card_pos[i][0], y=self.user_card_pos[i][1] + 5
+        if self.user_card_num <= 1:
+            self.user_card_pos = self.user_card_first_pos
+            self.user_card_rect = self.user_card_image[0].get_rect(
+                x=self.user_card_pos[0], y=self.user_card_pos[1] + 5
             )
-            for i in range(self.user_card_num)
-        ]
+        else:
+            # 유저 카드 rect 렌더링
+            self.user_card_rect = [
+                self.user_card_image[i].get_rect(
+                    x=self.user_card_pos[i][0], y=self.user_card_pos[i][1] + 5
+                )
+                for i in range(self.user_card_num)
+            ]
         self.user_card_hover = [False for i in range(self.user_card_num)]
 
         # draw pile and discard pile render

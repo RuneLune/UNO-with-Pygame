@@ -30,7 +30,7 @@ class Bot(Player):
     @overrides
     def turn_start(self) -> None:
         super(Bot, self).turn_start()
-        self._delay = round(random.random() * 1 + 0.5)
+        self._delay = random.uniform(0.5, 1.5)
         self._timer.start()
         # self._play()
         return None
@@ -81,5 +81,5 @@ class Bot(Player):
     # choose_color 오버라이딩
     @overrides
     def choose_color(self) -> None:
-        self._game.set_color(random.choice([1, 2, 3, 4]))
+        self._game.set_color(random.randrange(1, 5))
         return None
