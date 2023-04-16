@@ -50,7 +50,9 @@ class Settings:
     # Settings reset method
     def reset_settings(self):
         global initial_settings
+        copy_previous = self.__settings.get("previous_scene", None)
         self.__settings = copy.deepcopy(initial_settings)
+        self.__settings.update(previous_scene=copy_previous)
 
     # Settings save method
     def save_settings(self):
@@ -68,10 +70,6 @@ class Settings:
 
     def get_settings(self):
         return copy.deepcopy(self.__settings)
-    
-    # 진짜 세팅 값에 접근할 수 있는 메소드 추가
-    def get_real_settings(self):
-        return self.__settings
 
     def set_screen_resolution(self):
         if self.__settings.get("fullscreen", False) is False:
@@ -113,6 +111,26 @@ class Settings:
         elif self.__settings.get("screen_size", None) == "FHD":
             self.__settings.update(screen_size="SVGA")
             self.__SVGA()
+        self.save_settings()
+
+    def previous_main(self):
+        self.__settings.update(previous_scene="main")
+        self.save_settings()
+    
+    def previous_gamelobby(self):
+        self.__settings.update(previous_scene="gamelobby")
+        self.save_settings()
+
+    def previous_gameui(self):
+        self.__settings.update(previous_scene="gameui")
+        self.save_settings()
+
+    def previous_none(self):
+        self.__settings.update(previous_scene=None)
+        self.save_settings()
+
+    def previous_stageselect(self):
+        self.__settings.update(previous_scene="stageselect")
         self.save_settings()
 
     def change_fullscreen(self):

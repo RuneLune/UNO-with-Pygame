@@ -316,7 +316,7 @@ class Game_UI:
             if event.key == pygame.K_ESCAPE:
                 self.set_pause(self.pause)
                 self.game.pause_timer()
-                self.settings.get_real_settings().update(previous_scene="gameui")
+                self.settings.previous_gameui()
                 return pygame.event.post(
                     pygame.event.Event(events.CHANGE_SCENE, target="settings")
                 )

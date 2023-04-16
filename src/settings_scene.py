@@ -201,8 +201,14 @@ class Settings_Scene:
         self.__button_rect[-1].right = self.__screen.get_rect().centerx / 3
         self.__button_rect[-1].bottom = self.__screen.get_rect().centery / 5
 
+        # Default Settings
+        self.__button_text.append(self.__menu_font.render("Reset to Default Settings", True, colors.white))
+        self.__button_rect.append(self.__button_text[-1].get_rect())
+        self.__button_rect[-1].centerx = self.__screen.get_rect().centerx
+        self.__button_rect[-1].top = self.__screen.get_rect().centery / 3 + 10 * screen_size[1] / 16
+
         # 메인 메뉴 돌아가기 버튼 추가
-        if self.__settings.get_settings().get("previous_scene", None) is not "main": # if previous scene is gameui
+        if settings.get("previous_scene", None) != "main": # if previous scene is not main
             self.__button_text.append(self.__title_font.render("Back to Main menu", True, colors.white))
             self.__button_rect.append(self.__button_text[-1].get_rect())
             self.__button_rect[-1].centerx = self.__screen.get_rect().centerx
@@ -278,16 +284,19 @@ class Settings_Scene:
             self.__settings.change_colorblind_mode()
         elif i == 6:  # Back
             # if previous scene is main
-            if self.__settings.get_settings().get("previous_scene", None) is "main":
+            if self.__settings.get_settings().get("previous_scene") == "main":
                 return pygame.event.post(
                     pygame.event.Event(events.CHANGE_SCENE, target="main")
                 )
-            # if previous scene is gameui
-            else:
+            # if previous scene is game
+            elif self.__settings.get_settings().get("previous_scene") == "gameui":
                 return pygame.event.post(
                     pygame.event.Event(events.CHANGE_SCENE, target="gameui")
                 )
-        elif i == 7: # Back to Main menu
+        elif i == 7: # Default Settings
+            self.__settings.reset_settings()
+            self.__settings.set_screen_resolution()
+        elif i == 8: # Back to Main menu
             return pygame.event.post(
                 pygame.event.Event(events.CHANGE_SCENE, target="main")
             )

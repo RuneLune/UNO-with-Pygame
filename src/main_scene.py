@@ -97,16 +97,16 @@ class Main_Scene:
 
     def __menu_func(self, i):
         if i == 0:  # Start
-            self.__settings.get_real_settings().update(previous_scene="main")
+            self.__settings.previous_main()
             return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="gameui"))
         elif i == 1:  # Settings
-            self.__settings.get_real_settings().update(previous_scene="main")
+            self.__settings.previous_main()
             return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="stage"))
         elif i == 2:  # Settings
-            self.__settings.get_real_settings().update(previous_scene="main")
+            self.__settings.previous_main()
             return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="settings"))
         elif i == 3:  # Exit
-            self.__settings.get_real_settings().update(previous_scene=None)
+            self.__settings.previous_none()
             return pygame.event.post(pygame.event.Event(pygame.QUIT))
         else:
             print(self.__menu_options[i] + " clicked")

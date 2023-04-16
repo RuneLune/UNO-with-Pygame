@@ -147,12 +147,13 @@ class Stage:
             elif event.key == pygame.K_RETURN:
                 return self.__menu_func(self.__selected_stage)
             elif event.key == pygame.K_ESCAPE:
+                self.__settings.previous_stageselect()
                 return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="main"))
 
     
     def __menu_func(self, i):
         if i == 0:
-            self.__settings.get_real_settings().update(previous_scene="stage")
+            self.__settings.previous_stageselect()
             return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="main"))
         elif i == 1:
             pass
