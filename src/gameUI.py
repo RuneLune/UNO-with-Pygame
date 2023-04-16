@@ -85,11 +85,12 @@ class Game_UI:
 
         # font for user, bot name
         self.font = pygame.font.Font("res/font/MainFont.ttf", 25)
-        self.user_name_text = self.font.render("insert_User_name", True, colors.white)
+        self.user_name_text = self.font.render(self.user.get_name(), True, colors.white)
         self.bot_name_text = [
-            self.font.render("computer " + str(i), True, colors.white)
+            self.font.render("cpu" + str(i + 1), True, colors.white)
             for i in range(len(self.bots))
         ]
+        self.font2 = pygame.font.Font("res/font/MainFont.ttf", 15)
 
         # bot card position render
         self.bot_card_first_pos = [
@@ -225,10 +226,12 @@ class Game_UI:
                 x = self.bot_card_first_pos[i][0] + j * self.card_size[0] * 1 / 2
                 y = self.bot_card_first_pos[i][1]
                 self.screen.blit(self.card_back_image, (x, y))
-            card_num_text = self.font.render(str(bot_card_num), True, colors.white)
+            card_num_text = self.font2.render(
+                "total cards: " + str(bot_card_num), True, colors.white
+            )
             self.screen.blit(
                 card_num_text,
-                (x + 70, self.bots_space_pos[i][1]),
+                (self.bot_card_first_pos[i][0] + 50, self.bots_space_pos[i][1] + 5),
             )
 
         # 드로우카드 더미 하이라이팅
@@ -348,13 +351,14 @@ class Game_UI:
     def tick(self):
         # 턴 알림 이미지 위치 조정
         if self.user.is_turn() is True:
-            if self.turn_img_pos[0] < self.turn_img_size[0]:
+            if self.turn_img_pos[0] < 0:
                 self.turn_img_pos[0] += self.turn_img_size[0] / 60
             else:
-                self.turn_img_pos[0] = self.turn_img_size[0]
+                self.turn_img_pos[0] = 0
         else:
             self.turn_img_pos[0] = self.user_space_pos[0] - self.turn_img_size[0]
 
+        # hover 체크
         self.draw_pile_hover = self.hover_check(self.draw_pile_rect)
         if self.user.is_uno() is False:
             self.uno_btn_hover = self.hover_check(self.uno_btn_rect)
