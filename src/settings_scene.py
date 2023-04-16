@@ -204,18 +204,28 @@ class Settings_Scene:
         self.__button_rect[-1].bottom = self.__screen.get_rect().centery / 5
 
         # Default Settings
-        self.__button_text.append(self.__menu_font.render("Reset to Default Settings", True, colors.white))
+        self.__button_text.append(
+            self.__menu_font.render("Reset to Default Settings", True, colors.white)
+        )
         self.__button_rect.append(self.__button_text[-1].get_rect())
         self.__button_rect[-1].centerx = self.__screen.get_rect().centerx
-        self.__button_rect[-1].top = self.__screen.get_rect().centery / 3 + 10 * screen_size[1] / 16
+        self.__button_rect[-1].top = (
+            self.__screen.get_rect().centery / 3 + 10 * screen_size[1] / 16
+        )
 
         # 메인 메뉴 돌아가기 버튼 추가
-        if settings.get("previous_scene", None) != "main": # if previous scene is not main
-            self.__button_text.append(self.__title_font.render("Back to Main menu", True, colors.white))
+        if (
+            settings.get("previous_scene", None) != "main"
+        ):  # if previous scene is not main
+            self.__button_text.append(
+                self.__title_font.render("Back to Main menu", True, colors.white)
+            )
             self.__button_rect.append(self.__button_text[-1].get_rect())
             self.__button_rect[-1].centerx = self.__screen.get_rect().centerx
             self.__title_rect.bottom = self.__screen.get_rect().centery / 4
             self.__button_rect[-1].top = self.__screen.get_rect().centery * 7 / 4
+
+        # 키 종류별 선택 버튼 추가
 
         return None
 
@@ -263,7 +273,12 @@ class Settings_Scene:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 return pygame.event.post(
-                    pygame.event.Event(events.CHANGE_SCENE, target=self.__settings.get_settings().get("previous_scene", None))
+                    pygame.event.Event(
+                        events.CHANGE_SCENE,
+                        target=self.__settings.get_settings().get(
+                            "previous_scene", None
+                        ),
+                    )
                 )
 
         return "continue"
@@ -296,13 +311,15 @@ class Settings_Scene:
                 return pygame.event.post(
                     pygame.event.Event(events.CHANGE_SCENE, target="gameui")
                 )
-        elif i == 7: # Default Settings
+        elif i == 7:  # Default Settings
             self.__settings.reset_settings()
             self.__settings.set_screen_resolution()
-        elif i == 8: # Back to Main menu
+        elif i == 8:  # Back to Main menu
             return pygame.event.post(
                 pygame.event.Event(events.CHANGE_SCENE, target="main")
             )
+        ##################
+        # 키 종류별 인덱스 추가 후 커스텀 함수 실행 및 결과 저장
 
         self.refresh()
         return None

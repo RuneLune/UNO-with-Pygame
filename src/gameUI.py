@@ -29,6 +29,7 @@ class Game_UI:
         self.card_size = self.cards.get_card_image(000).get_rect().size
         self.card_back_image = self.cards.get_card_image(000)
         self.card_color = (0, 150, 100)
+        self.turn_img = pygame.image.load("res/img/myturn.png")
         self.current_color_dict = {
             "wild": colors.black,
             "red": colors.red,
@@ -54,6 +55,7 @@ class Game_UI:
         self.game.start_timer()
 
         self.refresh(6)  # 임시 플레이어 수
+        self.render()
         self.card_render()
 
     def render(self):
@@ -149,6 +151,18 @@ class Game_UI:
             self.deck_space.centery - self.card_size[1] * 1.5 + 40 - 5,
         )
 
+        # 턴 알림 이미지 렌더링
+        self.turn_tran_size = [
+            self.deck_space.size[0] / 3,
+            self.deck_space.size[1] / 3,
+        ]
+        self.turn_img_tran = pygame.transform.scale(self.turn_img, self.turn_tran_size)
+        self.turn_img_size = self.turn_img_tran.get_rect().size
+        self.turn_img_pos = [
+            self.user_space_pos[0] - self.turn_img_size[0],
+            self.user_space_pos[1] - self.turn_img_size[1],
+        ]
+
     def refresh(self, player_count):
         # if full screen
         flag = 0
@@ -231,6 +245,10 @@ class Game_UI:
             self.screen.blit(self.uno_btn, self.uno_btn_pos)
         else:
             self.screen.blit(self.uno_btn_gray, self.uno_btn_pos)
+
+        # 턴 시작시 알림
+        if self.user.is_turn() is True:
+            self.screen.blit(self.turn_img_tran, self.turn_img_pos)
 
         # 색깔표시 rect 그리기
         pygame.draw.circle(
@@ -356,6 +374,15 @@ class Game_UI:
                     pygame.event.Event(events.CHANGE_SCENE, target="settings")
                 )
 
+        # 턴 알림 이미지 위치 조정
+        if self.user.is_turn() is True:
+            if self.turn_img_pos[0] < self.turn_img_size[0]:
+                self.turn_img_pos[0] += self.turn_img_size[0] / 60
+            else:
+                self.turn_img_pos[0] = self.turn_img_size[0]
+        else:
+            self.turn_img_pos[0] = self.user_space_pos[0] - self.turn_img_size[0]
+
         # hover 체크
         self.draw_pile_hover = self.hover_check(self.draw_pile_rect)
         if self.user.is_uno() is False:
@@ -428,6 +455,9 @@ class Game_UI:
                 self.deck_space.centerx + 40,
                 self.deck_space.centery - self.card_size[1] * 1.5 - 5,
             )
+
+        if event:
+            return None
 
     def __handle_pause_menu(self, event):
         self.set_pause(self.pause)

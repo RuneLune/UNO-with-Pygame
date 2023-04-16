@@ -17,7 +17,7 @@ initial_settings = {
         "cancel": pygame.K_ESCAPE,
     },
     "colorblind_mode": False,
-    "previous_scene": None
+    "previous_scene": None,
 }
 
 
@@ -116,7 +116,7 @@ class Settings:
     def previous_main(self):
         self.__settings.update(previous_scene="main")
         self.save_settings()
-    
+
     def previous_gamelobby(self):
         self.__settings.update(previous_scene="gamelobby")
         self.save_settings()
@@ -166,3 +166,11 @@ class Settings:
             ctypes.windll.user32.GetSystemMetrics(0),
             ctypes.windll.user32.GetSystemMetrics(1),
         )
+
+    def key_custom(self, target, event):
+        pygame.event.wait()
+        event = pygame.event.poll()
+        if event.type == pygame.TEXTINPUT:
+            initial_settings["key_settings"][target] = pygame.key.key_code(event.text)
+        elif event.type == pygame.KEYDOWN and key_default[target]:
+            key_saved[target] = key_default[target]
