@@ -1,1 +1,1 @@
-{"screen_size": "SVGA", "key_settings": {"left": 1073741904, "right": 1073741903, "up": 1073741906, "down": 1073741905, "select": 13, "cancel": 27}, "colorblind_mode": false, "fullscreen": false, "previous_scene": "main"}
+{"screen_size": "SVGA", "key_settings": {"left": 1073741904, "right": 1073741903, "up": 1073741906, "down": 1073741905, "select": 13, "cancel": 27}, "colorblind_mode": true, "fullscreen": false, "previous_scene": "gameui"}
