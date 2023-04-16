@@ -225,7 +225,7 @@ class Stage:
     
     def __menu_func(self, i):
         if i == 0:
-            self.__settings.get_real_settings().update(previous_scene="stage")
+            self.__settings.previous_stageselect()
             return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="main"))
         elif i == 1 or i == 2 or i == 3 or i == 4:
             self.__is_confirm = True
