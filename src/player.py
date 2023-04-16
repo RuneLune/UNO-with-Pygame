@@ -165,3 +165,6 @@ class Player:
 
     def resume_timer(self) -> None:
         return None
+
+    def is_turn(self) -> bool:
+        return self._turn

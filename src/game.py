@@ -356,13 +356,18 @@ class Game:
             pass
         else:
             raise ValueError("Invalid Color")
-        
+
         self.end_turn()
         return None
 
     def tick(self) -> None:
         if self._turn_timer.get().total_seconds() > self._turn_seconds:
-            self._players[self._current_turn].draw_cards()
+            if self._players[self._current_turn].is_turn():
+                self._players[self._current_turn].draw_cards()
+                pass
+            elif self._discarded_card.get("color") == "wild":
+                self.set_color(random.randrange(1, 5))
+                pass
             pygame.event.post(pygame.event.Event(events.TURN_TIMEOUT))
             pass
         else:
