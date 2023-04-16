@@ -5,12 +5,13 @@ import events
 from cards import Cards
 from game import Game
 from settings_function import Settings
-
+from sound import SoundManager
 
 class Game_UI:
     def __init__(self, settings):
         self.game = Game(6)  # 임시 플레이어 수
         self.cards = Cards(settings)
+        self.sounds = SoundManager()
         self.settings = settings
         self.pause = False
         # load user and bot object
@@ -170,6 +171,7 @@ class Game_UI:
             self.__draw_game()
             pass
         else:
+            self.sounds.stop_background_sound()
             self.__draw_pause_menu()
             pass
         pass
@@ -326,9 +328,11 @@ class Game_UI:
 
     def handle(self, event):
         if self.pause is False:
+            self.sounds.play_background_sound()
             self.__handle_game(event)
             pass
         else:  # self.pause is True
+            self.sounds.stop_background_sound()
             self.__handle_pause_menu(event)
             pass
         pass
@@ -365,11 +369,13 @@ class Game_UI:
         if index_list:
             for index in index_list:
                 if self.user_card_hover[index] and event.type == pygame.MOUSEBUTTONDOWN:
+                    self.sounds.play_effect('discard')
                     self.user.discard_card(index)
                     break
 
         # 카드 뽑기 처리
         if self.draw_pile_hover is True and event.type == pygame.MOUSEBUTTONDOWN:
+            self.sounds.play_effect('draw')
             self.user.draw_cards()
 
         # 색깔 고르기 처리
@@ -399,6 +405,7 @@ class Game_UI:
                 self.user_card_num <= 2
                 and len(self.user.get_discardable_cards_index()) > 0
             ):
+                self.sounds.play_effect('click')
                 self.user._yelled_uno = True
 
         if self.user.is_turn() and self.user_card_num > 2:

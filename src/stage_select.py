@@ -1,12 +1,14 @@
 import pygame
 import colors
 import events
+from sound import SoundManager
 
 class Stage:
     def __init__(self, settings):
         self.__stage_num = 4
         self.__settings = settings
         self.__is_confirm = False
+        self.sounds = SoundManager()
         self.refresh()
 
         return super().__init__()
@@ -173,6 +175,7 @@ class Stage:
                 mouse_pos = pygame.mouse.get_pos()
                 for i in range(len(self.__button_rect)):
                     if self.__touchable[i] and self.__button_rect[i].collidepoint(mouse_pos):
+                        self.sounds.play_effect('click')
                         return self.__menu_func(i)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
@@ -192,6 +195,7 @@ class Stage:
                         if self.__selected_stage >= len(self.__button_rect):
                             self.__selected_stage = 0
                 elif event.key == pygame.K_RETURN:
+                    self.sounds.play_effect('click')
                     return self.__menu_func(self.__selected_stage)
                 elif event.key == pygame.K_ESCAPE:
                     return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="main"))
@@ -209,6 +213,7 @@ class Stage:
             mouse_pos = pygame.mouse.get_pos()
             for i in range(len(self.__window_rect)):
                 if self.__window_rect[i].collidepoint(mouse_pos):
+                    self.sounds.play_effect('click')
                     return self.__window_func(i, idx)
                 
         elif event.type == pygame.KEYDOWN:
@@ -221,6 +226,7 @@ class Stage:
                 if self.__selected_window >= len(self.__window_rect):
                     self.__selected_window = 0
             elif event.key == pygame.K_RETURN:
+                self.sounds.play_effect('click')
                 return self.__window_func(self.__selected_window, idx)
     
     def __menu_func(self, i):

@@ -3,6 +3,8 @@ import pygame
 import colors
 import events
 
+from sound import SoundManager
+
 
 class Main_Scene:
     MAX_Inst = 1
@@ -17,6 +19,7 @@ class Main_Scene:
     def __init__(self, settings):
         self.__menu_options = ["Start", "Story", "Settings", "Quit"]
         self.__settings = settings
+        self.sounds = SoundManager()
         self.refresh()
         return super().__init__()
 
@@ -79,6 +82,7 @@ class Main_Scene:
             mouse_pos = pygame.mouse.get_pos()
             for i in range(len(self.__menu_options)):
                 if self.__menu_rect[i].collidepoint(mouse_pos):
+                    self.sounds.play_effect('click')
                     return self.__menu_func(i)
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
@@ -90,6 +94,7 @@ class Main_Scene:
                 if self.__selected_menu >= len(self.__menu_options):
                     self.__selected_menu = 0
             elif event.key == pygame.K_RETURN:
+                self.sounds.play_effect('click')
                 return self.__menu_func(self.__selected_menu)
             elif event.key == pygame.K_ESCAPE:
                 return pygame.event.post(pygame.event.Event(pygame.QUIT))

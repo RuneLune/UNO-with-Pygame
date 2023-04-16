@@ -3,6 +3,7 @@ import pygame
 import colors
 import events
 
+from sound import SoundManager
 
 class Settings_Scene:
     MAX_Inst = 1
@@ -28,6 +29,7 @@ class Settings_Scene:
             "Colorblind Mode |",
         ]
         self.__settings = settings
+        self.sounds = SoundManager()
         self.refresh()
         return super().__init__()
 
@@ -256,6 +258,7 @@ class Settings_Scene:
             mouse_pos = pygame.mouse.get_pos()
             for i in range(len(self.__button_text)):
                 if self.__button_rect[i].collidepoint(mouse_pos):
+                    self.sounds.play_effect('click')
                     return self.__button_func(i)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
