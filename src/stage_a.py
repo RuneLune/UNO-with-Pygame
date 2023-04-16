@@ -2,6 +2,7 @@ import random
 from overrides import overrides
 from typing import Final, Type
 
+import cards
 from game import Game
 from player import Player
 from bot import Bot
@@ -37,20 +38,32 @@ class Stage_A(Game):
 
     @overrides
     def _deal_hands(self, count: int = 7) -> None:
-        chance: Final[int] = 0.6
-        normal_count: int = 0
-        functional_count: int = 0
-        for i in range(0, count):
-            random_number = random.random()
-            if random_number < chance:
-                functional_count += 1
+        # chance: Final[int] = 0.6
+        normal_cards: int = 0
+        functional_cards: int = 0
+        for card in self._draw_pile:
+            if cards.check_card(card).get("type") == "normal":
+                normal_cards += 1
                 pass
             else:
-                normal_count += 1
+                functional_cards += 1
                 pass
             continue
-        self._draw_normal_card(self._computer, normal_count)
-        self._draw_functional_card(self._computer, functional_count)
+        normal_draw: int = 0
+        functional_draw: int = 0
+        for i in range(0, count):
+            random_number = random.randrange(0, normal_cards * 2 + functional_cards * 3)
+            if random_number < normal_cards * 2:
+                normal_draw += 1
+                normal_cards -= 1
+                pass
+            else:
+                functional_draw += 1
+                functional_cards -= 1
+                pass
+            continue
+        self._draw_normal_card(self._computer, normal_draw)
+        self._draw_functional_card(self._computer, functional_draw)
         self._user.draw_cards(count)
 
         return None
@@ -59,17 +72,16 @@ class Stage_A(Game):
     def _draw_functional_card(self, player: Type[Player], count: int = 1) -> None:
         draw_count: int = 0
         for card in self._draw_pile:
-            if card % 100 < 10:
-                continue
+            if draw_count >= count:
+                break
+            elif card % 100 < 10:
+                pass
             else:
                 player.get_cards([card])
                 draw_count += 1
                 self._draw_pile.remove(card)
                 pass
-            if draw_count >= count:
-                break
-            else:
-                continue
+            continue
 
         return None
 
@@ -77,16 +89,15 @@ class Stage_A(Game):
     def _draw_normal_card(self, player: Player | Bot, count: int = 1) -> None:
         draw_count: int = 0
         for card in self._draw_pile:
-            if card % 100 < 10:
+            if draw_count >= count:
+                break
+            elif card % 100 < 10:
                 player.get_cards([card])
                 draw_count += 1
                 self._draw_pile.remove(card)
                 pass
             else:
-                continue
-            if draw_count >= count:
-                break
-            else:
-                continue
+                pass
+            continue
 
         return None

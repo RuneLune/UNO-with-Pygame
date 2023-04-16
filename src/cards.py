@@ -88,7 +88,7 @@ def check_card(card_code: int) -> Dict[str : str | int]:
     elif number == 12:
         type = "skip"
     elif number == 13:
-        type = "normal"
+        type = "wild"
     elif number == 14:
         type = "draw4"
     elif number == 15:
