@@ -91,7 +91,8 @@ class Main_Scene:
                     self.__selected_menu = 0
             elif event.key == pygame.K_RETURN:
                 return self.__menu_func(self.__selected_menu)
-
+            elif event.key == pygame.K_ESCAPE:
+                return pygame.event.post(pygame.event.Event(pygame.QUIT))
         return ("continue", None)
 
     def __menu_func(self, i):

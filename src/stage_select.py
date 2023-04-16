@@ -146,6 +146,8 @@ class Stage:
                         self.__selected_stage = 0
             elif event.key == pygame.K_RETURN:
                 return self.__menu_func(self.__selected_stage)
+            elif event.key == pygame.K_ESCAPE:
+                return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="main"))
 
     
     def __menu_func(self, i):
