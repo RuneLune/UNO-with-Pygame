@@ -65,6 +65,8 @@ class Game:
         self._skip_turn: bool = False
         # self._player_drawed: bool = False
 
+        # self._last_discarded_card = 0
+
         return None
 
     # 봇 및 플레이어를 추가하는 메서드
@@ -179,6 +181,7 @@ class Game:
 
     # card를 Discard pile에 추가하고 처리하는 메서드
     def discard_card(self, card: int) -> None:
+        # self._last_discarded_card = card
         self._discarded_card = cards.check_card(card)
         # 기술 카드 처리
         if self._discarded_card.get("type") == "draw2":
@@ -194,9 +197,6 @@ class Game:
             pass
         elif self._discarded_card.get("type") == "skip":
             self._skip_turn = True
-            pass
-        elif self._discarded_card.get("type") == "custom":
-            self._force_draw = 0
             pass
         elif self._discarded_card.get("color") == "wild":
             if self._discarded_card.get("type") == "draw4":
@@ -214,6 +214,9 @@ class Game:
                         (self._current_turn + 1) % len(self._players)
                     ].get_cards([shuffle_pile.pop(0)])
                     continue
+                pass
+            elif self._discarded_card.get("type") == "custom":
+                self._force_draw = 0
                 pass
             self._players[self._current_turn].choose_color()
             pass
@@ -282,7 +285,9 @@ class Game:
         if self._players[self._current_turn]._can_end_turn is False:
             self._players[self._current_turn].draw_cards()
             pass
-        self._next_turn()
+
+        if self._discarded_card.get("color") != "wild":
+            self._next_turn()
         return None
 
     # 다음 턴의 플레이어를 계산하는 메서드
@@ -351,6 +356,8 @@ class Game:
             pass
         else:
             raise ValueError("Invalid Color")
+        
+        self.end_turn()
         return None
 
     def tick(self) -> None:
