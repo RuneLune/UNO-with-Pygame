@@ -39,8 +39,7 @@ class Cards:
 
         card_code_list = (
             [0, 999]  # 카드 뒷면 및 ? 카드
-            + list(range(wild_normal, wild_shuffle + 1))
-            + [wild_custom]
+            + list(range(wild_normal, wild_custom + 1))
             + list(range(blue_0, blue_skip + 1))
             + list(range(green_0, green_skip + 1))
             + list(range(red_0, red_skip + 1))
@@ -67,7 +66,7 @@ class Cards:
 
 
 # card_code에 해당하는 카드 정보를 반환하는 함수
-def check_card(card_code: int) -> Dict[str: str | int]:
+def check_card(card_code: int) -> Dict[str : str | int]:
     color = math.floor(card_code / 100)
     if color == 1:
         color = "blue"

@@ -91,7 +91,8 @@ class Game:
             + list(range(cards.yellow_0, cards.yellow_skip + 1))
             + list(range(cards.yellow_1, cards.yellow_skip + 1))
             + list(range(cards.wild_normal, cards.wild_draw4 + 1)) * 4
-            + [cards.wild_custom] * 4
+            + [cards.wild_shuffle]
+            + [cards.wild_custom] * 3
         )
         random.shuffle(self._draw_pile)
         return None
