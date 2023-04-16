@@ -140,7 +140,7 @@ class Game_Lobby:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 return pygame.event.post(
-                    pygame.event.Event(events.CHANGE_SCENE, target=self.__settings.get_settings().get("previous_scene", None))
+                    pygame.event.Event(events.CHANGE_SCENE, target="main")
                 )
             # 봇 이름 수정
             # for i in range(len(self.bot_names_rects)):
@@ -156,11 +156,11 @@ class Game_Lobby:
     def __button_func(self, i):
         # 뒤로 가기 버튼
         if i == 0:
-            self.__settings.get_real_settings().update(previous_scene="gamelobby")
+            self.__settings.previous_gamelobby()
             return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="main"))
         # 게임 시작 버튼
         elif i == 1:
-            self.__settings.get_real_settings().update(previous_scene="gamelobby")
+            self.__settings.previous_gamelobby()
             return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="gameui"))
         # 봇 추가/삭제 버튼. 없을 때도 버튼이 활성화 되어 있음. 봇 1~5
         elif 1 < i < 7:

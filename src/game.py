@@ -207,13 +207,29 @@ class Game:
                 shuffle_pile: List[int] = []
                 for i in range(0, len(self._players)):
                     shuffle_pile += self._players[i].get_hand_cards()
-                    self._players[i].set_cards([])
                     continue
                 random.shuffle(shuffle_pile)
-                while len(shuffle_pile) == 0:
-                    self._players[
-                        (self._current_turn + 1) % len(self._players)
-                    ].get_cards([shuffle_pile.pop(0)])
+                count: int = len(shuffle_pile) // len(self._players)
+                extra: int = len(shuffle_pile) % len(self._players)
+                for i in range(len(self._players)):
+                    if i < extra:
+                        self._players[
+                            (self._current_turn + i) % len(self._players)
+                        ].set_cards(copy.deepcopy(shuffle_pile[: count + 1]))
+                        shuffle_pile = shuffle_pile[count + 1 :]
+                        pass
+                    elif i < len(self._players) - 1:
+                        self._players[
+                            (self._current_turn + i) % len(self._players)
+                        ].set_cards(copy.deepcopy(shuffle_pile[:count]))
+                        shuffle_pile = shuffle_pile[count:]
+                        pass
+                    else:
+                        self._players[
+                            (self._current_turn + i) % len(self._players)
+                        ].set_cards(copy.deepcopy(shuffle_pile))
+                        shuffle_pile = []
+                        pass
                     continue
                 pass
             elif self._discarded_card.get("type") == "custom":
@@ -375,3 +391,10 @@ class Game:
             self._players[self._current_turn].tick()
             pass
         return None
+
+    def remain_turn_time(self) -> int:
+        remain_time = self._turn_seconds - self._turn_timer.get().seconds
+        if remain_time < 0:
+            remain_time = 0
+            pass
+        return remain_time
