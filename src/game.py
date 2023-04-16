@@ -375,3 +375,10 @@ class Game:
             self._players[self._current_turn].tick()
             pass
         return None
+
+    def remain_turn_time(self) -> int:
+        remain_time = self._turn_seconds - self._turn_timer.get().seconds
+        if remain_time < 0:
+            remain_time = 0
+            pass
+        return remain_time
