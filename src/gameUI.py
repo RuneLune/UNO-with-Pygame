@@ -128,6 +128,20 @@ class Game_UI:
         ]
         self.choice_rect_hover = [False for i in range(4)]
 
+        # 턴 표시 화살표 벡터 렌더링
+        self.p1 = pygame.Vector2(
+            self.deck_space.centerx,
+            self.deck_space.centery - self.card_size[1] * 1.5 - 40 - 5,
+        )
+        self.p2 = pygame.Vector2(
+            self.deck_space.centerx + 40,
+            self.deck_space.centery - self.card_size[1] * 1.5 - 5,
+        )
+        self.p3 = pygame.Vector2(
+            self.deck_space.centerx,
+            self.deck_space.centery - self.card_size[1] * 1.5 + 40 - 5,
+        )
+
     def refresh(self, player_count):
         # if full screen
         flag = 0
@@ -216,7 +230,7 @@ class Game_UI:
             color=self.current_color[self.discard_code // 100],
             center=self.deck_space.center,
             radius=self.card_size[0] * 2.5,
-            width=20,
+            width=25,
         )
 
         # 색 변경 버튼 그리기
@@ -228,6 +242,14 @@ class Game_UI:
                     rect=self.choice_rect[i],
                     border_radius=5,
                 )
+
+        # 턴 진행방향 표시 화살표 그리기
+        if self.user.is_turn() is False:
+            pygame.draw.polygon(
+                self.surface,
+                color=self.current_color[self.discard_code // 100],
+                points=[self.p1, self.p2, self.p3],
+            )
 
     def __draw_pause_menu(self):
         title_text = self.title_font.render("Pause Menu", True, (255, 255, 255))
@@ -348,17 +370,20 @@ class Game_UI:
         if event.type == events.ASK_COLOR:
             self.color_choice = True
 
-        for i, rect in enumerate(self.choice_rect):
-            self.choice_rect_hover[i] = self.hover_check(rect)
-
-        for i, rect in enumerate(self.choice_rect):
-            if self.choice_rect_hover[i] is True and pygame.MOUSEBUTTONDOWN:
-                self.user.set_color(i + 1)
-                self.color_choice = False
+        if self.color_choice is True:
+            for i, rect in enumerate(self.choice_rect):
+                self.choice_rect_hover[i] = self.hover_check(rect)
+                print(self.choice_rect_hover)
+                if (
+                    self.choice_rect_hover[i] is True
+                    and event.type == pygame.MOUSEBUTTONDOWN
+                ):
+                    self.user.set_color(i + 1)
+                    self.color_choice = False
 
         # uno 버튼 클릭 이벤트 진행
         if (
-            self.user._turn
+            self.user.is_turn()
             and self.uno_btn_hover is True
             and event.type == pygame.MOUSEBUTTONDOWN
         ):
@@ -368,14 +393,26 @@ class Game_UI:
             ):
                 self.user._yelled_uno = True
 
-        if self.user._turn and self.user_card_num > 2:
+        if self.user.is_turn() and self.user_card_num > 2:
             self.user._yelled_uno = False
 
         # 승리 조건 확인
 
         # 턴 종료시 하이라이팅 비활성화
-        if self.user._turn is False:
+        if self.user.is_turn() is False:
             self.user_card_hover = [False for i in range(self.user_card_num)]
+
+        # 진행방향 체크
+        if self.game._reverse_direction is True:
+            self.p2 = pygame.Vector2(
+                self.deck_space.centerx - 40,
+                self.deck_space.centery - self.card_size[1] * 1.5 - 5,
+            )
+        else:
+            self.p2 = pygame.Vector2(
+                self.deck_space.centerx + 40,
+                self.deck_space.centery - self.card_size[1] * 1.5 - 5,
+            )
 
     def __handle_pause_menu(self, event):
         self.set_pause(self.pause)
@@ -441,14 +478,14 @@ class Game_UI:
 
     # 마우스 충돌 확인 함수
     def hover_check(self, rect):
-        if rect.collidepoint(pygame.mouse.get_pos()):
+        if rect.collidepoint(pygame.mouse.get_pos()) and self.user.is_turn():
             return True
         else:
             return False
 
     # 낼 수 있는 카드 위치 변경 함수
     def card_lift(self):
-        if self.user._turn:
+        if self.user.is_turn():
             for index in self.user.get_discardable_cards_index():
                 self.user_card_pos[index][1] -= 10
                 self.user_card_rect[index][1] -= 10
