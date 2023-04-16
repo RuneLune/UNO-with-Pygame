@@ -46,7 +46,6 @@ class Game_UI:
             colors.yellow,
         ]
         self.color_choice = False
-        # self.discard_color =
 
         self.title_font = pygame.font.Font(None, 60)
         self.menu_font = pygame.font.Font(None, 40)
@@ -85,7 +84,7 @@ class Game_UI:
         ]
 
         # font for user, bot name
-        self.font = pygame.font.Font("res/font/Travel.ttf", 25)
+        self.font = pygame.font.Font("res/font/MainFont.ttf", 25)
         self.user_name_text = self.font.render("insert_User_name", True, colors.white)
         self.bot_name_text = [
             self.font.render("computer " + str(i), True, colors.white)
@@ -193,6 +192,7 @@ class Game_UI:
 
     def __draw_game(self):
         self.game.tick()
+        self.tick()
         self.screen.fill(colors.black)
         self.screen.blit(self.surface, (0, 0))
 
@@ -345,6 +345,43 @@ class Game_UI:
         else:
             self.pause = True
 
+    def tick(self):
+        # 턴 알림 이미지 위치 조정
+        if self.user.is_turn() is True:
+            if self.turn_img_pos[0] < self.turn_img_size[0]:
+                self.turn_img_pos[0] += self.turn_img_size[0] / 60
+            else:
+                self.turn_img_pos[0] = self.turn_img_size[0]
+        else:
+            self.turn_img_pos[0] = self.user_space_pos[0] - self.turn_img_size[0]
+
+        self.draw_pile_hover = self.hover_check(self.draw_pile_rect)
+        if self.user.is_uno() is False:
+            self.uno_btn_hover = self.hover_check(self.uno_btn_rect)
+        for i in range(self.user_card_num):
+            rect = self.user_card_rect[i]
+            self.user_card_hover[i] = self.hover_check(rect)
+
+        # 현재 컬러 확인
+        self.discard_card = self.game.get_discard_info().get("discarded_card")
+        self.current_color = self.discard_card.get("color")
+
+        # 턴 종료시 하이라이팅 비활성화
+        if self.user.is_turn() is False:
+            self.user_card_hover = [False for i in range(self.user_card_num)]
+
+        # 진행방향 체크
+        if self.game._reverse_direction is True:
+            self.p2 = pygame.Vector2(
+                self.deck_space.centerx - 40,
+                self.deck_space.centery - self.card_size[1] * 1.5 - 5,
+            )
+        else:
+            self.p2 = pygame.Vector2(
+                self.deck_space.centerx + 40,
+                self.deck_space.centery - self.card_size[1] * 1.5 - 5,
+            )
+
     def handle(self, event):
         if self.pause is False:
             self.sounds.play_background_sound()
@@ -364,6 +401,7 @@ class Game_UI:
 
         self.card_render()
         self.card_lift()
+        self.tick()
 
         # 일시정지 화면전환 처리
         if event.type == pygame.KEYDOWN:
@@ -374,23 +412,6 @@ class Game_UI:
                 return pygame.event.post(
                     pygame.event.Event(events.CHANGE_SCENE, target="settings")
                 )
-
-        # 턴 알림 이미지 위치 조정
-        if self.user.is_turn() is True:
-            if self.turn_img_pos[0] < self.turn_img_size[0]:
-                self.turn_img_pos[0] += self.turn_img_size[0] / 60
-            else:
-                self.turn_img_pos[0] = self.turn_img_size[0]
-        else:
-            self.turn_img_pos[0] = self.user_space_pos[0] - self.turn_img_size[0]
-
-        # hover 체크
-        self.draw_pile_hover = self.hover_check(self.draw_pile_rect)
-        if self.user.is_uno() is False:
-            self.uno_btn_hover = self.hover_check(self.uno_btn_rect)
-        for i in range(self.user_card_num):
-            rect = self.user_card_rect[i]
-            self.user_card_hover[i] = self.hover_check(rect)
 
         # 카드 내기 처리
         index_list = self.user.get_discardable_cards_index()
@@ -419,10 +440,6 @@ class Game_UI:
                 self.user.set_color(i + 1)
                 self.color_choice = False
 
-        # 현재 컬러 확인
-        self.discard_card = self.game.get_discard_info().get("discarded_card")
-        self.current_color = self.discard_card.get("color")
-
         # uno 버튼 클릭 이벤트 진행
         if (
             self.user.is_turn()
@@ -440,22 +457,6 @@ class Game_UI:
             self.user._yelled_uno = False
 
         # 승리 조건 확인
-
-        # 턴 종료시 하이라이팅 비활성화
-        if self.user.is_turn() is False:
-            self.user_card_hover = [False for i in range(self.user_card_num)]
-
-        # 진행방향 체크
-        if self.game._reverse_direction is True:
-            self.p2 = pygame.Vector2(
-                self.deck_space.centerx - 40,
-                self.deck_space.centery - self.card_size[1] * 1.5 - 5,
-            )
-        else:
-            self.p2 = pygame.Vector2(
-                self.deck_space.centerx + 40,
-                self.deck_space.centery - self.card_size[1] * 1.5 - 5,
-            )
 
     def __handle_pause_menu(self, event):
         self.set_pause(self.pause)
