@@ -28,13 +28,15 @@ class Game_UI:
         self.card_size = self.cards.get_card_image(000).get_rect().size
         self.card_back_image = self.cards.get_card_image(000)
         self.card_color = (0, 150, 100)
-        # self.current_color = {"red": colors.red,
-        #                       "blue": colors.blue,
-        #                       "green": colors.green,
-        #                       "yellow": colors.yellow,
-        #                       "black": colors.black}
-        self.current_color = [
-            colors.black,
+        self.current_color_dict = {
+            "wild": colors.black,
+            "red": colors.red,
+            "blue": colors.blue,
+            "green": colors.green,
+            "yellow": colors.yellow,
+            "black": colors.black,
+        }
+        self.color_list = [
             colors.blue,
             colors.green,
             colors.red,
@@ -127,6 +129,10 @@ class Game_UI:
             for i in range(4)
         ]
         self.choice_rect_hover = [False for i in range(4)]
+
+        # 현재 색깔 불러오기
+        self.discard_card = self.game.get_discard_info().get("discarded_card")
+        self.current_color = self.discard_card.get("color")
 
         # 턴 표시 화살표 벡터 렌더링
         self.p1 = pygame.Vector2(
@@ -227,7 +233,7 @@ class Game_UI:
         # 색깔표시 rect 그리기
         pygame.draw.circle(
             self.surface,
-            color=self.current_color[self.discard_code // 100],
+            color=self.current_color_dict[self.current_color],
             center=self.deck_space.center,
             radius=self.card_size[0] * 2.5,
             width=25,
@@ -238,7 +244,7 @@ class Game_UI:
             for i in range(0, 4):
                 pygame.draw.rect(
                     self.surface,
-                    color=self.current_color[i + 1],
+                    color=self.color_list[i],
                     rect=self.choice_rect[i],
                     border_radius=5,
                 )
@@ -247,7 +253,7 @@ class Game_UI:
         if self.user.is_turn() is False:
             pygame.draw.polygon(
                 self.surface,
-                color=self.current_color[self.discard_code // 100],
+                color=self.current_color_dict[self.current_color],
                 points=[self.p1, self.p2, self.p3],
             )
 
@@ -378,6 +384,10 @@ class Game_UI:
             ):
                 self.user.set_color(i + 1)
                 self.color_choice = False
+
+        # 현재 컬러 확인
+        self.discard_card = self.game.get_discard_info().get("discarded_card")
+        self.current_color = self.discard_card.get("color")
 
         # uno 버튼 클릭 이벤트 진행
         if (
