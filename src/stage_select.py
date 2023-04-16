@@ -63,10 +63,10 @@ class Stage:
                 self.__button_rect[i+1].right =  self.__screen.get_rect().right/1.2
 
         # window
-        self.__window_text = self.__window_font.render("Do you want to start?", True, colors.white)
+        self.__window_text = self.__window_font.render("Do you want to start?", True, colors.black)
         self.__window_text_rect = self.__window_text.get_rect()
         self.__window_text_rect.top = self.__screen.get_rect().centery + 110
-        self.__window_text_rect.left = self.__screen.get_rect().right/3.2
+        self.__window_text_rect.center = self.__screen.get_rect().center
 
         self.__window_img.append(pygame.image.load(f"res/img/stage/yes.png"))
         self.__window_img.append(pygame.image.load(f"res/img/stage/no.png"))
@@ -81,7 +81,7 @@ class Stage:
 
         self.__background = pygame.Surface((self.__screen.get_width(), self.__screen.get_height()))
         self.__background.fill((255, 255, 255))  
-        self.__background.set_alpha(128) 
+        self.__background.set_alpha(200) 
 
         
                 
@@ -208,7 +208,19 @@ class Stage:
             for i in range(len(self.__window_rect)):
                 if self.__window_rect[i].collidepoint(mouse_pos):
                     return self.__window_func(i, idx)
-
+                
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                self.__selected_window -= 1
+                if self.__selected_window < 0:
+                    self.__selected_window = len(self.__window_rect) - 1
+            elif event.key == pygame.K_RIGHT:
+                self.__selected_window += 1
+                if self.__selected_window >= len(self.__window_rect):
+                    self.__selected_window = 0
+            elif event.key == pygame.K_RETURN:
+                return self.__window_func(self.__selected_window, idx)
+    
     def __menu_func(self, i):
         if i == 0:
             self.__settings.get_real_settings().update(previous_scene="stage")
