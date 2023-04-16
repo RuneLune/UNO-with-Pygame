@@ -18,6 +18,7 @@ class Game_UI:
         # load user and bot object
         self.players = self.game.get_players()
         self.bots = []
+        self.user_card_pos = []
 
         # discrete user and computer
         for player in self.players:
@@ -31,6 +32,7 @@ class Game_UI:
         self.card_back_image = self.cards.get_card_image(000)
         self.card_color = (0, 150, 100)
         self.turn_img = pygame.image.load("res/img/myturn.png")
+        self.draw_img = pygame.image.load("res/img/draw.png")
         self.current_color_dict = {
             "wild": colors.black,
             "red": colors.red,
@@ -57,13 +59,21 @@ class Game_UI:
         self.refresh(6)  # 임시 플레이어 수
         self.render()
         self.card_render()
+        self.time_start_pos = self.user_space_pos
+        self.time_end_pos = [self.user_space_size[0] / 10, self.deck_space_size[1]]
 
     def render(self):
         # each space's size,position definition
-        deck_space_size = (self.screen_size[0] * (3 / 4), self.screen_size[1] * (2 / 3))
+        self.deck_space_size = (
+            self.screen_size[0] * (3 / 4),
+            self.screen_size[1] * (2 / 3),
+        )
         deck_space_pos = (0, 0)
 
-        user_space_size = (self.screen_size[0] * (3 / 4), self.screen_size[1] * (1 / 3))
+        self.user_space_size = (
+            self.screen_size[0] * (3 / 4),
+            self.screen_size[1] * (1 / 3),
+        )
         self.user_space_pos = (0, self.screen_size[1] * (2 / 3))
 
         self.bots_space_size = (
@@ -71,13 +81,13 @@ class Game_UI:
             self.screen_size[1] * (1 / 5),
         )
         self.bots_space_pos = [
-            (user_space_size[0], i * self.bots_space_size[1])
+            (self.user_space_size[0], i * self.bots_space_size[1])
             for i in range(len(self.players))
         ]
 
         # space rectangular definition
-        self.deck_space = pygame.Rect(deck_space_pos, deck_space_size)
-        self.user_space = pygame.Rect(self.user_space_pos, user_space_size)
+        self.deck_space = pygame.Rect(deck_space_pos, self.deck_space_size)
+        self.user_space = pygame.Rect(self.user_space_pos, self.user_space_size)
         self.bots_space = [
             pygame.Rect(self.bots_space_pos[i], self.bots_space_size)
             for i in range(len(self.players))
@@ -107,8 +117,8 @@ class Game_UI:
         self.uno_btn_gray = pygame.transform.grayscale(self.uno_btn)
         self.uno_btn_size = self.uno_btn.get_rect().size
         self.uno_btn_pos = (
-            deck_space_size[0] - self.uno_btn_size[0] - 10,
-            deck_space_size[1] - self.uno_btn_size[1] - 10,
+            self.deck_space_size[0] - self.uno_btn_size[0] - 10,
+            self.deck_space_size[1] - self.uno_btn_size[1] - 10,
         )
         self.uno_btn_rect = self.uno_btn.get_rect(
             x=self.uno_btn_pos[0], y=self.uno_btn_pos[1]
@@ -180,6 +190,8 @@ class Game_UI:
         self.cards.refresh()
         self.render()
         self.card_render()
+        self.time_start_pos = self.user_space_pos
+        self.time_end_pos = [self.user_space_size[0] / 10, self.deck_space_size[1]]
 
     def draw(self):
         if self.pause is False:
@@ -203,16 +215,19 @@ class Game_UI:
         self.screen.blit(self.user_name_text, self.user_space_pos)
 
         for i in range(len(self.bots)):
-            pygame.draw.rect(self.surface, colors.red, self.bots_space[i], width=2)
+            pygame.draw.rect(self.surface, colors.white, self.bots_space[i], width=2)
             self.screen.blit(self.bot_name_text[i], self.bots_space_pos[i])
 
         # 플레이어의 카드 그리기
-        for i in range(self.user_card_num):
-            self.screen.blit(self.user_card_image[i], self.user_card_pos[i])
-            if self.user_card_hover[i] is True:
-                pygame.draw.rect(self.surface, colors.red, self.user_card_rect[i])
-            else:
-                pygame.draw.rect(self.surface, colors.black, self.user_card_rect[i])
+        if self.user_card_num == 1:
+            self.screen.blit(self.user_card_image[0], self.user_card_pos)
+        else:
+            for i in range(self.user_card_num):
+                self.screen.blit(self.user_card_image[i], self.user_card_pos[i])
+                if self.user_card_hover[i] is True:
+                    pygame.draw.rect(self.surface, colors.red, self.user_card_rect[i])
+                else:
+                    pygame.draw.rect(self.surface, colors.black, self.user_card_rect[i])
 
         # 봇의 카드그리기
         for i in range(len(self.bots)):
@@ -254,6 +269,13 @@ class Game_UI:
         if self.user.is_turn() is True:
             self.screen.blit(self.turn_img_tran, self.turn_img_pos)
 
+        # 드로우 권장 알림
+        if (
+            self.user.is_turn() is True
+            and len(self.user.get_discardable_cards_index()) == 0
+        ):
+            self.screen.blit(self.draw_img_tran, self.draw_img_pos)
+
         # 색깔표시 rect 그리기
         pygame.draw.circle(
             self.surface,
@@ -279,6 +301,25 @@ class Game_UI:
                 self.surface,
                 color=self.current_color_dict[self.current_color],
                 points=[self.p1, self.p2, self.p3],
+            )
+
+        # 턴 남은 시간 그리기
+        time = self.game.remain_turn_time()
+        if self.user.is_turn() is True:
+            pygame.draw.line(
+                self.surface,
+                color=colors.yellow,
+                start_pos=self.time_start_pos,
+                end_pos=(self.time_end_pos[0] * time, self.time_end_pos[1]),
+                width=10,
+            )
+        else:
+            pygame.draw.line(
+                self.surface,
+                color=colors.yellow,
+                start_pos=self.time_start_pos,
+                end_pos=(self.time_end_pos[0] * 10, self.time_end_pos[1]),
+                width=10,
             )
 
     def __draw_pause_menu(self):
@@ -362,9 +403,11 @@ class Game_UI:
         self.draw_pile_hover = self.hover_check(self.draw_pile_rect)
         if self.user.is_uno() is False:
             self.uno_btn_hover = self.hover_check(self.uno_btn_rect)
-        for i in range(self.user_card_num):
-            rect = self.user_card_rect[i]
-            self.user_card_hover[i] = self.hover_check(rect)
+        if self.user_card_num == 1:
+            self.user_card_hover[0] = self.hover_check(self.user_card_rect)
+        else:
+            for i, rect in enumerate(self.user_card_rect):
+                self.user_card_hover[i] = self.hover_check(rect)
 
         # 현재 컬러 확인
         self.discard_card = self.game.get_discard_info().get("discarded_card")
@@ -385,6 +428,20 @@ class Game_UI:
                 self.deck_space.centerx + 40,
                 self.deck_space.centery - self.card_size[1] * 1.5 - 5,
             )
+
+        # 드로우 권장 이미지 렌더링, 코드 위치 변경 필요
+        self.draw_tran_size = [
+            self.deck_space.size[0] / 5,
+            self.deck_space.size[1] / 5,
+        ]
+        self.draw_img_tran = pygame.transform.scale(self.draw_img, self.draw_tran_size)
+        self.draw_img_size = self.turn_img_tran.get_rect().size
+        self.draw_img_pos = [
+            self.draw_pile_pos[0] - self.draw_img_size[0] / 6,
+            self.draw_pile_pos[1] - self.draw_img_size[1] / 3,
+        ]
+        # 우승자 체크
+        self.game.check_winner()
 
     def handle(self, event):
         if self.pause is False:
@@ -451,7 +508,7 @@ class Game_UI:
             and event.type == pygame.MOUSEBUTTONDOWN
         ):
             if (
-                self.user_card_num <= 2
+                self.user_card_num == 2
                 and len(self.user.get_discardable_cards_index()) > 0
             ):
                 self.sounds.play_effect("click")
@@ -484,15 +541,16 @@ class Game_UI:
                 self.user_card_first_pos[0] + i * self.card_size[0] * 4 / 5,
                 self.user_card_first_pos[1],
             ]
-            for i in range(self.user_card_num)
+            for i in range(0, self.user_card_num)
         ]
-        if self.user_card_num <= 1:
+
+        # 유저 카드 rect 렌더링
+        if self.user_card_num == 1:
             self.user_card_pos = self.user_card_first_pos
             self.user_card_rect = self.user_card_image[0].get_rect(
                 x=self.user_card_pos[0], y=self.user_card_pos[1] + 5
             )
         else:
-            # 유저 카드 rect 렌더링
             self.user_card_rect = [
                 self.user_card_image[i].get_rect(
                     x=self.user_card_pos[i][0], y=self.user_card_pos[i][1] + 5
