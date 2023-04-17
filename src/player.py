@@ -176,8 +176,6 @@ class Player:
             self._can_end_turn = True
             self.end_turn()
             pass
-        else:
-            self._discarded_wild = True
         return None
 
     # 플레이어가 뽑은 카드가 낼 수 있는 경우 물어보는 메서드
@@ -194,16 +192,18 @@ class Player:
 
     # 와일드 카드를 냈을 때 호출되는 메서드
     def choose_color(self) -> None:
-        pygame.event.post(pygame.event.Event(events.ASK_COLOR))
         self._discarded_wild = True
+        pygame.event.post(pygame.event.Event(events.ASK_COLOR))
         return None
 
     # 색을 정하는 메서드
     def set_color(self, color: int | str) -> None:
-        self._game.set_color(color)
-        # self._discarded_wild = False
-        self._can_end_turn = True
-        self.end_turn()
+        if self._discarded_wild:
+            self._game.set_color(color)
+            self._discarded_wild = False
+            self._can_end_turn = True
+            self.end_turn()
+            pass
         return None
 
     def pause_timer(self) -> None:
