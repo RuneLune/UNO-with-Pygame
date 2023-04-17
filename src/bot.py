@@ -4,8 +4,10 @@ from overrides import overrides
 import random
 from timer import Timer
 from typing import TYPE_CHECKING, Dict, Type
+import pygame
 
 from player import Player
+import events
 
 if TYPE_CHECKING:
     from game import Game
@@ -40,21 +42,30 @@ class Bot(Player):
         if self._turn is True:
             if self._timer.get().total_seconds() > self._delay:
                 self._play()
+                pass
+            pass
         return None
 
     @overrides
     def pause_timer(self) -> None:
-        self._timer.pause()
+        if self._timer.status() == "running":
+            self._timer.pause()
+            pass
         return None
 
     @overrides
     def resume_timer(self) -> None:
-        self._timer.resume()
+        if self._timer.status() == "paused":
+            self._timer.resume()
+            pass
         return None
 
     # 자동으로 턴을 진행하는 메서드
     def _play(self) -> None:
-        if len(self._discardable_cards_index):
+        if self._discardable_cards_index:
+            if len(self._cards) == 2:
+                self.yell_uno()
+                pass
             self.discard_card(random.choice(self._discardable_cards_index))
             pass
         else:
@@ -71,6 +82,20 @@ class Bot(Player):
             pass
         return None
 
+    @overrides
+    def discard_card(self, index: int) -> None:
+        pygame.event.post(
+            pygame.event.Event(events.BOT_DISCARD, args={"bot": self, "count": 1})
+        )
+        return super().discard_card(index)
+
+    @overrides
+    def draw_cards(self, count: int = -1) -> None:
+        pygame.event.post(
+            pygame.event.Event(events.BOT_DRAW, args={"bot": self, "count": count})
+        )
+        return super().draw_cards(count)
+
     # ask_discard 오버라이딩
     @overrides
     def ask_discard(self) -> None:
@@ -81,5 +106,13 @@ class Bot(Player):
     # choose_color 오버라이딩
     @overrides
     def choose_color(self) -> None:
-        self._game.set_color(random.randrange(1, 5))
+        self.set_color(random.randrange(1, 5))
+        return None
+
+    @overrides
+    def set_color(self, color: int | str) -> None:
+        self._game.set_color(color)
+        self._discarded_wild = False
+        self._can_end_turn = True
+        self.end_turn()
         return None

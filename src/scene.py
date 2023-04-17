@@ -1,18 +1,23 @@
 from abc import abstractmethod, ABC
+from typing import Dict
 import pygame
+
+from settings_function import Settings
+from sound import SoundManager
 
 
 class Scene(ABC):
     def __new__(cls, *args, **kwargs):
         return super(Scene, cls).__new__(cls)
 
-    def __init__(self) -> None:
+    @abstractmethod
+    def __init__(self, settings: Settings, sound_manager: SoundManager) -> None:
         return super(Scene, self).__init__()
 
     @abstractmethod
     def refresh(self) -> None:
         raise NotImplementedError("Must override refresh() method")
-    
+
     @abstractmethod
     def render(self) -> None:
         raise NotImplementedError("Must override render() method")
@@ -24,3 +29,7 @@ class Scene(ABC):
     @abstractmethod
     def draw(self) -> None:
         raise NotImplementedError("Must override draw() method")
+
+    # @abstractmethod
+    # def get_args(self, args: Dict[any, any]) -> None:
+    #     raise NotImplementedError("Must override draw() method")
