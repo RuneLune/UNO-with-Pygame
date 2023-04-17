@@ -458,8 +458,12 @@ class Game_UI(Scene):
             for i, rect in enumerate(self.user_card_rect):
                 self.user_card_hover[i] = self.hover_check(rect)
 
+        # 카드 내기 애니메이션 위치 계산
         if self.move_flag is True:
-            if self.move_pos[1] > self.move_end[1]:
+            if (
+                self.move_pos[0] < self.move_end[0]
+                and self.move_pos[1] > self.move_end[1]
+            ):
                 self.move_pos[0] += self.move_rate_x
                 self.move_pos[1] += self.move_rate_y
             else:
@@ -673,5 +677,5 @@ class Game_UI(Scene):
         self.move_end = self.discard_pile_pos
         self.move_pos = self.move_start  # initial pos
 
-        self.move_rate_x = (self.move_end[0] - self.move_start[0]) / 20
-        self.move_rate_y = (self.move_end[1] - self.move_start[1]) / 20
+        self.move_rate_x = (self.move_end[0] - self.move_start[0]) / 10
+        self.move_rate_y = (self.move_end[1] - self.move_start[1]) / 10
