@@ -35,7 +35,7 @@ class App:
         self.settings: Settings = Settings()
         self.sound_manager: SoundManager = SoundManager(self.settings)
 
-        self.fps: int = 30
+        self.fps: int = 60
         self.clock: pygame.time.Clock = pygame.time.Clock()
         self.current_scene: str = "main"
 

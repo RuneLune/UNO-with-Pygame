@@ -68,6 +68,7 @@ class Game:
         # self._last_discarded_card = 0
         self._game_status = False
         self._name = "single"
+        self._turn_move = False
 
         return None
 
@@ -328,10 +329,6 @@ class Game:
 
     # 다음 턴의 플레이어를 계산하는 메서드
     def _next_turn(self) -> None:
-        # self._player_drawed = False
-
-        # 스킵 및 방향 확인해 턴 넘기기
-        # print("Before" + str(self._current_turn))
         if self._skip_turn is False:
             if self._reverse_direction is False:
                 self._current_turn = (self._current_turn + 1) % len(self._players)
@@ -349,9 +346,7 @@ class Game:
                 pass
             self._skip_turn = False
             pass
-        # print("After" + str(self._current_turn))
-        self._turn_timer.start()
-        self._players[self._current_turn].turn_start()
+        self._turn_move = True
 
         return None
 
@@ -406,6 +401,11 @@ class Game:
         return None
 
     def tick(self) -> None:
+        if self._turn_move is True:
+            self._turn_timer.start()
+            self._players[self._current_turn].turn_start()
+            self._turn_move = False
+            pass
         if self._turn_timer.get().total_seconds() > self._turn_seconds:
             if self._players[self._current_turn].is_turn():
                 self._players[self._current_turn].draw_cards()
