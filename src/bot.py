@@ -4,8 +4,10 @@ from overrides import overrides
 import random
 from timer import Timer
 from typing import TYPE_CHECKING, Dict, Type
+import pygame
 
 from player import Player
+import events
 
 if TYPE_CHECKING:
     from game import Game
@@ -79,6 +81,20 @@ class Bot(Player):
                 pass
             pass
         return None
+
+    @overrides
+    def discard_card(self, index: int) -> None:
+        pygame.event.post(
+            pygame.event.Event(events.BOT_DISCARD, args={"bot": self, "count": 1})
+        )
+        return super().discard_card(index)
+
+    @overrides
+    def draw_cards(self, count: int = -1) -> None:
+        pygame.event.post(
+            pygame.event.Event(events.BOT_DRAW, args={"bot": self, "count": count})
+        )
+        return super().draw_cards(count)
 
     # ask_discard 오버라이딩
     @overrides
