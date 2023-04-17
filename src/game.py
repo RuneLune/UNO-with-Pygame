@@ -359,28 +359,28 @@ class Game:
 
     # Game 객체 내의 모든 타이머를 일시정지하는 메서드
     def pause_timer(self) -> None:
-        try:
+        if self._turn_timer.status() == "running":
             self._turn_timer.pause()
             pass
-        except ValueError:
-            print("game._turn_timer: timer not started or already paused. ")
-            pass
-        try:
+        if self._round_timer.status() == "running":
             self._round_timer.pause()
-            pass
-        except ValueError:
-            print("game._round_timer: timer not started or not paused. ")
             pass
         for player in self._players:
             player.pause_timer()
+            continue
         return None
 
     # Game 객체 내의 모든 일시정지된 타이머를 재개하는 메서드
     def resume_timer(self) -> None:
-        self._turn_timer.resume()
-        self._round_timer.resume()
+        if self._turn_timer.status() == "paused":
+            self._turn_timer.resume()
+            pass
+        if self._round_timer.status() == "paused":
+            self._round_timer.resume()
+            pass
         for player in self._players:
             player.resume_timer()
+            continue
         return None
 
     def set_color(self, color: int | str) -> None:

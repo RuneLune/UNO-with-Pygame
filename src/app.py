@@ -12,6 +12,7 @@ from game_lobby import Game_Lobby
 from scene import Scene
 from stage_select import Stage
 from sound import SoundManager
+from resource_manager import image_resource
 
 
 class App:
@@ -29,6 +30,8 @@ class App:
     def __init__(self) -> None:
         pygame.init()
 
+        self.app_icon: pygame.Surface = pygame.image.load(image_resource("icon.png"))
+
         self.settings: Settings = Settings()
         self.sound_manager: SoundManager = SoundManager(self.settings)
 
@@ -44,6 +47,7 @@ class App:
             "stage": Stage(self.settings, self.sound_manager),
         }
 
+        pygame.display.set_icon(self.app_icon)
         pygame.display.set_caption("Main Menu")
         return None
 

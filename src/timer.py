@@ -36,6 +36,7 @@ class Timer:
             raise ValueError("Timer is not paused")
         pausetime = datetime.now() - self.__timepaused
         self.__timestarted += pausetime
+        self.__timepaused = None
         self.__paused = False
         return None
 
@@ -54,3 +55,20 @@ class Timer:
         self.__timepaused = None
         self.__paused = False
         return None
+
+    # 타이머 상태 조회 메서드
+    def status(self) -> str:
+        status: Optional[str] = None
+        if self.__paused is True:
+            status = "paused"
+            pass
+        elif self.__timestarted is None and self.__timepaused is None:
+            status = "stopped"
+            pass
+        elif self.__timestarted is not None and self.__timepaused is None:
+            status = "running"
+            pass
+        else:
+            raise ValueError("Timer Error")
+
+        return status
