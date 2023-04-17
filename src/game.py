@@ -268,6 +268,7 @@ class Game:
 
     # 라운드 종료 후 점수를 계산하는 메서드
     def _end_round(self) -> None:
+        pygame.event.post(pygame.event.Event(events.GAME_END, status="win"))
         self._game_status = False
         points: int = 0
         for i in range(0, len(self._players)):

@@ -70,6 +70,10 @@ class App:
                     self.sound_manager.refresh()
                     self.scenes[self.current_scene].refresh()
                     pass
+                elif event.type == events.GAME_END:
+                    self.scenes["stage"].handle(event)
+                    self.scenes[self.current_scene].handle(event)
+                    pass
                 else:
                     self.scenes[self.current_scene].handle(event)
                     pass
