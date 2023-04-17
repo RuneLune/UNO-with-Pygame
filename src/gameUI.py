@@ -25,6 +25,7 @@ class Game_UI(Scene):
         self.bots = []
         self.user_card_pos = []
         self.discard_flag = False
+        self.draw_flag = False
 
         # discrete user and computer
         self.user = self.game.get_user()
@@ -249,9 +250,14 @@ class Game_UI(Scene):
                 self.surface, self.turn_color(self.bots[i]), self.bots_space[i], width=2
             )
             self.screen.blit(self.bot_name_text[i], self.bots_space_pos[i])
+
         # 카드 내기 애니메이션
         if self.discard_flag is True:
-            self.screen.blit(self.discard_card, self.discard_pos)
+            self.screen.blit(self.discard_card_img, self.discard_pos)
+
+        # 카드 뽑기 애니메이션
+        if self.draw_flag is True:
+            self.screen.blit(self.draw_card, self.draw_pos)
 
         # 플레이어의 카드 그리기
         if self.user_card_num == 1:
@@ -469,6 +475,17 @@ class Game_UI(Scene):
             else:
                 self.discard_flag = False
 
+        # 카드 뽑기 애니메이션 위치 계산
+        if self.draw_flag is True:
+            if (
+                self.draw_pos[0] > self.draw_end[0]
+                and self.draw_pos[1] < self.draw_end[1]
+            ):
+                self.draw_pos[0] += self.draw_rate_x
+                self.draw_pos[1] += self.draw_rate_y
+            else:
+                self.draw_flag = False
+
         # 현재 컬러 확인
         self.discard_card = self.game.get_discard_info().get("discarded_card")
         self.current_color = self.discard_card.get("color")
@@ -549,6 +566,7 @@ class Game_UI(Scene):
         if self.draw_pile_hover is True and event.type == pygame.MOUSEBUTTONDOWN:
             self.sounds.play_effect("draw")
             self.user.draw_cards()
+            self.ani_draw()
 
         # 색깔 고르기 처리
         if event.type == events.ASK_COLOR:
@@ -671,7 +689,7 @@ class Game_UI(Scene):
 
     def ani_discard(self, index, card):
         self.discard_flag = True
-        self.discard_card = self.cards.get_card_image(card)
+        self.discard_card_img = self.cards.get_card_image(card)
 
         self.discard_start = self.user_card_pos[index]
         self.discard_end = self.discard_pile_pos
@@ -679,6 +697,14 @@ class Game_UI(Scene):
 
         self.discard_rate_x = (self.discard_end[0] - self.discard_start[0]) / 10
         self.discard_rate_y = (self.discard_end[1] - self.discard_start[1]) / 10
-    
+
     def ani_draw(self):
-        self.
+        self.draw_flag = True
+        self.draw_card = self.cards.get_card_image(self.game._draw_pile[0])
+
+        self.draw_start = [self.draw_pile_pos[0], self.draw_pile_pos[1]]
+        self.draw_end = self.user_card_first_pos
+        self.draw_pos = self.draw_start  # initial pos
+
+        self.draw_rate_x = (self.draw_end[0] - self.draw_start[0]) / 10
+        self.draw_rate_y = (self.draw_end[1] - self.draw_start[1]) / 10
