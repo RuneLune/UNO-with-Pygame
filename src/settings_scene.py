@@ -225,34 +225,14 @@ class Settings_Scene(Scene):
         self.__background_sound_text = self.__menu_font.render("BGM", True, colors.white)
         self.__background_sound_text_rect = self.__background_sound_text.get_rect()
         self.__background_sound_text_rect.centerx = self.__screen.get_rect().centerx * 1.5 + 100
-        self.__background_sound_text_rect.top = self.__screen.get_rect().centery/ 4
-
-        self.__button_text.append(self.__menu_font.render("▲", True, colors.white))
-        self.__button_rect.append(self.__button_text[-1].get_rect())
-        self.__button_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
-        self.__button_rect[-1].top = self.__screen.get_rect().centery / 2.8
-
-        self.__sound_setting_text.append(self.__menu_font.render(str(settings.get("background_sound_volume", None)), True, colors.white))
-        self.__sound_setting_text_rect.append(self.__sound_setting_text[-1].get_rect())
-        self.__sound_setting_text_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
-        self.__sound_setting_text_rect[-1].top = self.__screen.get_rect().centery / 2.1
-
-        self.__button_text.append(self.__menu_font.render("▼", True, colors.white))
-        self.__button_rect.append(self.__button_text[-1].get_rect())
-        self.__button_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
-        self.__button_rect[-1].top = self.__screen.get_rect().centery / 1.7
-
-        self.__effect_sound_text = self.__menu_font.render("EFF", True, colors.white)
-        self.__effect_sound_text_rect = self.__effect_sound_text.get_rect()
-        self.__effect_sound_text_rect.centerx = self.__screen.get_rect().centerx * 1.5 + 100
-        self.__effect_sound_text_rect.top = self.__screen.get_rect().bottom / 2.7
+        self.__background_sound_text_rect.top = self.__screen.get_rect().bottom / 2.7
 
         self.__button_text.append(self.__menu_font.render("▲", True, colors.white))
         self.__button_rect.append(self.__button_text[-1].get_rect())
         self.__button_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
         self.__button_rect[-1].top = self.__screen.get_rect().bottom / 2.39
 
-        self.__sound_setting_text.append(self.__menu_font.render(str(settings.get("effect_sound_volume", None)), False, colors.white))
+        self.__sound_setting_text.append(self.__menu_font.render(str(settings.get("background_sound_volume", None)), True, colors.white))
         self.__sound_setting_text_rect.append(self.__sound_setting_text[-1].get_rect())
         self.__sound_setting_text_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
         self.__sound_setting_text_rect[-1].top = self.__screen.get_rect().bottom / 2.1
@@ -262,17 +242,17 @@ class Settings_Scene(Scene):
         self.__button_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
         self.__button_rect[-1].top = self.__screen.get_rect().bottom / 1.9
 
-        self.__all_sound_text = self.__menu_font.render("ALL", True, colors.white)
-        self.__all_sound_text_rect = self.__all_sound_text.get_rect()
-        self.__all_sound_text_rect.centerx = self.__screen.get_rect().centerx * 1.5 + 100
-        self.__all_sound_text_rect.top = self.__screen.get_rect().bottom / 1.7
+        self.__effect_sound_text = self.__menu_font.render("EFF", True, colors.white)
+        self.__effect_sound_text_rect = self.__effect_sound_text.get_rect()
+        self.__effect_sound_text_rect.centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__effect_sound_text_rect.top = self.__screen.get_rect().bottom / 1.7
 
         self.__button_text.append(self.__menu_font.render("▲", True, colors.white))
         self.__button_rect.append(self.__button_text[-1].get_rect())
         self.__button_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
         self.__button_rect[-1].top = self.__screen.get_rect().bottom / 1.56
 
-        self.__sound_setting_text.append(self.__menu_font.render(str(settings.get("all_sound_volume", None)), False, colors.white))
+        self.__sound_setting_text.append(self.__menu_font.render(str(settings.get("effect_sound_volume", None)), False, colors.white))
         self.__sound_setting_text_rect.append(self.__sound_setting_text[-1].get_rect())
         self.__sound_setting_text_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
         self.__sound_setting_text_rect[-1].top = self.__screen.get_rect().bottom / 1.44
@@ -282,6 +262,25 @@ class Settings_Scene(Scene):
         self.__button_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
         self.__button_rect[-1].top = self.__screen.get_rect().bottom / 1.34
 
+        self.__all_sound_text = self.__menu_font.render("ALL", True, colors.white)
+        self.__all_sound_text_rect = self.__all_sound_text.get_rect()
+        self.__all_sound_text_rect.centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__all_sound_text_rect.top = self.__screen.get_rect().centery/ 4
+
+        self.__button_text.append(self.__menu_font.render("▲", True, colors.white))
+        self.__button_rect.append(self.__button_text[-1].get_rect())
+        self.__button_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__button_rect[-1].top = self.__screen.get_rect().centery / 2.8
+
+        self.__sound_setting_text.append(self.__menu_font.render(str(settings.get("all_sound_volume", None)), False, colors.white))
+        self.__sound_setting_text_rect.append(self.__sound_setting_text[-1].get_rect())
+        self.__sound_setting_text_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__sound_setting_text_rect[-1].top = self.__screen.get_rect().centery / 2.1
+
+        self.__button_text.append(self.__menu_font.render("▼", True, colors.white))
+        self.__button_rect.append(self.__button_text[-1].get_rect())
+        self.__button_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__button_rect[-1].top = self.__screen.get_rect().centery / 1.7
 
 
         # 메인 메뉴 돌아가기 버튼 추가
