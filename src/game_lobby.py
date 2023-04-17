@@ -183,6 +183,7 @@ class Game_Lobby(Scene):
             mouse_pos = pygame.mouse.get_pos()
             for i in range(len(self.__button_rect)):
                 if self.__button_rect[i].collidepoint(mouse_pos):
+                    self.sounds.play_effect('click')
                     return self.__button_func(i)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
