@@ -424,6 +424,9 @@ class Game_UI(Scene):
             if (
                 self.discard_pos[0] < self.discard_end[0]
                 and self.discard_pos[1] > self.discard_end[1]
+            ) or (
+                self.discard_pos[0] > self.discard_end[0]
+                and self.discard_pos[1] > self.discard_end[1]
             ):
                 self.discard_pos[0] += self.discard_rate_x
                 self.discard_pos[1] += self.discard_rate_y
@@ -437,12 +440,12 @@ class Game_UI(Scene):
                     if (
                         self.draw_pos[i][0] > self.draw_end[i][0]
                         and self.draw_pos[i][1] < self.draw_end[i][1]
+                    ) or (
+                        self.draw_pos[i][0] < self.draw_end[i][0]
+                        and self.draw_pos[i][1] < self.draw_end[i][1]
                     ):
                         self.draw_pos[i][0] += self.draw_rate_x[i]
                         self.draw_pos[i][1] += self.draw_rate_y[i]
-                    # elif i == len(self.draw_card) - 1:
-                    #     self.draw_flag_list[i] = False
-                    #     self.draw_flag = False
                     else:
                         self.draw_flag_list[i] = False
                         self.draw_flag_list[i + 1] = True
@@ -529,6 +532,7 @@ class Game_UI(Scene):
             self.draw_pile_hover is True
             and event.type == pygame.MOUSEBUTTONDOWN
             and self.color_choice is False
+            and self.user.is_turn() is True
         ):
             self.sounds.play_effect("draw")
             self.user.draw_cards()
