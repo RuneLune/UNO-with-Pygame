@@ -26,6 +26,8 @@ class Game_UI(Scene):
         self.user_card_pos = []
         self.discard_flag = False
         self.draw_flag = False
+        self.winner_flag = False
+        self.winner_name = ""
 
         # discrete user and computer
         self.user = self.game.get_user()
@@ -122,12 +124,13 @@ class Game_UI(Scene):
         self.bot_name_text = [
             self.font.render(bot.get_name(), True, colors.white) for bot in self.bots
         ]
-        # self.bot_name_text = [
-        #     self.font.render("cpu" + str(i + 1), True, colors.white)
-        #     for i in range(len(self.bots))
-        # ]
         self.font2 = pygame.font.Font(font_resource("MainFont.ttf"), 15)
-
+        self.winner_font = pygame.font.Font(
+            font_resource("MainFont.ttf"), int(self.screen_size[1] / 8)
+        )
+        self.winner_text = self.winner_font.render(
+            "You Are Winner\n" + self.winner_name + "!", True, colors.gold
+        )
         # bot card position render
         self.bot_card_first_pos = [
             (
@@ -380,6 +383,11 @@ class Game_UI(Scene):
                 width=10,
             )
 
+        if self.winner_flag is True:
+            self.screen.blit(
+                self.winner_text, (self.screen_size[0] / 8, self.screen_size[1] / 8)
+            )
+
     def get_pause(self):
         return self.pause
 
@@ -469,8 +477,6 @@ class Game_UI(Scene):
             self.draw_pile_pos[0] - self.draw_img_size[0] / 6,
             self.draw_pile_pos[1] - self.draw_img_size[1] / 3,
         ]
-        # 우승자 체크
-        self.game.check_winner()
 
     @overrides
     def handle(self, event):
@@ -545,6 +551,11 @@ class Game_UI(Scene):
         # uno 버튼 클릭 이벤트 진행
         if self.uno_btn_hover is True and event.type == pygame.MOUSEBUTTONDOWN:
             self.user.yell_uno()
+
+        if event.type == events.GAME_END:
+            if hasattr(event, "args") and "winner" in event.args:
+                self.winner_name = event.args.get("winner")
+                self.winner_flag = True
 
         # 승리 조건 확인
 
@@ -654,6 +665,7 @@ class Game_UI(Scene):
     def ani_draw(self):
         self.draw_flag = True
         self.last_draw_card = self.user.get_last_drawing_cards()
+        print(self.last_draw_card)
         self.draw_flag_list = []
         self.draw_card = []
         self.draw_end = []
