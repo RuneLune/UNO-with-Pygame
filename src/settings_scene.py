@@ -435,8 +435,8 @@ class Settings_Scene(Scene):
             select = self.__settings.key_change()
             self.__settings.set_key_value("select", select)
         elif i == 8:
-            cancle = self.__settings.key_change()
-            self.__settings.set_key_value("cancle", cancle)
+            cancel = self.__settings.key_change()
+            self.__settings.set_key_value("cancel", cancel)
 
         pygame.event.post(pygame.event.Event(events.CHANGE_SETTINGS))
         return None
