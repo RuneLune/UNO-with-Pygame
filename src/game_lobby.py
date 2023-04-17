@@ -193,7 +193,7 @@ class Game_Lobby(Scene):
         # 사용자 이름 수정 방법 글씨
         self.__enter_text = pygame.font.Font(
             font_resource("MainFont.ttf"), round(screen_size[1] / 14)
-        ).render("Press Enter to edit the name.", True, colors.white)
+        ).render("Press Enter to edit the name", True, colors.white)
         self.__enter_rect = self.__enter_text.get_rect()
         self.__enter_rect.center = (self.deck_space.centerx, self.deck_space.height * (1 / 3))
 
