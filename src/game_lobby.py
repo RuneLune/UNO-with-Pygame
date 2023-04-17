@@ -295,7 +295,7 @@ class Game_Lobby(Scene):
                 pygame.event.Event(
                     events.CHANGE_SCENE,
                     target="gameui",
-                    args={"game": Game(self.__game_settings.get("player_count, None"))},
+                    args={"game": Game(self.__game_settings.get("player_count", None))},
                 )
             )
         # 봇 추가/삭제 버튼. 없을 때도 버튼이 활성화 되어 있음. 봇 1~5
