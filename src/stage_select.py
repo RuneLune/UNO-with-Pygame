@@ -11,6 +11,7 @@ from settings_function import Settings
 from stage_a import Stage_A
 from stage_b import Stage_B
 from stage_c import Stage_C
+from stage_d import Stage_D
 
 
 class Stage(Scene):
@@ -291,12 +292,12 @@ class Stage(Scene):
             if idx == 1:
                 self.__is_confirm = False
                 return pygame.event.post(
-                pygame.event.Event(
-                    events.CHANGE_SCENE,
-                    target="gameui",
-                    args={"game": Stage_A()},
+                    pygame.event.Event(
+                        events.CHANGE_SCENE,
+                        target="gameui",
+                        args={"game": Stage_A()},
+                    )
                 )
-            )
             elif idx == 2:
                 self.__is_confirm = False
                 return pygame.event.post(
@@ -315,6 +316,15 @@ class Stage(Scene):
                         args={"game": Stage_C()},
                     )
                 )
-            
+            elif idx == 4:
+                self.__is_confirm = False
+                return pygame.event.post(
+                    pygame.event.Event(
+                        events.CHANGE_SCENE,
+                        target="gameui",
+                        args={"game": Stage_D(4)},
+                    )
+                )
+
         else:
             self.__is_confirm = False
