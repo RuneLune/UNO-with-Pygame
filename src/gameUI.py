@@ -202,6 +202,7 @@ class Game_UI(Scene):
 
     @overrides
     def refresh(self):
+        pygame.display.set_caption("Game")
         # if full screen
         flag = 0
         if self.settings.get_settings().get("fullscreen", False) is True:
@@ -228,7 +229,6 @@ class Game_UI(Scene):
             pass
         else:
             self.sounds.stop_background_sound()
-            self.__draw_pause_menu()
             pass
         pass
 
@@ -257,7 +257,9 @@ class Game_UI(Scene):
 
         # 카드 뽑기 애니메이션
         if self.draw_flag is True:
-            self.screen.blit(self.draw_card, self.draw_pos)
+            for i in range(len(self.draw_card)):
+                if self.draw_flag_list[i] is True:
+                    self.screen.blit(self.draw_card[i], self.draw_pos[i])
 
         # 플레이어의 카드 그리기
         if self.user_card_num == 1:
@@ -377,62 +379,6 @@ class Game_UI(Scene):
                 width=10,
             )
 
-    def __draw_pause_menu(self):
-        title_text = self.title_font.render("Pause Menu", True, (255, 255, 255))
-        continue_text = self.menu_font.render("Continue", True, (255, 255, 255))
-        settings_text = self.menu_font.render("Settings", True, (255, 255, 255))
-        start_menu_text = self.menu_font.render("Start Menu", True, (255, 255, 255))
-        exit_text = self.menu_font.render("Exit", True, (255, 255, 255))
-
-        # Get the size of the screen
-        screen_width, screen_height = self.screen.get_size()
-
-        # Set the position of the menu options
-        title_pos = (self.screen.get_width() // 2 - title_text.get_width() // 2, 50)
-        continue_pos = (
-            screen_width // 2 - continue_text.get_width() // 2,
-            screen_height // 2 - 75,
-        )
-        settings_pos = (
-            screen_width // 2 - settings_text.get_width() // 2,
-            screen_height // 2 - 25,
-        )
-        start_menu_pos = (
-            screen_width // 2 - start_menu_text.get_width() // 2,
-            screen_height // 2 + 25,
-        )
-        exit_pos = (
-            screen_width // 2 - exit_text.get_width() // 2,
-            screen_height // 2 + 75,
-        )
-
-        # Draw the menu options on the screen
-        self.screen.fill((0, 0, 0))
-        self.screen.blit(title_text, title_pos)
-        self.screen.blit(continue_text, continue_pos)
-        self.screen.blit(settings_text, settings_pos)
-        self.screen.blit(start_menu_text, start_menu_pos)
-        self.screen.blit(exit_text, exit_pos)
-
-        # # 정지 메뉴 이벤트
-        # for event in pygame.event.get():
-        #     if event.type == pygame.QUIT:
-        #         pygame.quit()
-        #         sys.exit()
-        #     if event.type == pygame.MOUSEBUTTONDOWN:
-        #         if continue_text.get_rect(center=continue_pos).collidepoint(self.mouse_pos):
-        #             # Code to resume the game
-        #             pass
-        #         elif settings_text.get_rect(center=settings_pos).collidepoint(self.mouse_pos):
-        #             # Code to open the settings menu
-        #             pass
-        #         elif start_menu_text.get_rect(center=start_menu_pos).collidepoint(self.mouse_pos):
-        #             # Code to go back to the start menu
-        #             pass
-        #         elif exit_text.get_rect(center=exit_pos).collidepoint(self.mouse_pos):
-        #             pygame.quit()
-        #             sys.exit()
-
     def get_pause(self):
         return self.pause
 
@@ -477,15 +423,20 @@ class Game_UI(Scene):
 
         # 카드 뽑기 애니메이션 위치 계산
         if self.draw_flag is True:
-            if (
-                self.draw_pos[0] > self.draw_end[0]
-                and self.draw_pos[1] < self.draw_end[1]
-            ):
-                self.draw_pos[0] += self.draw_rate_x
-                self.draw_pos[1] += self.draw_rate_y
-            else:
-                self.draw_flag = False
-
+            for i in range(len(self.draw_card)):
+                if self.draw_flag_list[i] is True:
+                    if (
+                        self.draw_pos[i][0] > self.draw_end[i][0]
+                        and self.draw_pos[i][1] < self.draw_end[i][1]
+                    ):
+                        self.draw_pos[i][0] += self.draw_rate_x[i]
+                        self.draw_pos[i][1] += self.draw_rate_y[i]
+                    # elif i == len(self.draw_card) - 1:
+                    #     self.draw_flag_list[i] = False
+                    #     self.draw_flag = False
+                    else:
+                        self.draw_flag_list[i] = False
+                        self.draw_flag_list[i + 1] = True
         # 현재 컬러 확인
         self.discard_card = self.game.get_discard_info().get("discarded_card")
         self.current_color = self.discard_card.get("color")
@@ -582,20 +533,8 @@ class Game_UI(Scene):
                 self.color_choice = False
 
         # uno 버튼 클릭 이벤트 진행
-        if (
-            self.user.is_turn()
-            and self.uno_btn_hover is True
-            and event.type == pygame.MOUSEBUTTONDOWN
-        ):
-            if (
-                self.user_card_num == 2
-                and len(self.user.get_discardable_cards_index()) > 0
-            ):
-                self.sounds.play_effect("click")
-                self.user._yelled_uno = True
-
-        if self.user.is_turn() and self.user_card_num > 2:
-            self.user._yelled_uno = False
+        if self.uno_btn_hover is True and event.type == pygame.MOUSEBUTTONDOWN:
+            self.user.yell_uno()
 
         # 승리 조건 확인
 
@@ -621,7 +560,7 @@ class Game_UI(Scene):
                 self.user_card_first_pos[0] + i * self.card_size[0] * 4 / 5,
                 self.user_card_first_pos[1],
             ]
-            for i in range(0, self.user_card_num)
+            for i in range(0, self.user_card_num + 4)
         ]
 
         # 유저 카드 rect 렌더링
@@ -691,7 +630,11 @@ class Game_UI(Scene):
         self.discard_flag = True
         self.discard_card_img = self.cards.get_card_image(card)
 
-        self.discard_start = self.user_card_pos[index]
+        # user card num == 1 일때 start pos 지정
+        if self.user_card_num == 1:
+            self.discard_start = self.user_card_pos
+        else:
+            self.discard_start = self.user_card_pos[index]
         self.discard_end = self.discard_pile_pos
         self.discard_pos = self.discard_start  # initial pos
 
@@ -700,11 +643,27 @@ class Game_UI(Scene):
 
     def ani_draw(self):
         self.draw_flag = True
-        self.draw_card = self.cards.get_card_image(self.game._draw_pile[0])
-
+        self.last_draw_card = self.user.get_last_drawing_cards()
+        self.draw_flag_list = []
+        self.draw_card = []
+        self.draw_end = []
+        self.draw_rate_x = []
+        self.draw_rate_y = []
+        self.draw_pos = []
         self.draw_start = [self.draw_pile_pos[0], self.draw_pile_pos[1]]
-        self.draw_end = self.user_card_first_pos
-        self.draw_pos = self.draw_start  # initial pos
 
-        self.draw_rate_x = (self.draw_end[0] - self.draw_start[0]) / 10
-        self.draw_rate_y = (self.draw_end[1] - self.draw_start[1]) / 10
+        for i, index in enumerate(self.last_draw_card):
+            if i == 0:
+                self.draw_flag_list.append(True)
+            else:
+                self.draw_flag_list.append(False)
+            self.draw_card.append(self.cards.get_card_image(index[1]))
+            if self.user_card_num == 1:
+                self.draw_end.append(self.user_card_pos)
+            else:
+                self.draw_end.append(self.user_card_pos[index[0]])
+            self.draw_rate_x.append((self.draw_end[i][0] - self.draw_start[0]) / 10)
+            self.draw_rate_y.append((self.draw_end[i][1] - self.draw_start[1]) / 10)
+            self.draw_pos.append(self.draw_start)  # initial pos
+
+        self.draw_flag_list.append(False)
