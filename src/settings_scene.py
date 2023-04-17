@@ -353,6 +353,13 @@ class Settings_Scene(Scene):
                 if self.__button_rect[i].collidepoint(mouse_pos):
                     self.sounds.play_effect("click")
                     return self.__button_func(i)
+                
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            for i in range(len(self.__setting_rect)):
+                if self.__setting_rect[i].collidepoint(mouse_pos):
+                    self.sounds.play_effect("click")
+                    return self.__setting_func(i)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 return pygame.event.post(
@@ -408,6 +415,28 @@ class Settings_Scene(Scene):
             )
         ##################
         # 키 종류별 인덱스 추가 후 커스텀 함수 실행 및 결과 저장
+        pygame.event.post(pygame.event.Event(events.CHANGE_SETTINGS))
+        return None
+
+    def __setting_func(self, i):
+        if i == 3: 
+            left = self.__settings.key_change()
+            self.__settings.set_key_value("left", left)
+        elif i == 4:
+            right = self.__settings.key_change()
+            self.__settings.set_key_value("right", right)
+        elif i == 5:
+            up = self.__settings.key_change()
+            self.__settings.set_key_value("up", up)
+        elif i == 6:
+            down = self.__settings.key_change()
+            self.__settings.set_key_value("down", down)
+        elif i == 7:
+            select = self.__settings.key_change()
+            self.__settings.set_key_value("select", select)
+        elif i == 8:
+            cancle = self.__settings.key_change()
+            self.__settings.set_key_value("cancle", cancle)
 
         pygame.event.post(pygame.event.Event(events.CHANGE_SETTINGS))
         return None

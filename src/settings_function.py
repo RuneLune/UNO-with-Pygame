@@ -230,10 +230,20 @@ class Settings:
             monitor.height,
         )
 
-    def key_custom(self, target, event):
-        pygame.event.wait()
-        event = pygame.event.poll()
-        if event.type == pygame.TEXTINPUT:
-            initial_settings["key_settings"][target] = pygame.key.key_code(event.text)
-        elif event.type == pygame.KEYDOWN and key_default[target]:
-            key_saved[target] = key_default[target]
+    def set_key_value(self, key_name, value):
+        self.__settings["key_settings"][key_name] = value
+        self.save_settings()
+
+    def key_change(self):
+        temp = 0
+        while True:
+            event = pygame.event.wait()
+            if event.type == pygame.KEYDOWN:
+                temp = event.key
+                if (temp == self.__settings["key_settings"]["left"] or temp == self.__settings["key_settings"]["right"] or 
+                    temp == self.__settings["key_settings"]["up"] or temp == self.__settings["key_settings"]["down"] or
+                    temp == self.__settings["key_settings"]["select"] or temp == self.__settings["key_settings"]["cancel"]):
+                    pass
+                else:
+                    break
+        return temp
