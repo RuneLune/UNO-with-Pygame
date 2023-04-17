@@ -321,7 +321,7 @@ class Game_UI(Scene):
         )
 
         # 색 변경 버튼 그리기
-        if self.color_choice is True:
+        if self.color_choice is True and self.user.is_turn() is True:
             for i in range(0, 4):
                 pygame.draw.rect(
                     self.surface,
