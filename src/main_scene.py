@@ -1,33 +1,43 @@
 import pygame
+from overrides import overrides
+from typing import Final, List, Tuple
 
 import colors
 import events
+from settings_function import Settings
+from sound import SoundManager
+from scene import Scene
+from resource_manager import font_resource
 
 
-class Main_Scene:
-    MAX_Inst = 1
-    Inst_created = 0
+class Main_Scene(Scene):
+    MAX_Inst: Final[int] = 1
+    Inst_created: int = 0
 
+    @overrides
     def __new__(cls, *args, **kwargs):
         if cls.Inst_created >= cls.MAX_Inst:
             raise ValueError("Cannot create more Main Scene")
         cls.Inst_created += 1
-        return super().__new__(cls)
+        return super(Main_Scene, cls).__new__(cls)
 
-    def __init__(self, settings):
-        self.__menu_options = ["Start", "Settings", "Quit"]
-        self.__settings = settings
+    @overrides
+    def __init__(self, settings: Settings) -> None:
+        self.__menu_options: List[str] = ["Start", "Story", "Settings", "Quit"]
+        self.__settings: Settings = settings
+        self.sounds: SoundManager = SoundManager()
         self.refresh()
-        return super().__init__()
+        return super(Main_Scene, self).__init__()
 
-    def render(self):
-        screen_size = self.__settings.get_screen_resolution()
+    @overrides
+    def render(self) -> None:
+        screen_size: Tuple[int, int] = self.__settings.get_screen_resolution()
 
         self.__title_font = pygame.font.Font(
-            "res/font/MainFont.ttf", round(screen_size[1] / 3)
+            font_resource("MainFont.ttf"), round(screen_size[1] / 3)
         )
         self.__menu_font = pygame.font.Font(
-            "res/font/MainFont.ttf",
+            font_resource("MainFont.ttf"),
             round(screen_size[1] / (3.3 * len(self.__menu_options))),
         )
 
@@ -47,12 +57,13 @@ class Main_Scene:
             ].top = self.__screen.get_rect().centery + i * screen_size[1] / (
                 3 * len(self.__menu_options)
             )
-        self.__select_rect = pygame.Rect(
+        self.__selected_rect = pygame.Rect(
             0, 0, screen_size[0] / 3, screen_size[1] / (3 * len(self.__menu_options))
         )
         return None
 
-    def refresh(self):
+    @overrides
+    def refresh(self) -> None:
         pygame.display.set_caption("Start")
         flag = 0
         if self.__settings.get_settings().get("fullscreen", False) is True:
@@ -66,17 +77,19 @@ class Main_Scene:
         self.render()
         return None
 
-    def draw(self):
+    @overrides
+    def draw(self) -> None:
         self.__screen.fill(colors.white)
         self.__screen.blit(self.__title_text, self.__title_rect)
-        self.__select_rect.center = self.__menu_rect[self.__selected_menu].center
-        pygame.draw.rect(self.__screen, colors.black, self.__select_rect, 2)
+        self.__selected_rect.center = self.__menu_rect[self.__selected_menu].center
+        pygame.draw.rect(self.__screen, colors.black, self.__selected_rect, 2)
         for i in range(len(self.__menu_text)):
             self.__screen.blit(self.__menu_text[i], self.__menu_rect[i])
 
         return None
 
-    def handle(self, event):
+    @overrides
+    def handle(self, event: pygame.event.Event) -> None:
         if event.type == pygame.MOUSEMOTION:
             mouse_pos = pygame.mouse.get_pos()
             for i in range(len(self.__menu_options)):
@@ -87,6 +100,7 @@ class Main_Scene:
             mouse_pos = pygame.mouse.get_pos()
             for i in range(len(self.__menu_options)):
                 if self.__menu_rect[i].collidepoint(mouse_pos):
+                    self.sounds.play_effect("click")
                     return self.__menu_func(i)
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
@@ -98,16 +112,30 @@ class Main_Scene:
                 if self.__selected_menu >= len(self.__menu_options):
                     self.__selected_menu = 0
             elif event.key == pygame.K_RETURN:
+                self.sounds.play_effect("click")
                 return self.__menu_func(self.__selected_menu)
-
+            elif event.key == pygame.K_ESCAPE:
+                return pygame.event.post(pygame.event.Event(pygame.QUIT))
         return ("continue", None)
 
-    def __menu_func(self, i):
+    def __menu_func(self, i) -> None:
         if i == 0:  # Start
-            return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="gameui"))
+            self.__settings.previous_main()
+            return pygame.event.post(
+                pygame.event.Event(events.CHANGE_SCENE, target="gameui")
+            )
         elif i == 1:  # Settings
-            return pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="settings"))
-        elif i == 2:  # Exit
+            self.__settings.previous_main()
+            return pygame.event.post(
+                pygame.event.Event(events.CHANGE_SCENE, target="stage")
+            )
+        elif i == 2:  # Settings
+            self.__settings.previous_main()
+            return pygame.event.post(
+                pygame.event.Event(events.CHANGE_SCENE, target="settings")
+            )
+        elif i == 3:  # Exit
+            self.__settings.previous_none()
             return pygame.event.post(pygame.event.Event(pygame.QUIT))
         else:
             print(self.__menu_options[i] + " clicked")

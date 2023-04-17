@@ -3,6 +3,7 @@ import copy
 import json
 import os
 import ctypes  # Get Resolution of PC
+from typing import Tuple
 
 
 initial_settings = {
@@ -17,6 +18,7 @@ initial_settings = {
         "cancel": pygame.K_ESCAPE,
     },
     "colorblind_mode": False,
+    "previous_scene": None,
 }
 
 
@@ -25,6 +27,8 @@ class Settings:
         return super().__new__(cls)
 
     def __init__(self):
+        global initial_settings
+        self.__settings = initial_settings
         # Create settings.json if not exist
         if not os.path.isfile("settings.json"):
             self.reset_settings()
@@ -49,7 +53,9 @@ class Settings:
     # Settings reset method
     def reset_settings(self):
         global initial_settings
+        copy_previous = self.__settings.get("previous_scene", None)
         self.__settings = copy.deepcopy(initial_settings)
+        self.__settings.update(previous_scene=copy_previous)
 
     # Settings save method
     def save_settings(self):
@@ -83,7 +89,7 @@ class Settings:
         else:
             self.__fullscreen()
 
-    def get_screen_resolution(self):
+    def get_screen_resolution(self) -> Tuple[int, int]:
         return self.__screen_resolution
 
     def lower_screen_size(self):
@@ -108,6 +114,26 @@ class Settings:
         elif self.__settings.get("screen_size", None) == "FHD":
             self.__settings.update(screen_size="SVGA")
             self.__SVGA()
+        self.save_settings()
+
+    def previous_main(self):
+        self.__settings.update(previous_scene="main")
+        self.save_settings()
+
+    def previous_gamelobby(self):
+        self.__settings.update(previous_scene="gamelobby")
+        self.save_settings()
+
+    def previous_gameui(self):
+        self.__settings.update(previous_scene="gameui")
+        self.save_settings()
+
+    def previous_none(self):
+        self.__settings.update(previous_scene=None)
+        self.save_settings()
+
+    def previous_stageselect(self):
+        self.__settings.update(previous_scene="stageselect")
         self.save_settings()
 
     def change_fullscreen(self):
@@ -143,3 +169,11 @@ class Settings:
             ctypes.windll.user32.GetSystemMetrics(0),
             ctypes.windll.user32.GetSystemMetrics(1),
         )
+
+    def key_custom(self, target, event):
+        pygame.event.wait()
+        event = pygame.event.poll()
+        if event.type == pygame.TEXTINPUT:
+            initial_settings["key_settings"][target] = pygame.key.key_code(event.text)
+        elif event.type == pygame.KEYDOWN and key_default[target]:
+            key_saved[target] = key_default[target]
