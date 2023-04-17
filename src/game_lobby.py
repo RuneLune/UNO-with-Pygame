@@ -41,6 +41,8 @@ class Game_Lobby(Scene):
         self.sounds = sound_manager
         self.refresh()
 
+        self.next_empty = self.__game_settings.get("player_count", None)
+
         # load user and bot object
         # self.players = self.game.get_players()
         self.bots = []
@@ -272,10 +274,12 @@ class Game_Lobby(Scene):
             if self.user_name_editing:
                 if event.key == pygame.K_BACKSPACE and len(self.user_name) > 1:
                     self.__game_settings.update(user_name = self.user_name[:-1])
-                elif event.unicode.isprintable() and len(self.user_name) < 30:
+                elif event.unicode.isprintable() and len(self.user_name) < 20:
                     self.__game_settings.update(user_name = self.user_name + event.unicode)
                 elif event.key == pygame.K_RETURN:
                     self.user_name_editing = False
+                else:
+                    pass
                 self.save_game_settings()
             else:
                 if event.key == pygame.K_RETURN:
@@ -303,17 +307,19 @@ class Game_Lobby(Scene):
         # 봇 추가/삭제 버튼. 없을 때도 버튼이 활성화 되어 있음. 봇 1~5
         elif 1 < i < 7:
             # 이미 눌린 상태인 경우 다시 원래대로 돌리기
-            if self.pressed_bots.get((self.bots_space[i-2].x, self.bots_space[i-2].y), None):
+            if self.pressed_bots.get((self.bots_space[i-2].x, self.bots_space[i-2].y), None) and self.next_empty == (i - 1):
                 self.pressed_bots[(self.bots_space[i-2].x, self.bots_space[i-2].y)] = not self.pressed_bots.get((self.bots_space[i-2].x, self.bots_space[i-2].y), None)
                 self.__game_settings["player_count"] += 1
+                self.next_empty += 1
                 self.__game_settings["pressed_bots"][f"bot{i-1}"] = not self.__game_settings["pressed_bots"][f"bot{i-1}"]
                 self.save_game_settings()
             # 아닌 경우 empty 추가하기
-            else:
+            elif not self.pressed_bots.get((self.bots_space[i-2].x, self.bots_space[i-2].y), None) and self.next_empty == i:
                 # bot이 2명 이상일 경우
                 if self.__game_settings.get("player_count", None) > 2:
                     self.pressed_bots[(self.bots_space[i-2].x, self.bots_space[i-2].y)] = True
                     self.__game_settings["player_count"] -= 1
+                    self.next_empty -= 1
                     self.__game_settings["pressed_bots"][f"bot{i-1}"] = not self.__game_settings["pressed_bots"][f"bot{i-1}"]
                     self.save_game_settings()
                 # bot이 1명일 경우
