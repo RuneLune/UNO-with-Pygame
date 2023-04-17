@@ -69,6 +69,7 @@ class Game:
         self._game_status = False
         self._name = "single"
         self._turn_move = False
+        self._is_fliping = False
 
         return None
 
@@ -121,13 +122,14 @@ class Game:
 
     # Draw pile 맨 위에서 카드를 뒤집어 시작 카드를 정하는 메서드
     def _flip_top(self) -> None:
+        self._is_fliping = True
         self._discard_pile: List[int] = self._draw_pile[:1]
         self._draw_pile = self._draw_pile[1:]
         self._discarded_card: Dict[str, str | int] = cards.check_card(
             self._discard_pile[0]
         )
 
-        while self._discarded_card.get("type", None) == "draw4":
+        while self._discarded_card.get("color", None) == "wild":
             self._draw_pile += self._discard_pile
             self._discard_pile = self._draw_pile[:1]
             self._draw_pile = self._draw_pile[1:]
@@ -144,9 +146,10 @@ class Game:
         elif self._discarded_card.get("type", None) == "skip":
             self._current_turn = 2 % len(self._players)
             pass
-        elif self._discarded_card.get("color", None) == "wild":
-            self._players[1].choose_color()
-            pass
+        # elif self._discarded_card.get("color", None) == "wild":
+        #     self._players[1]._turn = True
+        #     self._players[1].choose_color()
+        #     pass
 
         self._game_status = True
 
@@ -333,6 +336,10 @@ class Game:
 
     # 플레이어가 턴 종료 시 호출하는 메서드
     def end_turn(self) -> None:
+        if self._is_fliping is True:
+            self._is_fliping = False
+            self._current_turn = (self._current_turn - 1) % len(self._players)
+            return None
         if self._game_status is False:
             return None
         if self._players[self._current_turn]._can_end_turn is False:
