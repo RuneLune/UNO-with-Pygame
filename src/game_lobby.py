@@ -22,7 +22,7 @@ initial_settings = {
         "bot4": True,
         "bot5": True
     },
-    "user_name": " User_Name (Press Enter)"
+    "user_name": " User_Name "
 }
 
 class Game_Lobby(Scene):
@@ -87,13 +87,13 @@ class Game_Lobby(Scene):
         self.surface = pygame.Surface(screen_size)
 
         # 폰트 생성
-        self.__game_font = pygame.font.Font(
-            font_resource("Travel.ttf"), round(screen_size[1] / 15)
-        )
-        self.__back_font = pygame.font.Font(
+        self.__small_font = pygame.font.Font(
             font_resource("MainFont.ttf"), round(screen_size[1] / 20)
         )
-        self.__start_font = pygame.font.Font(
+        self.__middle_font = pygame.font.Font(
+            font_resource("Mainfont.ttf"), round(screen_size[1] / 15)
+        )
+        self.__big_font = pygame.font.Font(
             font_resource("MainFont.ttf"), round(screen_size[1] / 10)
         )
 
@@ -118,14 +118,14 @@ class Game_Lobby(Scene):
         ]
 
         # 뒤로가기 버튼 추가
-        self.__button_text.append(self.__back_font.render("◀ Back", True, colors.white))
+        self.__button_text.append(self.__small_font.render("◀ Back", True, colors.white))
         self.__button_rect.append(self.__button_text[-1].get_rect())
         self.__button_rect[-1].right = self.__screen.get_rect().centerx / 3
         self.__button_rect[-1].bottom = self.__screen.get_rect().centery / 5
 
         # 스타트 버튼 추가 및 스타트 버튼 위에 start 출력
         self.__button_text.append(
-            self.__start_font.render("Start Game", True, colors.white)
+            self.__big_font.render("Start Game", True, colors.white)
         )
         self.__button_rect.append(
             pygame.Rect(
@@ -144,15 +144,9 @@ class Game_Lobby(Scene):
         self.__start_surface.blit(self.__button_text[-1], self.__start_text_rect)
 
         # 봇 이름 리스트 및 이름 공간 사각형 정의
-        self.bot_names = [
-            "Computer One",
-            "Computer Two",
-            "Computer Three",
-            "Computer Four",
-            "Computer Five",
-        ]
+        self.bot_names = [f"CPU {i + 1}" for i in range(5)]
         self.bot_names_text = [
-            self.__game_font.render(self.bot_names[i], True, colors.white)
+            self.__small_font.render(self.bot_names[i], True, colors.white)
             for i in range(len(self.bot_names))
         ]
         self.bot_names_rects = [
@@ -174,7 +168,7 @@ class Game_Lobby(Scene):
 
         # empty surface 위에 테두리 그리고 글자 쓰기
         pygame.draw.rect(self.empty_surface, colors.black, self.empty_surface.get_rect(), int(screen_size[1] * (1/100)))
-        self.empty_text = self.__game_font.render("empty", True, colors.light_gray)
+        self.empty_text = self.__small_font.render("empty", True, colors.light_gray)
         self.empty_text_rect = self.empty_text.get_rect(center = self.empty_surface.get_rect().center)
         self.empty_surface.blit(self.empty_text, self.empty_text_rect)
 
@@ -193,6 +187,13 @@ class Game_Lobby(Scene):
 
         # 사용자 이름 수정하고 있는지
         self.user_name_editing = False
+
+        # 사용자 이름 수정 방법 글씨
+        self.__enter_text = pygame.font.Font(
+            font_resource("MainFont.ttf"), round(screen_size[1] / 14)
+        ).render("Press Enter to edit the name.", True, colors.white)
+        self.__enter_rect = self.__enter_text.get_rect()
+        self.__enter_rect.center = (self.deck_space.centerx, self.deck_space.height * (1 / 3))
 
     @overrides
     def refresh(self):
@@ -231,13 +232,14 @@ class Game_Lobby(Scene):
                 pygame.draw.rect(self.__screen, colors.red, self.bots_space[i], width=2)
                 self.__screen.blit(self.bot_names_text[i], self.__button_rect[i+2])
 
-        # 스크린 위에 뒤로가기 버튼, 스타트 버튼 그리기
+        # 스크린 위에 뒤로가기 버튼, 스타트 버튼, 수정 방법 텍스트 그리기
         self.__screen.blit(self.__button_text[0], self.__button_rect[0])
         self.__screen.blit(self.__start_surface, self.__button_rect[1])
+        self.__screen.blit(self.__enter_text, self.__enter_rect)
 
         # 사용자 이름 렌더링
         self.user_name = self.__game_settings.get("user_name", None)
-        self.user_name_surface = self.__game_font.render(self.user_name, True, colors.white)
+        self.user_name_surface = self.__middle_font.render(self.user_name, True, colors.white)
         self.user_name_rect = self.user_name_surface.get_rect()
         self.user_name_rect.center = self.deck_space.center
 
@@ -295,7 +297,7 @@ class Game_Lobby(Scene):
                 pygame.event.Event(
                     events.CHANGE_SCENE,
                     target="gameui",
-                    args={"game": Game(self.__game_settings.get("player_count", None))},
+                    args={"game": Game(self.__game_settings.get("player_count", None), self.__game_settings.get("user_name", None))},
                 )
             )
         # 봇 추가/삭제 버튼. 없을 때도 버튼이 활성화 되어 있음. 봇 1~5
@@ -317,7 +319,5 @@ class Game_Lobby(Scene):
                 # bot이 1명일 경우
                 else:
                     pass
-            print(f"clicked {i}")
-            pass
 
         return None
