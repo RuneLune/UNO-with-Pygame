@@ -221,6 +221,49 @@ class Settings_Scene(Scene):
             self.__screen.get_rect().centery / 3 + 10 * screen_size[1] / 16
         )
 
+        # 소리 조절 버튼
+        self.__background_sound_text = self.__menu_font.render("BGM", True, colors.white)
+        self.__background_sound_text_rect = self.__background_sound_text.get_rect()
+        self.__background_sound_text_rect.centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__background_sound_text_rect.top = self.__screen.get_rect().centery/ 4
+
+        self.__button_text.append(self.__menu_font.render("▲", True, colors.white))
+        self.__button_rect.append(self.__button_text[-1].get_rect())
+        self.__button_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__button_rect[-1].top = self.__screen.get_rect().centery / 2.5
+
+        self.__sound_setting_text.append(self.__menu_font.render(str(settings.get("background_sound_volume", None)), True, colors.white))
+        self.__sound_setting_text_rect.append(self.__sound_setting_text[-1].get_rect())
+        self.__sound_setting_text_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__sound_setting_text_rect[-1].top = self.__screen.get_rect().centery / 1.9
+
+        self.__button_text.append(self.__menu_font.render("▼", True, colors.white))
+        self.__button_rect.append(self.__button_text[-1].get_rect())
+        self.__button_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__button_rect[-1].top = self.__screen.get_rect().centery / 1.5
+
+        self.__effect_sound_text = self.__menu_font.render("EFF", True, colors.white)
+        self.__effect_sound_text_rect = self.__effect_sound_text.get_rect()
+        self.__effect_sound_text_rect.centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__effect_sound_text_rect.top = self.__screen.get_rect().bottom / 2.3
+
+        self.__button_text.append(self.__menu_font.render("▲", True, colors.white))
+        self.__button_rect.append(self.__button_text[-1].get_rect())
+        self.__button_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__button_rect[-1].top = self.__screen.get_rect().bottom / 2
+
+        self.__sound_setting_text.append(self.__menu_font.render(str(settings.get("effect_sound_volume", None)), False, colors.white))
+        self.__sound_setting_text_rect.append(self.__sound_setting_text[-1].get_rect())
+        self.__sound_setting_text_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__sound_setting_text_rect[-1].top = self.__screen.get_rect().bottom / 1.7
+
+        self.__button_text.append(self.__menu_font.render("▼", True, colors.white))
+        self.__button_rect.append(self.__button_text[-1].get_rect())
+        self.__button_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__button_rect[-1].top = self.__screen.get_rect().bottom / 1.5
+
+
+
         # 메인 메뉴 돌아가기 버튼 추가
         if (
             settings.get("previous_scene", None) != "main"
@@ -252,6 +295,8 @@ class Settings_Scene(Scene):
         self.__setting_rect = []
         self.__button_text = []
         self.__button_rect = []
+        self.__sound_setting_text = []
+        self.__sound_setting_text_rect = []
         self.render()
         return None
 
@@ -270,6 +315,13 @@ class Settings_Scene(Scene):
         # 버튼 출력
         for i in range(len(self.__button_text)):
             self.__screen.blit(self.__button_text[i], self.__button_rect[i])
+
+        # 사운드 버튼 출력
+        self.__screen.blit(self.__background_sound_text, self.__background_sound_text_rect)
+        self.__screen.blit(self.__effect_sound_text, self.__effect_sound_text_rect)
+
+        for i in range(len(self.__sound_setting_text)):
+            self.__screen.blit(self.__sound_setting_text[i], self.__sound_setting_text_rect[i])
 
         return None
 
@@ -318,7 +370,15 @@ class Settings_Scene(Scene):
         elif i == 7:  # Default Settings
             self.__settings.reset_settings()
             self.__settings.set_screen_resolution()
-        elif i == 8:  # Back to Main menu
+        elif i == 8:
+            self.__settings.higher_background_sound_volume()
+        elif i == 9:
+            self.__settings.lower_background_sound_volume()
+        elif i == 10:
+            self.__settings.higher_effect_sound_volume()
+        elif i == 11:
+            self.__settings.lower_effect_sound_volume()
+        elif i == 12:  # Back to Main menu
             return pygame.event.post(
                 pygame.event.Event(events.CHANGE_SCENE, target="main")
             )

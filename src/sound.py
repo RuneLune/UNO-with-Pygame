@@ -28,6 +28,20 @@ class SoundManager:
 
         self.is_background_playing = False
 
+        self.refresh()
+        
+        return None
+        
+    
+    def refresh(self) -> None:
+        
+        self.background_sound_volume = self.settings.get_settings().get("background_sound_volume", 0.5)
+        self.effect_sound_volume = self.settings.get_settings().get("effect_sound_volume", 0.5)
+        self.set_background_sound_volume()
+        self.set_effect_sound_volume()
+
+        return None
+
     def play_background_sound(self):
         if not self.is_background_playing:  # 배경음악이 재생중이 아니면
             self.background_sound.play(-1)  # 배경음악 재생
@@ -37,13 +51,13 @@ class SoundManager:
         self.background_sound.stop()  # 배경음악 정지
         self.is_background_playing = False  # 배경음악 재생중이 아니라고 표시
 
-    def set_background_sound_volume(self, volume):
-        self.background_sound.set_volume(volume)  # 배경음악 음량 조절 0~1 사이값, 0은 음소거 1은 최대 볼륨
+    def set_background_sound_volume(self):
+        self.background_sound.set_volume(self.background_sound_volume)  # 배경음악 음량 조절 0~1 사이값, 0은 음소거 1은 최대 볼륨
 
     def play_effect(self, name):
         if name in self.effect:
             self.effect[name].play()  # 효과음 재생
 
-    def set_effect_volume(self, volume):
+    def set_effect_sound_volume(self):
         for effect_sound in self.effect.values():
-            effect_sound.set_volume(volume)  # 효과음 음량 조절 0~1 사이값, 0은 음소거 1은 최대 볼륨
+            effect_sound.set_volume(self.effect_sound_volume)  # 효과음 음량 조절 0~1 사이값, 0은 음소거 1은 최대 볼륨
