@@ -315,6 +315,7 @@ class Game_UI(Scene):
         # 드로우 권장 알림
         if (
             self.user.is_turn() is True
+            and self.color_choice is False
             and len(self.user.get_discardable_cards_index()) == 0
         ):
             self.screen.blit(self.draw_img_tran, self.draw_img_pos)
@@ -443,7 +444,7 @@ class Game_UI(Scene):
 
         # 턴 종료시 하이라이팅 비활성화
         if self.user.is_turn() is False:
-            self.user_card_hover = [False for i in range(self.user_card_num)]
+            self.user_card_hover = [False for i in range(len(self.user_card_rect))]
 
         # 진행방향 체크
         if self.game._reverse_direction is True:
@@ -493,6 +494,10 @@ class Game_UI(Scene):
         self.card_lift()
         self.tick()
 
+        # 턴 시간초과시
+        if event.type == events.TURN_TIMEOUT:
+            self.color_choice = False
+
         # 일시정지 화면전환 처리
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
@@ -514,7 +519,11 @@ class Game_UI(Scene):
                     break
 
         # 카드 뽑기 처리
-        if self.draw_pile_hover is True and event.type == pygame.MOUSEBUTTONDOWN:
+        if (
+            self.draw_pile_hover is True
+            and event.type == pygame.MOUSEBUTTONDOWN
+            and self.color_choice is False
+        ):
             self.sounds.play_effect("draw")
             self.user.draw_cards()
             self.ani_draw()
@@ -522,6 +531,7 @@ class Game_UI(Scene):
         # 색깔 고르기 처리
         if event.type == events.ASK_COLOR:
             self.color_choice = True
+            self.draw_flag = False
 
         for i, rect in enumerate(self.choice_rect):
             self.choice_rect_hover[i] = self.hover_check(rect)
