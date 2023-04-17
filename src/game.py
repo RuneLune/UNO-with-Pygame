@@ -37,6 +37,7 @@ class Game:
         self._deal_hands()
         self._flip_top()
         self.start_timer()
+        self._user.set_cards([cards.wild_normal] * 2)
         self._players[self._current_turn].turn_start()
 
         return super().__init__()
@@ -168,13 +169,17 @@ class Game:
         }
 
     # player에게 Draw pile에서 count만큼 카드를 주는 메서드
-    def draw_cards(self, count: int, player: Type[Player]) -> None:
+    def draw_cards(
+        self, count: int, player: Type[Player], check_force_draw: bool = True
+    ) -> None:
         # 강제 드로우 수 확인
-        if self._force_draw > 0:
-            if count != self._force_draw:
-                raise ValueError("must draw " + str(self._force_draw) + " cards")
+        if check_force_draw is True:
+            if self._force_draw > 0:
+                if count != self._force_draw:
+                    raise ValueError("must draw " + str(self._force_draw) + " cards")
+                pass
+            self._force_draw = 0
             pass
-        self._force_draw = 0
 
         # 남은 카드가 부족하면 패 섞고 드로우
         if count >= len(self._draw_pile):
@@ -301,14 +306,16 @@ class Game:
         return points
 
     # player가 우노를 외칠 수 있는 상황인지 확인하고 처리하는 메서드
-    def check_uno(self, player: Type[Player]) -> None:
-        if (
-            len(player.get_hand_cards()) == 2
-            and len(player.get_discardable_cards_index()) >= 1
-        ):
-            pass
-        else:
-            self.draw_cards(3, player)
+    def check_uno(self) -> None:
+        for player in self._players:
+            if (
+                not player.is_turn()
+                and len(player.get_hand_cards()) == 1
+                and not player.is_uno()
+            ):
+                self.draw_cards(2, player)
+                pass
+            continue
         return None
 
     # Game 객체 내의 플레이어 배열을 반환하는 메서드
@@ -401,14 +408,18 @@ class Game:
         return None
 
     def tick(self) -> None:
+        player = self._players[self._current_turn]
         if self._turn_move is True:
+            if len(player.get_hand_cards()) == 1 and not player.is_uno():
+                self.draw_cards(1, player)
+                pass
             self._turn_timer.start()
-            self._players[self._current_turn].turn_start()
+            player.turn_start()
             self._turn_move = False
             pass
         if self._turn_timer.get().total_seconds() > self._turn_seconds:
-            if self._players[self._current_turn].is_turn():
-                self._players[self._current_turn].draw_cards()
+            if player.is_turn():
+                player.draw_cards()
                 pass
             elif self._discarded_card.get("color") == "wild":
                 self.set_color(random.randrange(1, 5))
@@ -416,7 +427,7 @@ class Game:
             pygame.event.post(pygame.event.Event(events.TURN_TIMEOUT))
             pass
         else:
-            self._players[self._current_turn].tick()
+            player.tick()
             pass
         return None
 

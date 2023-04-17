@@ -61,7 +61,10 @@ class Bot(Player):
 
     # 자동으로 턴을 진행하는 메서드
     def _play(self) -> None:
-        if len(self._discardable_cards_index):
+        if self._discardable_cards_index:
+            if len(self._cards) == 2:
+                self.yell_uno()
+                pass
             self.discard_card(random.choice(self._discardable_cards_index))
             pass
         else:

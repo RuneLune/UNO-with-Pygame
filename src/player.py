@@ -35,6 +35,7 @@ class Player:
 
     # Draw pile로부터 count만큼 카드를 뽑아오는 메서드
     def draw_cards(self, count: int = -1) -> None:
+        self._yelled_uno = False
         if count == -1:
             if self._turn is False:
                 return None
@@ -83,7 +84,14 @@ class Player:
 
     # 플레이어가 우노를 외치는 메서드
     def yell_uno(self) -> None:
-        self._game.check_uno(self)
+        if (self._turn and len(self._cards) == 2) or (
+            len(self._cards) == 1 and self._yelled_uno is False
+        ):
+            self._yelled_uno = True
+            pass
+        else:
+            self._game.check_uno()
+            pass
         return None
 
     # 플레이어가 이번 턴에 우노를 외친 여부를 반환하는 메서드
@@ -97,6 +105,7 @@ class Player:
     # 플레이어의 턴 시작 시 호출되는 메서드
     def turn_start(self) -> None:
         self._turn = True
+        self._yelled_uno = False
         self._can_end_turn = False
         self._check_discardable_cards()
         return None
