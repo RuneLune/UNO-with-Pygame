@@ -274,13 +274,19 @@ class Game:
     def check_winner(self) -> None:
         if len(self._players[self._current_turn].get_hand_cards()) == 0:
             self._end_round()
+            pass
         return None
 
     # 라운드 종료 후 점수를 계산하는 메서드
     def _end_round(self) -> None:
         pygame.event.post(
             pygame.event.Event(
-                events.GAME_END, args={"stage": self._name, "status": "win"}
+                events.GAME_END,
+                args={
+                    "stage": self._name,
+                    "status": "win",
+                    "winner": self._players[self._current_turn].get_name(),
+                },
             )
         )
         self._game_status = False
