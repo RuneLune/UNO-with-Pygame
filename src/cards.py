@@ -3,6 +3,9 @@ from __future__ import annotations
 import math
 import pygame
 from typing import TYPE_CHECKING, Dict
+from os.path import join
+
+from resource_manager import image_resource
 
 if TYPE_CHECKING:
     from settings_function import Settings
@@ -28,10 +31,10 @@ class Cards:
     # 카드 이미지 렌더링 메서드
     def __render(self) -> None:
         if self.__settings.get_settings().get("colorblind_mode") is False:
-            image_directory = "res/img/default/"
+            image_directory = "default"
             pass
         else:
-            image_directory = "res/img/colorblind/"
+            image_directory = "colorblind"
             pass
 
         card_height = round(self.__settings.get_screen_resolution()[1] / 8)
@@ -48,7 +51,7 @@ class Cards:
 
         for card_code in card_code_list:
             card_image = pygame.image.load(
-                image_directory + str(card_code).zfill(3) + ".png"
+                image_resource(join(image_directory, str(card_code).zfill(3) + ".png"))
             )
             self.__card_images.update(
                 {

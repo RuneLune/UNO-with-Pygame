@@ -1,22 +1,29 @@
 import pygame
+from overrides import overrides
+from typing import Final, List
 
 import colors
 import events
-
+from settings_function import Settings
 from sound import SoundManager
+from scene import Scene
+from resource_manager import font_resource
 
-class Settings_Scene:
-    MAX_Inst = 1
-    Inst_created = 0
 
+class Settings_Scene(Scene):
+    MAX_Inst: Final[int] = 1
+    Inst_created: int = 0
+
+    @overrides
     def __new__(cls, *args, **kwargs):
         if cls.Inst_created >= cls.MAX_Inst:
             raise ValueError("Cannot create more Settings Scene")
         cls.Inst_created += 1
-        return super().__new__(cls)
+        return super(Settings_Scene, cls).__new__(cls)
 
-    def __init__(self, settings):
-        self.__menu_options = [
+    @overrides
+    def __init__(self, settings: Settings) -> None:
+        self.__menu_options: List[str] = [
             "Screen Size |",
             "Fullscreen |",
             "Key Settings |",
@@ -28,20 +35,21 @@ class Settings_Scene:
             "Cancel |",
             "Colorblind Mode |",
         ]
-        self.__settings = settings
+        self.__settings: Settings = settings
         self.sounds = SoundManager()
         self.refresh()
-        return super().__init__()
+        return super(Settings_Scene, self).__init__()
 
-    def render(self):
+    @overrides
+    def render(self) -> None:
         settings = self.__settings.get_settings()
         screen_size = self.__settings.get_screen_resolution()
 
         self.__title_font = pygame.font.Font(
-            "res/font/MainFont.ttf", round(screen_size[1] / 10)
+            font_resource("MainFont.ttf"), round(screen_size[1] / 10)
         )
         self.__menu_font = pygame.font.Font(
-            "res/font/MainFont.ttf", round(screen_size[1] / 20)
+            font_resource("MainFont.ttf"), round(screen_size[1] / 20)
         )
 
         self.__title_text = self.__title_font.render("Settings", True, colors.white)
@@ -229,7 +237,8 @@ class Settings_Scene:
 
         return None
 
-    def refresh(self):
+    @overrides
+    def refresh(self) -> None:
         pygame.display.set_caption("Settings")
         flag = 0
         if self.__settings.get_settings().get("fullscreen", False) is True:
@@ -246,7 +255,8 @@ class Settings_Scene:
         self.render()
         return None
 
-    def draw(self):
+    @overrides
+    def draw(self) -> None:
         self.__screen.fill(colors.black)
         # Setting Scene 제목 출력
         self.__screen.blit(self.__title_text, self.__title_rect)
@@ -263,12 +273,13 @@ class Settings_Scene:
 
         return None
 
-    def handle(self, event):
+    @overrides
+    def handle(self, event: pygame.event.Event) -> None:
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
             for i in range(len(self.__button_text)):
                 if self.__button_rect[i].collidepoint(mouse_pos):
-                    self.sounds.play_effect('click')
+                    self.sounds.play_effect("click")
                     return self.__button_func(i)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
@@ -282,13 +293,6 @@ class Settings_Scene:
                 )
 
         return "continue"
-
-    def __menu_func(self, i):
-        if i == 0:  # Back
-            return ("scene", "main")
-        else:
-            print(self.__menu_options[i] + " clicked")
-        return ("continue", None)
 
     def __button_func(self, i):
         if self.__settings.get_settings().get("fullscreen", False) is False:

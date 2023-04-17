@@ -2,8 +2,9 @@ import sys
 
 from app import App
 
+
 # Create App Object
-app = App()
+app: App = App()
 
 # Run App(loop forever)
 app.start()

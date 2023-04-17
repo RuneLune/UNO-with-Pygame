@@ -3,6 +3,7 @@ import copy
 import json
 import os
 import ctypes  # Get Resolution of PC
+from typing import Tuple
 
 
 initial_settings = {
@@ -26,6 +27,8 @@ class Settings:
         return super().__new__(cls)
 
     def __init__(self):
+        global initial_settings
+        self.__settings = initial_settings
         # Create settings.json if not exist
         if not os.path.isfile("settings.json"):
             self.reset_settings()
@@ -86,7 +89,7 @@ class Settings:
         else:
             self.__fullscreen()
 
-    def get_screen_resolution(self):
+    def get_screen_resolution(self) -> Tuple[int, int]:
         return self.__screen_resolution
 
     def lower_screen_size(self):

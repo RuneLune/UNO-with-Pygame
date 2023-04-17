@@ -55,10 +55,7 @@ class App:
                     pass
                 elif event.type == events.CHANGE_SCENE:
                     self.current_scene = event.target
-                    if event.target == "gameui":
-                        self.scenes[self.current_scene].refresh(5)
-                    else:
-                        self.scenes[self.current_scene].refresh()
+                    self.scenes[self.current_scene].refresh()
                     continue
                 else:
                     self.scenes[self.current_scene].handle(event)

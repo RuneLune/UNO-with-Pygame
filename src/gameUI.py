@@ -1,15 +1,19 @@
 import pygame
+from overrides import overrides
+
 import colors
 import events
-
 from cards import Cards
 from game import Game
 from settings_function import Settings
 from sound import SoundManager
+from resource_manager import image_resource, font_resource
+from scene import Scene
 
 
-class Game_UI:
-    def __init__(self, settings):
+class Game_UI(Scene):
+    @overrides
+    def __init__(self, settings: Settings):
         self.game = Game(6)  # 임시 플레이어 수
         self.cards = Cards(settings)
         self.sounds = SoundManager()
@@ -31,8 +35,8 @@ class Game_UI:
         self.card_size = self.cards.get_card_image(000).get_rect().size
         self.card_back_image = self.cards.get_card_image(000)
         self.card_color = (0, 150, 100)
-        self.turn_img = pygame.image.load("res/img/myturn.png")
-        self.draw_img = pygame.image.load("res/img/draw.png")
+        self.turn_img = pygame.image.load(image_resource("myturn.png"))
+        self.draw_img = pygame.image.load(image_resource("draw.png"))
         self.current_color_dict = {
             "wild": colors.black,
             "red": colors.red,
@@ -56,12 +60,13 @@ class Game_UI:
         # 타이머 스타트
         self.game.start_timer()
 
-        self.refresh(6)  # 임시 플레이어 수
+        self.refresh()
         self.render()
         self.card_render()
         self.time_start_pos = self.user_space_pos
         self.time_end_pos = [self.user_space_size[0] / 10, self.deck_space_size[1]]
 
+    @overrides
     def render(self):
         # each space's size,position definition
         self.deck_space_size = (
@@ -94,13 +99,13 @@ class Game_UI:
         ]
 
         # font for user, bot name
-        self.font = pygame.font.Font("res/font/MainFont.ttf", 25)
+        self.font = pygame.font.Font(font_resource("MainFont.ttf"), 25)
         self.user_name_text = self.font.render(self.user.get_name(), True, colors.white)
         self.bot_name_text = [
             self.font.render("cpu" + str(i + 1), True, colors.white)
             for i in range(len(self.bots))
         ]
-        self.font2 = pygame.font.Font("res/font/MainFont.ttf", 15)
+        self.font2 = pygame.font.Font(font_resource("MainFont.ttf"), 15)
 
         # bot card position render
         self.bot_card_first_pos = [
@@ -112,7 +117,7 @@ class Game_UI:
         ]
 
         # uno 버튼 렌더링
-        uno_img = pygame.image.load("res/img/uno.png")
+        uno_img = pygame.image.load(image_resource("uno.png"))
         self.uno_btn = pygame.transform.scale_by(uno_img, 0.1)
         self.uno_btn_gray = pygame.transform.grayscale(self.uno_btn)
         self.uno_btn_size = self.uno_btn.get_rect().size
@@ -174,7 +179,8 @@ class Game_UI:
             self.user_space_pos[1] - self.turn_img_size[1],
         ]
 
-    def refresh(self, player_count):
+    @overrides
+    def refresh(self):
         # if full screen
         flag = 0
         if self.settings.get_settings().get("fullscreen", False) is True:
@@ -193,6 +199,7 @@ class Game_UI:
         self.time_start_pos = self.user_space_pos
         self.time_end_pos = [self.user_space_size[0] / 10, self.deck_space_size[1]]
 
+    @overrides
     def draw(self):
         if self.pause is False:
             self.__draw_game()
@@ -443,6 +450,7 @@ class Game_UI:
         # 우승자 체크
         self.game.check_winner()
 
+    @overrides
     def handle(self, event):
         if self.pause is False:
             self.sounds.play_background_sound()

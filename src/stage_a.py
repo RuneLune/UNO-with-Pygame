@@ -1,6 +1,6 @@
 import random
 from overrides import overrides
-from typing import Final, Type
+from typing import Type
 
 import cards
 from game import Game
@@ -38,7 +38,6 @@ class Stage_A(Game):
 
     @overrides
     def _deal_hands(self, count: int = 7) -> None:
-        # chance: Final[int] = 0.6
         normal_cards: int = 0
         functional_cards: int = 0
         for card in self._draw_pile:
