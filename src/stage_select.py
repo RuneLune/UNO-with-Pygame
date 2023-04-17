@@ -8,6 +8,9 @@ from sound import SoundManager
 from scene import Scene
 from resource_manager import font_resource, image_resource
 from settings_function import Settings
+from stage_a import Stage_A
+from stage_b import Stage_B
+from stage_c import Stage_C
 
 
 class Stage(Scene):
@@ -285,7 +288,33 @@ class Stage(Scene):
 
     def __window_func(self, i, idx):
         if i == 0:
-            # 각 스테이지로 이동 idx 1부터 4까지 a~d 이동
-            pass
+            if idx == 1:
+                self.__is_confirm = False
+                return pygame.event.post(
+                pygame.event.Event(
+                    events.CHANGE_SCENE,
+                    target="gameui",
+                    args={"game": Stage_A()},
+                )
+            )
+            elif idx == 2:
+                self.__is_confirm = False
+                return pygame.event.post(
+                    pygame.event.Event(
+                        events.CHANGE_SCENE,
+                        target="gameui",
+                        args={"game": Stage_B()},
+                    )
+                )
+            elif idx == 3:
+                self.__is_confirm = False
+                return pygame.event.post(
+                    pygame.event.Event(
+                        events.CHANGE_SCENE,
+                        target="gameui",
+                        args={"game": Stage_C()},
+                    )
+                )
+            
         else:
             self.__is_confirm = False
