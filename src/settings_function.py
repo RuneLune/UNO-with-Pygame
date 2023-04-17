@@ -2,11 +2,11 @@ import pygame
 import copy
 import json
 import os
-import ctypes  # Get Resolution of PC
-from typing import Tuple
+from screeninfo import get_monitors
+from typing import Tuple, Dict
 
 
-initial_settings = {
+initial_settings: Dict[str, str | bool | Dict[str, int]] = {
     "screen_size": "SVGA",
     "full_screen": False,
     "key_settings": {
@@ -18,7 +18,7 @@ initial_settings = {
         "cancel": pygame.K_ESCAPE,
     },
     "colorblind_mode": False,
-    "previous_scene": None,
+    "previous_scene": "main",
 }
 
 
@@ -26,7 +26,7 @@ class Settings:
     def __new__(cls):
         return super().__new__(cls)
 
-    def __init__(self):
+    def __init__(self) -> None:
         global initial_settings
         self.__settings = initial_settings
         # Create settings.json if not exist
@@ -165,9 +165,10 @@ class Settings:
 
     # Fullscreen
     def __fullscreen(self):
+        monitor = get_monitors()[0]
         self.__screen_resolution = (
-            ctypes.windll.user32.GetSystemMetrics(0),
-            ctypes.windll.user32.GetSystemMetrics(1),
+            monitor.width,
+            monitor.height,
         )
 
     def key_custom(self, target, event):

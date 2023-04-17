@@ -122,7 +122,7 @@ class Main_Scene(Scene):
         if i == 0:  # Start
             self.__settings.previous_main()
             return pygame.event.post(
-                pygame.event.Event(events.CHANGE_SCENE, target="gameui")
+                pygame.event.Event(events.CHANGE_SCENE, target="gamelobby")
             )
         elif i == 1:  # Settings
             self.__settings.previous_main()
