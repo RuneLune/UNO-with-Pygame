@@ -37,7 +37,6 @@ class Game:
         self._deal_hands()
         self._flip_top()
         self.start_timer()
-        self._user.set_cards([cards.wild_normal] * 2)
         self._players[self._current_turn].turn_start()
 
         return super().__init__()
