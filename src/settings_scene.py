@@ -419,22 +419,76 @@ class Settings_Scene(Scene):
         return None
 
     def __setting_func(self, i):
-        if i == 3: 
+        if i == 3:
+            left_text = self.__menu_font.render(
+                        pygame.key.name(
+                            self.__settings.get_settings().get("key_settings", None).get("left", None)
+                        ),
+                        True,
+                        colors.red
+                    )
+            self.__screen.blit(left_text, self.__setting_rect[i])
+            pygame.display.update()
             left = self.__settings.key_change()
             self.__settings.set_key_value("left", left)
         elif i == 4:
+            right_text = self.__menu_font.render(
+                        pygame.key.name(
+                            self.__settings.get_settings().get("key_settings", None).get("right", None)
+                        ),
+                        True,
+                        colors.red
+                    )
+            self.__screen.blit(right_text, self.__setting_rect[i])
+            pygame.display.update()
             right = self.__settings.key_change()
             self.__settings.set_key_value("right", right)
         elif i == 5:
+            up_text = self.__menu_font.render(
+                        pygame.key.name(
+                            self.__settings.get_settings().get("key_settings", None).get("up", None)
+                        ),
+                        True,
+                        colors.red
+                    )
+            self.__screen.blit(up_text, self.__setting_rect[i])
+            pygame.display.update()
             up = self.__settings.key_change()
             self.__settings.set_key_value("up", up)
         elif i == 6:
+            down_text = self.__menu_font.render(
+                        pygame.key.name(
+                            self.__settings.get_settings().get("key_settings", None).get("down", None)
+                        ),
+                        True,
+                        colors.red
+                    )
+            self.__screen.blit(down_text, self.__setting_rect[i])
+            pygame.display.update()
             down = self.__settings.key_change()
             self.__settings.set_key_value("down", down)
         elif i == 7:
+            select_text = self.__menu_font.render(
+                        pygame.key.name(
+                            self.__settings.get_settings().get("key_settings", None).get("select", None)
+                        ),
+                        True,
+                        colors.red
+                    )
+            self.__screen.blit(select_text, self.__setting_rect[i])
+            pygame.display.update()
             select = self.__settings.key_change()
             self.__settings.set_key_value("select", select)
         elif i == 8:
+            cancel_text = self.__menu_font.render(
+                        pygame.key.name(
+                            self.__settings.get_settings().get("key_settings", None).get("cancel", None)
+                        ),
+                        True,
+                        colors.red
+                    )
+            self.__screen.blit(cancel_text, self.__setting_rect[i])
+            pygame.display.update()
             cancel = self.__settings.key_change()
             self.__settings.set_key_value("cancel", cancel)
 
