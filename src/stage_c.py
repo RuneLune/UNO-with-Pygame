@@ -18,6 +18,7 @@ class Stage_C(Game):
         self._make_draw_pile()
         self._deal_hands()
         self._flip_top()
+        self.start_timer()
 
         self._players[self._current_turn].turn_start()
 

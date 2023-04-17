@@ -18,6 +18,7 @@ class Stage_B(Game):
         drawing_cards_count: int = (len(self._draw_pile) - 1) // len(self._players)
         self._deal_hands(drawing_cards_count)
         self._flip_top()
+        self.start_timer()
 
         self._players[self._current_turn].turn_start()
 

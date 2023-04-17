@@ -36,9 +36,7 @@ class Game:
         self._make_draw_pile()
         self._deal_hands()
         self._flip_top()
-
-        self._round_timer.start()
-        self._turn_timer.start()
+        self.start_timer()
         self._players[self._current_turn].turn_start()
 
         return super().__init__()
