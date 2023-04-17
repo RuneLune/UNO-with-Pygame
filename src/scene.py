@@ -2,12 +2,16 @@ from abc import abstractmethod, ABC
 from typing import Dict
 import pygame
 
+from settings_function import Settings
+from sound import SoundManager
+
 
 class Scene(ABC):
     def __new__(cls, *args, **kwargs):
         return super(Scene, cls).__new__(cls)
 
-    def __init__(self) -> None:
+    @abstractmethod
+    def __init__(self, settings: Settings, sound_manager: SoundManager) -> None:
         return super(Scene, self).__init__()
 
     @abstractmethod

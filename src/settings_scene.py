@@ -22,7 +22,7 @@ class Settings_Scene(Scene):
         return super(Settings_Scene, cls).__new__(cls)
 
     @overrides
-    def __init__(self, settings: Settings) -> None:
+    def __init__(self, settings: Settings, sound_manager: SoundManager) -> None:
         self.__menu_options: List[str] = [
             "Screen Size |",
             "Fullscreen |",
@@ -36,9 +36,9 @@ class Settings_Scene(Scene):
             "Colorblind Mode |",
         ]
         self.__settings: Settings = settings
-        self.sounds = SoundManager()
+        self.sounds = sound_manager
         self.refresh()
-        return super(Settings_Scene, self).__init__()
+        return None
 
     @overrides
     def render(self) -> None:

@@ -11,6 +11,7 @@ from gameUI import Game_UI
 from game_lobby import Game_Lobby
 from scene import Scene
 from stage_select import Stage
+from sound import SoundManager
 
 
 class App:
@@ -29,17 +30,18 @@ class App:
         pygame.init()
 
         self.settings: Settings = Settings()
+        self.sound_manager: SoundManager = SoundManager(self.settings)
 
         self.fps: int = 30
         self.clock: pygame.time.Clock = pygame.time.Clock()
         self.current_scene: str = "main"
 
         self.scenes: Dict[str, Type[Scene]] = {
-            "main": Main_Scene(self.settings),
-            "gamelobby": Game_Lobby(self.settings),
-            "settings": Settings_Scene(self.settings),
-            "gameui": Game_UI(self.settings),
-            "stage": Stage(self.settings),
+            "main": Main_Scene(self.settings, self.sound_manager),
+            "gamelobby": Game_Lobby(self.settings, self.sound_manager),
+            "settings": Settings_Scene(self.settings, self.sound_manager),
+            "gameui": Game_UI(self.settings, self.sound_manager),
+            "stage": Stage(self.settings, self.sound_manager),
         }
 
         pygame.display.set_caption("Main Menu")
@@ -66,8 +68,10 @@ class App:
             self.scenes[self.current_scene].draw()
 
             # Update screen
-            pygame.display.update()
+            pygame.display.flip()
             self.clock.tick(self.fps)
+            continue
 
         # Quit pygame
         pygame.quit()
+        return None

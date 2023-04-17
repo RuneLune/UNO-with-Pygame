@@ -128,11 +128,13 @@ class Player:
             return None
         # print(self._cards)
         # print(self._discardable_cards_index)
+        if index < 0:
+            index = index % len(self._cards)
         if index not in self._discardable_cards_index:
             print("Selected non-discardable card. ")
             return None
         discarding_card = self._cards[index]
-        self._discardable_cards_index.remove(index % len(self._cards))
+        self._discardable_cards_index.remove(index)
         del self._cards[index]
         self._game.discard_card(discarding_card)
         self._can_end_turn = True

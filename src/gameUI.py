@@ -14,10 +14,10 @@ from scene import Scene
 
 class Game_UI(Scene):
     @overrides
-    def __init__(self, settings: Settings):
+    def __init__(self, settings: Settings, sound_manager: SoundManager):
         self.game: Type[Game] = Game(2)  # 임시 플레이어 수
         self.cards = Cards(settings)
-        self.sounds = SoundManager()
+        self.sounds = sound_manager
         self.settings = settings
         self.pause = False
         # load user and bot object

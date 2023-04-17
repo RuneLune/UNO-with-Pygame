@@ -1,10 +1,13 @@
 import pygame
 
 from resource_manager import sound_resource
+from settings_function import Settings
 
 
 class SoundManager:
-    def __init__(self):
+    def __init__(self, settings: Settings):
+        self.settings = settings
+
         pygame.mixer.init()  # pygame.mixer 초기화
         self.background_sound = pygame.mixer.Sound(sound_resource("background.mp3"))
         self.deal_effect_sound = pygame.mixer.Sound(sound_resource("deal1.mp3"))

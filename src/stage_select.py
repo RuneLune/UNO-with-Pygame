@@ -12,14 +12,14 @@ from settings_function import Settings
 
 class Stage(Scene):
     @overrides
-    def __init__(self, settings: Settings) -> None:
+    def __init__(self, settings: Settings, sound_manager: SoundManager) -> None:
         self.__stage_num = 4
         self.__settings = settings
         self.__is_confirm = False
-        self.sounds = SoundManager()
+        self.sounds = sound_manager
         self.refresh()
 
-        return super(Stage, self).__init__()
+        return None
 
     @overrides
     def render(self) -> None:

@@ -6,13 +6,16 @@ from overrides import overrides
 from resource_manager import font_resource
 from scene import Scene
 from game import Game
+from settings_function import Settings
+from sound import SoundManager
 
 
 class Game_Lobby(Scene):
     @overrides
-    def __init__(self, settings):
+    def __init__(self, settings: Settings, sound_manager: SoundManager):
         # self.game = Game(6) # 임시 플레이어 수
         self.__settings = settings
+        self.sounds = sound_manager
         self.refresh()
 
         self._players_count = 6
@@ -21,7 +24,7 @@ class Game_Lobby(Scene):
         # self.players = self.game.get_players()
         self.bots = []
 
-        return super().__init__()
+        return None
 
     @overrides
     def render(self):

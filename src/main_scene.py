@@ -22,12 +22,12 @@ class Main_Scene(Scene):
         return super(Main_Scene, cls).__new__(cls)
 
     @overrides
-    def __init__(self, settings: Settings) -> None:
+    def __init__(self, settings: Settings, sound_manager: SoundManager) -> None:
         self.__menu_options: List[str] = ["Start", "Story", "Settings", "Quit"]
         self.__settings: Settings = settings
-        self.sounds: SoundManager = SoundManager()
+        self.sounds: SoundManager = sound_manager
         self.refresh()
-        return super(Main_Scene, self).__init__()
+        return None
 
     @overrides
     def render(self) -> None:
