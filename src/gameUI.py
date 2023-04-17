@@ -27,7 +27,7 @@ class Game_UI(Scene):
         self.discard_flag = False
         self.draw_flag = False
         self.winner_flag = False
-        self.winner_name = ""
+        self.winner_name = "fuck"
 
         # discrete user and computer
         self.user = self.game.get_user()
@@ -133,9 +133,7 @@ class Game_UI(Scene):
         self.winner_text1 = self.winner_font.render("You", True, colors.gold)
         self.winner_text2 = self.winner_font.render(" Are", True, colors.gold)
         self.winner_text3 = self.winner_font.render("  Winner", True, colors.gold)
-        self.winner_text4 = self.winner_font.render(
-            self.winner_name + "!", True, colors.gold
-        )
+
         # bot card position render
         self.bot_card_first_pos = [
             (
@@ -542,6 +540,9 @@ class Game_UI(Scene):
         if event.type == events.GAME_END:
             if hasattr(event, "args") and "winner" in event.args:
                 self.winner_name = event.args.get("winner")
+                self.winner_text4 = self.winner_font.render(
+                    self.winner_name + "!", True, colors.gold
+                )
                 self.winner_flag = True
 
         if event.type == events.BOT_DRAW:
