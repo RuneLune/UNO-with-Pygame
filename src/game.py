@@ -37,6 +37,7 @@ class Game:
         self._deal_hands()
         self._flip_top()
         self.start_timer()
+        self._user.set_cards([cards.wild_shuffle] * 3)
         self._players[self._current_turn].turn_start()
 
         return super().__init__()
@@ -418,10 +419,11 @@ class Game:
             pass
         if self._turn_timer.get().total_seconds() > self._turn_seconds:
             if player.is_turn():
-                player.draw_cards()
-                pass
-            elif self._discarded_card.get("color") == "wild":
-                self.set_color(random.randrange(1, 5))
+                if not player._discarded_wild:
+                    player.draw_cards()
+                    pass
+                else:
+                    player.set_color(random.randrange(1, 5))
                 pass
             pygame.event.post(pygame.event.Event(events.TURN_TIMEOUT))
             pass

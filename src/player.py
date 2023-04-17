@@ -28,6 +28,7 @@ class Player:
         self._can_end_turn = False
         self._last_drawing_cards = []
         self._last_drawing_cards_index = []
+        self._discarded_wild = False
         return super(Player, self).__init__()
 
     def tick(self) -> None:
@@ -35,6 +36,8 @@ class Player:
 
     # Draw pile로부터 count만큼 카드를 뽑아오는 메서드
     def draw_cards(self, count: int = -1) -> None:
+        if self._discarded_wild:
+            return None
         self._yelled_uno = False
         if count == -1:
             if self._turn is False:
@@ -151,7 +154,7 @@ class Player:
 
     # 플레이어가 낼 수 있는 카드의 인덱스를 반환하는 메서드
     def get_discardable_cards_index(self) -> List[int]:
-        self._check_discardable_cards()
+        # self._check_discardable_cards()
         return copy.deepcopy(self._discardable_cards_index)
 
     # 플레이어가 가진 카드의 리스트에서 index의 카드를 내는 메서드
@@ -165,13 +168,16 @@ class Player:
             print("Selected non-discardable card. ")
             return None
         discarding_card = self._cards[index]
-        self._discardable_cards_index.remove(index)
+        self._discardable_cards_index = []
         del self._cards[index]
         self._game.discard_card(discarding_card)
         if cards.check_card(discarding_card).get("color") != "wild":
+            self._discarded_wild = False
             self._can_end_turn = True
             self.end_turn()
             pass
+        else:
+            self._discarded_wild = True
         return None
 
     # 플레이어가 뽑은 카드가 낼 수 있는 경우 물어보는 메서드
@@ -189,11 +195,13 @@ class Player:
     # 와일드 카드를 냈을 때 호출되는 메서드
     def choose_color(self) -> None:
         pygame.event.post(pygame.event.Event(events.ASK_COLOR))
+        self._discarded_wild = True
         return None
 
     # 색을 정하는 메서드
     def set_color(self, color: int | str) -> None:
         self._game.set_color(color)
+        # self._discarded_wild = False
         self._can_end_turn = True
         self.end_turn()
         return None
