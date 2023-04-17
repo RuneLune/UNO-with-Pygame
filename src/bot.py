@@ -40,6 +40,9 @@ class Bot(Player):
         if self._turn is True:
             if self._timer.get().total_seconds() > self._delay:
                 self._play()
+                self._timer.stop()
+                pass
+            pass
         return None
 
     @overrides
@@ -81,5 +84,5 @@ class Bot(Player):
     # choose_color 오버라이딩
     @overrides
     def choose_color(self) -> None:
-        self._game.set_color(random.randrange(1, 5))
+        self.set_color(random.randrange(1, 5))
         return None

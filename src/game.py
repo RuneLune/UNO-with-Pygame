@@ -389,7 +389,6 @@ class Game:
         else:
             raise ValueError("Invalid Color")
 
-        self.end_turn()
         return None
 
     def tick(self) -> None:

@@ -56,6 +56,7 @@ class Player:
     # (주의) 플레이어의 기존 카드를 없애고 카드를 cards_list로 설정하는 메서드
     def set_cards(self, cards_list: Iterable[int]) -> None:
         self._cards = list(cards_list)
+        self._cards.sort()
         return None
 
     # 플레이어의 이름을 반환하는 메서드
@@ -126,8 +127,6 @@ class Player:
         if self._turn is False:
             print("Not user's turn")
             return None
-        # print(self._cards)
-        # print(self._discardable_cards_index)
         if index < 0:
             index = index % len(self._cards)
         if index not in self._discardable_cards_index:
@@ -137,8 +136,10 @@ class Player:
         self._discardable_cards_index.remove(index)
         del self._cards[index]
         self._game.discard_card(discarding_card)
-        self._can_end_turn = True
-        self.end_turn()
+        if cards.check_card(discarding_card).get("color") != "wild":
+            self._can_end_turn = True
+            self.end_turn()
+            pass
         return None
 
     # 플레이어가 뽑은 카드가 낼 수 있는 경우 물어보는 메서드
@@ -161,6 +162,8 @@ class Player:
     # 색을 정하는 메서드
     def set_color(self, color: int | str) -> None:
         self._game.set_color(color)
+        self._can_end_turn = True
+        self.end_turn()
         return None
 
     def pause_timer(self) -> None:

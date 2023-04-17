@@ -62,8 +62,13 @@ class App:
                         pass
                     self.scenes[self.current_scene].refresh()
                     continue
+                elif event.type == events.CHANGE_SETTINGS:
+                    # self.sound_manager.refresh()
+                    self.scenes[self.current_scene].refresh()
+                    pass
                 else:
                     self.scenes[self.current_scene].handle(event)
+                    pass
 
             self.scenes[self.current_scene].draw()
 

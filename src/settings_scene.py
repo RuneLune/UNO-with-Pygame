@@ -325,5 +325,5 @@ class Settings_Scene(Scene):
         ##################
         # 키 종류별 인덱스 추가 후 커스텀 함수 실행 및 결과 저장
 
-        self.refresh()
+        pygame.event.post(pygame.event.Event(events.CHANGE_SETTINGS))
         return None
