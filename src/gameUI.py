@@ -332,6 +332,20 @@ class Game_UI(Scene):
                 color=self.current_color_dict[self.current_color],
                 points=[self.p1, self.p2, self.p3],
             )
+            pygame.draw.line(
+                self.surface,
+                color=(0, 150, 100),
+                start_pos=self.p1,
+                end_pos=self.p2,
+                width=5,
+            )
+            pygame.draw.line(
+                self.surface,
+                color=(0, 150, 100),
+                start_pos=self.p2,
+                end_pos=self.p3,
+                width=5,
+            )
 
         # 턴 남은 시간 그리기
         time = self.game.remain_turn_time()
@@ -511,6 +525,7 @@ class Game_UI(Scene):
             for index in index_list:
                 if self.user_card_hover[index] and event.type == pygame.MOUSEBUTTONDOWN:
                     self.sounds.play_effect("discard")
+                    self.ani_discard(index, self.user_card_list[index])
                     self.user.discard_card(index)
                     break
 
@@ -547,10 +562,6 @@ class Game_UI(Scene):
 
         if self.user.is_turn() and self.user_card_num > 2:
             self.user._yelled_uno = False
-        
-        if event.type == events.TURN_TIMEOUT:
-            self.sounds.play_effect('timeout')
-            pass
 
         # 승리 조건 확인
 
@@ -642,5 +653,6 @@ class Game_UI(Scene):
         else:
             return colors.white
 
-    def ani_discard(self, card):
-        pass
+    def ani_discard(self, index, card):
+        start_pos = self.user_card_pos[index]
+        end_pos = self.discard_pile_pos
