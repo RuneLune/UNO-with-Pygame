@@ -524,6 +524,10 @@ class Game_UI(Scene):
 
         if self.user.is_turn() and self.user_card_num > 2:
             self.user._yelled_uno = False
+        
+        if event.type == events.TURN_TIMEOUT:
+            self.sounds.play_effect('timeout')
+            pass
 
         # 승리 조건 확인
 
