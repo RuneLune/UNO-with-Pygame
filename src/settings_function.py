@@ -6,7 +6,7 @@ from screeninfo import get_monitors
 from typing import Tuple, Dict
 
 
-initial_settings: Dict[str, str | bool | Dict[str, int]] = {
+initial_settings: Dict[str, str | bool | Dict[str, int] | float] = {
     "screen_size": "SVGA",
     "full_screen": False,
     "key_settings": {
@@ -19,6 +19,8 @@ initial_settings: Dict[str, str | bool | Dict[str, int]] = {
     },
     "colorblind_mode": False,
     "previous_scene": "main",
+    "background_sound_volume": 1,
+    "effect_sound_volume": 0.5,
 }
 
 
@@ -115,6 +117,44 @@ class Settings:
             self.__settings.update(screen_size="SVGA")
             self.__SVGA()
         self.save_settings()
+
+    def higher_background_sound_volume(self):
+        if self.__settings.get("background_sound_volume", None) == 0:
+            self.__settings.update(background_sound_volume=0.5)
+        elif self.__settings.get("background_sound_volume", None) == 0.5:
+            self.__settings.update(background_sound_volume=1)
+        elif self.__settings.get("background_sound_volume", None) == 1:
+            self.__settings.update(background_sound_volume=0)
+        self.save_settings()
+
+    def lower_background_sound_volume(self):
+        if self.__settings.get("background_sound_volume", None) == 0:
+            self.__settings.update(background_sound_volume=1)
+        elif self.__settings.get("background_sound_volume", None) == 0.5:
+            self.__settings.update(background_sound_volume=0)
+        elif self.__settings.get("background_sound_volume", None) == 1:
+            self.__settings.update(background_sound_volume=0.5)
+        self.save_settings()
+
+    def higher_effect_sound_volume(self):
+        if self.__settings.get("effect_sound_volume", None) == 0:
+            self.__settings.update(effect_sound_volume=0.5)
+        elif self.__settings.get("effect_sound_volume", None) == 0.5:
+            self.__settings.update(effect_sound_volume=1)
+        elif self.__settings.get("effect_sound_volume", None) == 1:
+            self.__settings.update(effect_sound_volume=0)
+        self.save_settings()
+
+    def lower_effect_sound_volume(self):
+        if self.__settings.get("effect_sound_volume", None) == 0:
+            self.__settings.update(effect_sound_volume=1)
+        elif self.__settings.get("effect_sound_volume", None) == 0.5:
+            self.__settings.update(effect_sound_volume=0)
+        elif self.__settings.get("effect_sound_volume", None) == 1:
+            self.__settings.update(effect_sound_volume=0.5)
+        self.save_settings()
+        
+
 
     def previous_main(self):
         self.__settings.update(previous_scene="main")

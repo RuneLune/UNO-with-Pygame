@@ -67,7 +67,7 @@ class App:
                     self.scenes[self.current_scene].refresh()
                     continue
                 elif event.type == events.CHANGE_SETTINGS:
-                    # self.sound_manager.refresh()
+                    self.sound_manager.refresh()
                     self.scenes[self.current_scene].refresh()
                     pass
                 else:
