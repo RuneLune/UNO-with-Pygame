@@ -243,7 +243,7 @@ class Game_Lobby(Scene):
         self.user_name = self.__game_settings.get("user_name", None)
         self.user_name_surface = self.__middle_font.render(self.user_name, True, colors.white)
         self.user_name_rect = self.user_name_surface.get_rect()
-        self.user_name_rect.center = self.deck_space.center
+        self.user_name_rect.center = (self.deck_space.centerx, self.deck_space.bottom * (2 / 3))
 
         # 유저 이름 화면에 출력
         self.__screen.blit(self.user_name_surface, self.user_name_rect)
