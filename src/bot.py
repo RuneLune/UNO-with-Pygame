@@ -47,12 +47,22 @@ class Bot(Player):
 
     @overrides
     def pause_timer(self) -> None:
-        self._timer.pause()
+        try:
+            self._timer.pause()
+            pass
+        except ValueError:
+            print(f"{self._name}._timer: timer not started or already paused. ")
+            pass
         return None
 
     @overrides
     def resume_timer(self) -> None:
-        self._timer.resume()
+        try:
+            self._timer.resume()
+            pass
+        except ValueError:
+            print(f"{self._name}._timer: timer not started or not paused. ")
+            pass
         return None
 
     # 자동으로 턴을 진행하는 메서드

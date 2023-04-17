@@ -359,8 +359,18 @@ class Game:
 
     # Game 객체 내의 모든 타이머를 일시정지하는 메서드
     def pause_timer(self) -> None:
-        self._turn_timer.pause()
-        self._round_timer.pause()
+        try:
+            self._turn_timer.pause()
+            pass
+        except ValueError:
+            print("game._turn_timer: timer not started or already paused. ")
+            pass
+        try:
+            self._round_timer.pause()
+            pass
+        except ValueError:
+            print("game._round_timer: timer not started or not paused. ")
+            pass
         for player in self._players:
             player.pause_timer()
         return None
