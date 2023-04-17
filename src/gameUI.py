@@ -24,7 +24,8 @@ class Game_UI(Scene):
         self.players = self.game.get_players()
         self.bots = []
         self.user_card_pos = []
-        self.move_flag = False
+        self.discard_flag = False
+        self.draw_flag = False
 
         # discrete user and computer
         self.user = self.game.get_user()
@@ -249,9 +250,14 @@ class Game_UI(Scene):
                 self.surface, self.turn_color(self.bots[i]), self.bots_space[i], width=2
             )
             self.screen.blit(self.bot_name_text[i], self.bots_space_pos[i])
+
         # 카드 내기 애니메이션
-        if self.move_flag is True:
-            self.screen.blit(self.move_card, self.move_pos)
+        if self.discard_flag is True:
+            self.screen.blit(self.discard_card_img, self.discard_pos)
+
+        # 카드 뽑기 애니메이션
+        if self.draw_flag is True:
+            self.screen.blit(self.draw_card, self.draw_pos)
 
         # 플레이어의 카드 그리기
         if self.user_card_num == 1:
@@ -321,7 +327,7 @@ class Game_UI(Scene):
         )
 
         # 색 변경 버튼 그리기
-        if self.color_choice is True:
+        if self.color_choice is True and self.user.is_turn() is True:
             for i in range(0, 4):
                 pygame.draw.rect(
                     self.surface,
@@ -459,15 +465,26 @@ class Game_UI(Scene):
                 self.user_card_hover[i] = self.hover_check(rect)
 
         # 카드 내기 애니메이션 위치 계산
-        if self.move_flag is True:
+        if self.discard_flag is True:
             if (
-                self.move_pos[0] < self.move_end[0]
-                and self.move_pos[1] > self.move_end[1]
+                self.discard_pos[0] < self.discard_end[0]
+                and self.discard_pos[1] > self.discard_end[1]
             ):
-                self.move_pos[0] += self.move_rate_x
-                self.move_pos[1] += self.move_rate_y
+                self.discard_pos[0] += self.discard_rate_x
+                self.discard_pos[1] += self.discard_rate_y
             else:
-                self.move_flag = False
+                self.discard_flag = False
+
+        # 카드 뽑기 애니메이션 위치 계산
+        if self.draw_flag is True:
+            if (
+                self.draw_pos[0] > self.draw_end[0]
+                and self.draw_pos[1] < self.draw_end[1]
+            ):
+                self.draw_pos[0] += self.draw_rate_x
+                self.draw_pos[1] += self.draw_rate_y
+            else:
+                self.draw_flag = False
 
         # 현재 컬러 확인
         self.discard_card = self.game.get_discard_info().get("discarded_card")
@@ -549,6 +566,7 @@ class Game_UI(Scene):
         if self.draw_pile_hover is True and event.type == pygame.MOUSEBUTTONDOWN:
             self.sounds.play_effect("draw")
             self.user.draw_cards()
+            self.ani_draw()
 
         # 색깔 고르기 처리
         if event.type == events.ASK_COLOR:
@@ -670,12 +688,23 @@ class Game_UI(Scene):
             return colors.white
 
     def ani_discard(self, index, card):
-        self.move_flag = True
-        self.move_card = self.cards.get_card_image(card)
+        self.discard_flag = True
+        self.discard_card_img = self.cards.get_card_image(card)
 
-        self.move_start = self.user_card_pos[index]
-        self.move_end = self.discard_pile_pos
-        self.move_pos = self.move_start  # initial pos
+        self.discard_start = self.user_card_pos[index]
+        self.discard_end = self.discard_pile_pos
+        self.discard_pos = self.discard_start  # initial pos
 
-        self.move_rate_x = (self.move_end[0] - self.move_start[0]) / 10
-        self.move_rate_y = (self.move_end[1] - self.move_start[1]) / 10
+        self.discard_rate_x = (self.discard_end[0] - self.discard_start[0]) / 10
+        self.discard_rate_y = (self.discard_end[1] - self.discard_start[1]) / 10
+
+    def ani_draw(self):
+        self.draw_flag = True
+        self.draw_card = self.cards.get_card_image(self.game._draw_pile[0])
+
+        self.draw_start = [self.draw_pile_pos[0], self.draw_pile_pos[1]]
+        self.draw_end = self.user_card_first_pos
+        self.draw_pos = self.draw_start  # initial pos
+
+        self.draw_rate_x = (self.draw_end[0] - self.draw_start[0]) / 10
+        self.draw_rate_y = (self.draw_end[1] - self.draw_start[1]) / 10
