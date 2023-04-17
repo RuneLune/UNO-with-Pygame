@@ -125,6 +125,8 @@ class Game_UI(Scene):
             self.font.render(bot.get_name(), True, colors.white) for bot in self.bots
         ]
         self.font2 = pygame.font.Font(font_resource("MainFont.ttf"), 15)
+
+        # 우승자 이름 렌더링
         self.winner_font = pygame.font.Font(
             font_resource("MainFont.ttf"), int(self.screen_size[1] / 8)
         )
@@ -240,7 +242,7 @@ class Game_UI(Scene):
 
     def __draw_game(self):
         self.game.tick()
-        self.tick()
+        # self.tick()
         self.screen.fill(colors.black)
         self.screen.blit(self.surface, (0, 0))
 
@@ -405,6 +407,8 @@ class Game_UI(Scene):
                 (5 * self.screen_size[0] / 8, self.screen_size[1] / 4),
             )
 
+        self.tick()
+
     def get_pause(self):
         return self.pause
 
@@ -540,6 +544,12 @@ class Game_UI(Scene):
                 self.winner_name = event.args.get("winner")
                 self.winner_flag = True
 
+        if event.type == events.BOT_DRAW:
+            pass
+
+        if event.type == events.BOT_DISCARD:
+            pass
+
         # 카드 내기 처리
         index_list = self.user.get_discardable_cards_index()
         if index_list:
@@ -548,7 +558,7 @@ class Game_UI(Scene):
                     self.sounds.play_effect("discard")
                     self.ani_discard(index, self.user_card_list[index])
                     self.user.discard_card(index)
-                    break
+                    self.user_card_hover[index] = False
 
         # 카드 뽑기 처리
         if (
@@ -656,7 +666,6 @@ class Game_UI(Scene):
         elif self.user.is_turn() is True:
             for index in self.user.get_discardable_cards_index():
                 self.user_card_pos[index][1] -= 10
-                self.user_card_rect[index][1] -= 10
         else:
             self.user_card_pos[:][1] = self.user_card_first_pos[1]
 
