@@ -118,8 +118,7 @@ class Game_UI(Scene):
         self.font = pygame.font.Font(font_resource("MainFont.ttf"), 25)
         self.user_name_text = self.font.render(self.user.get_name(), True, colors.white)
         self.bot_name_text = [
-            self.font.render(bot.get_name(), True, colors.white)
-            for bot in self.bots
+            self.font.render(bot.get_name(), True, colors.white) for bot in self.bots
         ]
         # self.bot_name_text = [
         #     self.font.render("cpu" + str(i + 1), True, colors.white)
@@ -238,11 +237,15 @@ class Game_UI(Scene):
 
         # draw spaces and text
         pygame.draw.rect(self.surface, (0, 150, 100), rect=self.deck_space)
-        pygame.draw.rect(self.surface, colors.white, rect=self.user_space, width=2)
+        pygame.draw.rect(
+            self.surface, self.turn_color(self.user), rect=self.user_space, width=2
+        )
         self.screen.blit(self.user_name_text, self.user_space_pos)
 
         for i in range(len(self.bots)):
-            pygame.draw.rect(self.surface, colors.white, self.bots_space[i], width=2)
+            pygame.draw.rect(
+                self.surface, self.turn_color(self.bots[i]), self.bots_space[i], width=2
+            )
             self.screen.blit(self.bot_name_text[i], self.bots_space_pos[i])
 
         # 플레이어의 카드 그리기
@@ -623,9 +626,21 @@ class Game_UI(Scene):
 
     # 낼 수 있는 카드 위치 변경 함수
     def card_lift(self):
-        if self.user.is_turn():
+        if self.user.is_turn() is True and self.user_card_num <= 1:
+            pass
+        elif self.user.is_turn() is True:
             for index in self.user.get_discardable_cards_index():
                 self.user_card_pos[index][1] -= 10
                 self.user_card_rect[index][1] -= 10
         else:
             self.user_card_pos[:][1] = self.user_card_first_pos[1]
+
+    # 해당 턴이면 빨강색 반환
+    def turn_color(self, player):
+        if player.is_turn() is True:
+            return colors.red
+        else:
+            return colors.white
+
+    def ani_discard(self, card):
+        pass
