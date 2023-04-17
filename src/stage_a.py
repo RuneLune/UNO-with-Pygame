@@ -32,7 +32,7 @@ class Stage_A(Game):
     @overrides
     def _add_players(self, username: str = "Player", players_count: int = 4) -> None:
         self._user: Player = Player(self, username)
-        self._computer: Bot = Bot(self, "Computer 1")
+        self._computer: Bot = Bot(self, "CPU 1")
         self._players.append(self._user)
         self._players.append(self._computer)
         random.shuffle(self._players)

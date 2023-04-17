@@ -40,7 +40,6 @@ class Bot(Player):
         if self._turn is True:
             if self._timer.get().total_seconds() > self._delay:
                 self._play()
-                self._timer.stop()
                 pass
             pass
         return None
@@ -92,4 +91,12 @@ class Bot(Player):
     @overrides
     def choose_color(self) -> None:
         self.set_color(random.randrange(1, 5))
+        return None
+
+    @overrides
+    def set_color(self, color: int | str) -> None:
+        self._game.set_color(color)
+        self._discarded_wild = False
+        self._can_end_turn = True
+        self.end_turn()
         return None

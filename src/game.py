@@ -414,7 +414,7 @@ class Game:
         player = self._players[self._current_turn]
         if self._turn_move is True:
             if len(player.get_hand_cards()) == 1 and not player.is_uno():
-                self.draw_cards(1, player)
+                self.draw_cards(1, player, False)
                 pass
             self._turn_timer.start()
             player.turn_start()
