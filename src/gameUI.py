@@ -209,10 +209,11 @@ class Game_UI(Scene):
         self.screen_size = self.settings.get_screen_resolution()
         self.screen = pygame.display.set_mode(self.screen_size)
         self.surface = pygame.Surface(self.screen_size)
-        self.card_back_image = self.cards.get_card_image(000)
 
         self.players = self.game.get_players()
         self.cards.refresh()
+        self.card_size = self.cards.get_card_image(000).get_rect().size
+        self.card_back_image = self.cards.get_card_image(000)
         self.render()
         self.card_render()
         self.time_start_pos = self.user_space_pos
@@ -654,5 +655,9 @@ class Game_UI(Scene):
             return colors.white
 
     def ani_discard(self, index, card):
-        start_pos = self.user_card_pos[index]
-        end_pos = self.discard_pile_pos
+        self.move_pos = [self.user_card_pos[index], self.discard_pile_pos]
+        self.move_rate = [
+            self.move_pos[1][0] - self.move_pos[0][0],
+            self.move_pos[1][1] - self.move_pos[0][1],
+        ]
+        self.move_card = self.cards.get_card_image[card]
