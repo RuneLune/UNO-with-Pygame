@@ -37,6 +37,8 @@ class Game:
         self._deal_hands()
         self._flip_top()
 
+        self._round_timer.start()
+        self._turn_timer.start()
         self._players[self._current_turn].turn_start()
 
         return super().__init__()
@@ -66,6 +68,7 @@ class Game:
         # self._player_drawed: bool = False
 
         # self._last_discarded_card = 0
+        self._game_status = False
 
         return None
 
@@ -74,10 +77,22 @@ class Game:
         self._user: Player = Player(self, username)
         self._players.append(self._user)
         for i in range(1, players_count):
-            self._players.append(Bot(self, "Computer " + str(i)))
+            self._players.append(Bot(self, "CPU " + str(i)))
             continue
         random.shuffle(self._players)
         return None
+
+    def get_user(self) -> Player:
+        return self._user
+
+    def get_bots(self) -> List[Bot]:
+        bots = []
+        index = self._players.index(self._user) + 1
+        for i in range(len(self._players) - 1):
+            bots.append(self._players[index % len(self._players)])
+            index += 1
+            continue
+        return bots
 
     # Draw pile에 카드를 추가하고 섞는 메서드
     def _make_draw_pile(self) -> None:

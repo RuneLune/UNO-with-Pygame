@@ -5,6 +5,7 @@ from overrides import overrides
 
 from resource_manager import font_resource
 from scene import Scene
+from game import Game
 
 
 class Game_Lobby(Scene):
@@ -13,6 +14,8 @@ class Game_Lobby(Scene):
         # self.game = Game(6) # 임시 플레이어 수
         self.__settings = settings
         self.refresh()
+
+        self._players_count = 6
 
         # load user and bot object
         # self.players = self.game.get_players()
@@ -205,7 +208,11 @@ class Game_Lobby(Scene):
         elif i == 1:
             self.__settings.previous_gamelobby()
             return pygame.event.post(
-                pygame.event.Event(events.CHANGE_SCENE, target="gameui")
+                pygame.event.Event(
+                    events.CHANGE_SCENE,
+                    target="gameui",
+                    args={"game": Game(self._players_count)},
+                )
             )
         # 봇 추가/삭제 버튼. 없을 때도 버튼이 활성화 되어 있음. 봇 1~5
         elif 1 < i < 7:

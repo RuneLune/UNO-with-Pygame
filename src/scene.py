@@ -1,4 +1,5 @@
 from abc import abstractmethod, ABC
+from typing import Dict
 import pygame
 
 
@@ -12,7 +13,7 @@ class Scene(ABC):
     @abstractmethod
     def refresh(self) -> None:
         raise NotImplementedError("Must override refresh() method")
-    
+
     @abstractmethod
     def render(self) -> None:
         raise NotImplementedError("Must override render() method")
@@ -24,3 +25,7 @@ class Scene(ABC):
     @abstractmethod
     def draw(self) -> None:
         raise NotImplementedError("Must override draw() method")
+
+    # @abstractmethod
+    # def get_args(self, args: Dict[any, any]) -> None:
+    #     raise NotImplementedError("Must override draw() method")

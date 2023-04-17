@@ -1,5 +1,6 @@
 import pygame
 from overrides import overrides
+from typing import Dict, Type
 
 import colors
 import events
@@ -14,7 +15,7 @@ from scene import Scene
 class Game_UI(Scene):
     @overrides
     def __init__(self, settings: Settings):
-        self.game = Game(6)  # 임시 플레이어 수
+        self.game: Type[Game] = Game(2)  # 임시 플레이어 수
         self.cards = Cards(settings)
         self.sounds = SoundManager()
         self.settings = settings
@@ -25,11 +26,13 @@ class Game_UI(Scene):
         self.user_card_pos = []
 
         # discrete user and computer
-        for player in self.players:
-            if player.get_name() == "Player":  # 이름 변경에따른 코드 수정 필요
-                self.user = player
-            else:
-                self.bots.append(player)
+        self.user = self.game.get_user()
+        self.bots = self.game.get_bots()
+        # for player in self.players:
+        #     if player.get_name() == "Player":  # 이름 변경에따른 코드 수정 필요
+        #         self.user = player
+        #     else:
+        #         self.bots.append(player)
 
         self.cards.refresh()
         self.card_size = self.cards.get_card_image(000).get_rect().size
@@ -65,6 +68,19 @@ class Game_UI(Scene):
         self.card_render()
         self.time_start_pos = self.user_space_pos
         self.time_end_pos = [self.user_space_size[0] / 10, self.deck_space_size[1]]
+
+        return None
+
+    # @overrides
+    def get_args(self, args: Dict[any, any]) -> None:
+        if "game" in args:
+            self.game: Type[Game] = args.get("game")
+            self.players = self.game.get_players()
+            self.user = self.game.get_user()
+            self.bots = self.game.get_bots()
+            pass
+
+        return None
 
     @overrides
     def render(self):
@@ -102,9 +118,13 @@ class Game_UI(Scene):
         self.font = pygame.font.Font(font_resource("MainFont.ttf"), 25)
         self.user_name_text = self.font.render(self.user.get_name(), True, colors.white)
         self.bot_name_text = [
-            self.font.render("cpu" + str(i + 1), True, colors.white)
-            for i in range(len(self.bots))
+            self.font.render(bot.get_name(), True, colors.white)
+            for bot in self.bots
         ]
+        # self.bot_name_text = [
+        #     self.font.render("cpu" + str(i + 1), True, colors.white)
+        #     for i in range(len(self.bots))
+        # ]
         self.font2 = pygame.font.Font(font_resource("MainFont.ttf"), 15)
 
         # bot card position render
@@ -253,7 +273,7 @@ class Game_UI(Scene):
             )
             self.screen.blit(
                 card_num_text,
-                (self.bot_card_first_pos[i][0] + 50, self.bots_space_pos[i][1] + 5),
+                (self.bot_card_first_pos[i][0] + 70, self.bots_space_pos[i][1] + 5),
             )
 
         # 드로우카드 더미 하이라이팅

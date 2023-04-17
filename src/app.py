@@ -55,6 +55,9 @@ class App:
                     pass
                 elif event.type == events.CHANGE_SCENE:
                     self.current_scene = event.target
+                    if hasattr(event, "args"):
+                        self.scenes[self.current_scene].get_args(event.args)
+                        pass
                     self.scenes[self.current_scene].refresh()
                     continue
                 else:
