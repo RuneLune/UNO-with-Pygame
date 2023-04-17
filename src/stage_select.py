@@ -322,7 +322,7 @@ class Stage(Scene):
                     pygame.event.Event(
                         events.CHANGE_SCENE,
                         target="gameui",
-                        args={"game": Stage_D(4)},
+                        args={"game": Stage_D()},
                     )
                 )
 

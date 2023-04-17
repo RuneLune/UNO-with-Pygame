@@ -21,5 +21,6 @@ class Stage_B(Game):
         self.start_timer()
 
         self._players[self._current_turn].turn_start()
+        self._name = "stage_b"
 
         return None
