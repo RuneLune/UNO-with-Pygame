@@ -24,6 +24,7 @@ class Game_UI(Scene):
         self.players = self.game.get_players()
         self.bots = []
         self.user_card_pos = []
+        self.move_flag = False
 
         # discrete user and computer
         self.user = self.game.get_user()
@@ -248,6 +249,9 @@ class Game_UI(Scene):
                 self.surface, self.turn_color(self.bots[i]), self.bots_space[i], width=2
             )
             self.screen.blit(self.bot_name_text[i], self.bots_space_pos[i])
+        # 카드 내기 애니메이션
+        if self.move_flag is True:
+            self.screen.blit(self.move_card, self.move_pos)
 
         # 플레이어의 카드 그리기
         if self.user_card_num == 1:
@@ -454,6 +458,13 @@ class Game_UI(Scene):
             for i, rect in enumerate(self.user_card_rect):
                 self.user_card_hover[i] = self.hover_check(rect)
 
+        if self.move_flag is True:
+            if self.move_pos[1] > self.move_end[1]:
+                self.move_pos[0] += self.move_rate_x
+                self.move_pos[1] += self.move_rate_y
+            else:
+                self.move_flag = False
+
         # 현재 컬러 확인
         self.discard_card = self.game.get_discard_info().get("discarded_card")
         self.current_color = self.discard_card.get("color")
@@ -655,9 +666,12 @@ class Game_UI(Scene):
             return colors.white
 
     def ani_discard(self, index, card):
-        self.move_pos = [self.user_card_pos[index], self.discard_pile_pos]
-        self.move_rate = [
-            self.move_pos[1][0] - self.move_pos[0][0],
-            self.move_pos[1][1] - self.move_pos[0][1],
-        ]
-        self.move_card = self.cards.get_card_image[card]
+        self.move_flag = True
+        self.move_card = self.cards.get_card_image(card)
+
+        self.move_start = self.user_card_pos[index]
+        self.move_end = self.discard_pile_pos
+        self.move_pos = self.move_start  # initial pos
+
+        self.move_rate_x = (self.move_end[0] - self.move_start[0]) / 20
+        self.move_rate_y = (self.move_end[1] - self.move_start[1]) / 20
