@@ -22,7 +22,7 @@ class Settings_Scene(Scene):
         return super(Settings_Scene, cls).__new__(cls)
 
     @overrides
-    def __init__(self, settings: Settings) -> None:
+    def __init__(self, settings: Settings, sound_manager: SoundManager) -> None:
         self.__menu_options: List[str] = [
             "Screen Size |",
             "Fullscreen |",
@@ -36,9 +36,9 @@ class Settings_Scene(Scene):
             "Colorblind Mode |",
         ]
         self.__settings: Settings = settings
-        self.sounds = SoundManager()
+        self.sounds = sound_manager
         self.refresh()
-        return super(Settings_Scene, self).__init__()
+        return None
 
     @overrides
     def render(self) -> None:
@@ -221,6 +221,68 @@ class Settings_Scene(Scene):
             self.__screen.get_rect().centery / 3 + 10 * screen_size[1] / 16
         )
 
+        # 소리 조절 버튼
+        self.__background_sound_text = self.__menu_font.render("BGM", True, colors.white)
+        self.__background_sound_text_rect = self.__background_sound_text.get_rect()
+        self.__background_sound_text_rect.centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__background_sound_text_rect.top = self.__screen.get_rect().bottom / 2.7
+
+        self.__button_text.append(self.__menu_font.render("▲", True, colors.white))
+        self.__button_rect.append(self.__button_text[-1].get_rect())
+        self.__button_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__button_rect[-1].top = self.__screen.get_rect().bottom / 2.39
+
+        self.__sound_setting_text.append(self.__menu_font.render(str(settings.get("background_sound_volume", None)), True, colors.white))
+        self.__sound_setting_text_rect.append(self.__sound_setting_text[-1].get_rect())
+        self.__sound_setting_text_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__sound_setting_text_rect[-1].top = self.__screen.get_rect().bottom / 2.1
+
+        self.__button_text.append(self.__menu_font.render("▼", True, colors.white))
+        self.__button_rect.append(self.__button_text[-1].get_rect())
+        self.__button_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__button_rect[-1].top = self.__screen.get_rect().bottom / 1.9
+
+        self.__effect_sound_text = self.__menu_font.render("EFF", True, colors.white)
+        self.__effect_sound_text_rect = self.__effect_sound_text.get_rect()
+        self.__effect_sound_text_rect.centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__effect_sound_text_rect.top = self.__screen.get_rect().bottom / 1.7
+
+        self.__button_text.append(self.__menu_font.render("▲", True, colors.white))
+        self.__button_rect.append(self.__button_text[-1].get_rect())
+        self.__button_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__button_rect[-1].top = self.__screen.get_rect().bottom / 1.56
+
+        self.__sound_setting_text.append(self.__menu_font.render(str(settings.get("effect_sound_volume", None)), False, colors.white))
+        self.__sound_setting_text_rect.append(self.__sound_setting_text[-1].get_rect())
+        self.__sound_setting_text_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__sound_setting_text_rect[-1].top = self.__screen.get_rect().bottom / 1.44
+
+        self.__button_text.append(self.__menu_font.render("▼", True, colors.white))
+        self.__button_rect.append(self.__button_text[-1].get_rect())
+        self.__button_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__button_rect[-1].top = self.__screen.get_rect().bottom / 1.34
+
+        self.__all_sound_text = self.__menu_font.render("ALL", True, colors.white)
+        self.__all_sound_text_rect = self.__all_sound_text.get_rect()
+        self.__all_sound_text_rect.centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__all_sound_text_rect.top = self.__screen.get_rect().centery/ 4
+
+        self.__button_text.append(self.__menu_font.render("▲", True, colors.white))
+        self.__button_rect.append(self.__button_text[-1].get_rect())
+        self.__button_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__button_rect[-1].top = self.__screen.get_rect().centery / 2.8
+
+        self.__sound_setting_text.append(self.__menu_font.render(str(settings.get("all_sound_volume", None)), False, colors.white))
+        self.__sound_setting_text_rect.append(self.__sound_setting_text[-1].get_rect())
+        self.__sound_setting_text_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__sound_setting_text_rect[-1].top = self.__screen.get_rect().centery / 2.1
+
+        self.__button_text.append(self.__menu_font.render("▼", True, colors.white))
+        self.__button_rect.append(self.__button_text[-1].get_rect())
+        self.__button_rect[-1].centerx = self.__screen.get_rect().centerx * 1.5 + 100
+        self.__button_rect[-1].top = self.__screen.get_rect().centery / 1.7
+
+
         # 메인 메뉴 돌아가기 버튼 추가
         if (
             settings.get("previous_scene", None) != "main"
@@ -252,6 +314,8 @@ class Settings_Scene(Scene):
         self.__setting_rect = []
         self.__button_text = []
         self.__button_rect = []
+        self.__sound_setting_text = []
+        self.__sound_setting_text_rect = []
         self.render()
         return None
 
@@ -271,6 +335,14 @@ class Settings_Scene(Scene):
         for i in range(len(self.__button_text)):
             self.__screen.blit(self.__button_text[i], self.__button_rect[i])
 
+        # 사운드 버튼 출력
+        self.__screen.blit(self.__background_sound_text, self.__background_sound_text_rect)
+        self.__screen.blit(self.__effect_sound_text, self.__effect_sound_text_rect)
+        self.__screen.blit(self.__all_sound_text, self.__all_sound_text_rect)
+
+        for i in range(len(self.__sound_setting_text)):
+            self.__screen.blit(self.__sound_setting_text[i], self.__sound_setting_text_rect[i])
+
         return None
 
     @overrides
@@ -281,6 +353,13 @@ class Settings_Scene(Scene):
                 if self.__button_rect[i].collidepoint(mouse_pos):
                     self.sounds.play_effect("click")
                     return self.__button_func(i)
+                
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            for i in range(len(self.__setting_rect)):
+                if self.__setting_rect[i].collidepoint(mouse_pos):
+                    self.sounds.play_effect("click")
+                    return self.__setting_func(i)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 return pygame.event.post(
@@ -318,12 +397,100 @@ class Settings_Scene(Scene):
         elif i == 7:  # Default Settings
             self.__settings.reset_settings()
             self.__settings.set_screen_resolution()
-        elif i == 8:  # Back to Main menu
+        elif i == 8:
+            self.__settings.higher_background_sound_volume()
+        elif i == 9:
+            self.__settings.lower_background_sound_volume()
+        elif i == 10:
+            self.__settings.higher_effect_sound_volume()
+        elif i == 11:
+            self.__settings.lower_effect_sound_volume()
+        elif i == 12:
+            self.__settings.higher_all_sound_volume()
+        elif i == 13:
+            self.__settings.lower_all_sound_volume()
+        elif i == 14:  # Back to Main menu
             return pygame.event.post(
                 pygame.event.Event(events.CHANGE_SCENE, target="main")
             )
         ##################
         # 키 종류별 인덱스 추가 후 커스텀 함수 실행 및 결과 저장
+        pygame.event.post(pygame.event.Event(events.CHANGE_SETTINGS))
+        return None
 
-        self.refresh()
+    def __setting_func(self, i):
+        if i == 3:
+            left_text = self.__menu_font.render(
+                        pygame.key.name(
+                            self.__settings.get_settings().get("key_settings", None).get("left", None)
+                        ),
+                        True,
+                        colors.red
+                    )
+            self.__screen.blit(left_text, self.__setting_rect[i])
+            pygame.display.update()
+            left = self.__settings.key_change()
+            self.__settings.set_key_value("left", left)
+        elif i == 4:
+            right_text = self.__menu_font.render(
+                        pygame.key.name(
+                            self.__settings.get_settings().get("key_settings", None).get("right", None)
+                        ),
+                        True,
+                        colors.red
+                    )
+            self.__screen.blit(right_text, self.__setting_rect[i])
+            pygame.display.update()
+            right = self.__settings.key_change()
+            self.__settings.set_key_value("right", right)
+        elif i == 5:
+            up_text = self.__menu_font.render(
+                        pygame.key.name(
+                            self.__settings.get_settings().get("key_settings", None).get("up", None)
+                        ),
+                        True,
+                        colors.red
+                    )
+            self.__screen.blit(up_text, self.__setting_rect[i])
+            pygame.display.update()
+            up = self.__settings.key_change()
+            self.__settings.set_key_value("up", up)
+        elif i == 6:
+            down_text = self.__menu_font.render(
+                        pygame.key.name(
+                            self.__settings.get_settings().get("key_settings", None).get("down", None)
+                        ),
+                        True,
+                        colors.red
+                    )
+            self.__screen.blit(down_text, self.__setting_rect[i])
+            pygame.display.update()
+            down = self.__settings.key_change()
+            self.__settings.set_key_value("down", down)
+        elif i == 7:
+            select_text = self.__menu_font.render(
+                        pygame.key.name(
+                            self.__settings.get_settings().get("key_settings", None).get("select", None)
+                        ),
+                        True,
+                        colors.red
+                    )
+            self.__screen.blit(select_text, self.__setting_rect[i])
+            pygame.display.update()
+            select = self.__settings.key_change()
+            self.__settings.set_key_value("select", select)
+        elif i == 8:
+            cancel_text = self.__menu_font.render(
+                        pygame.key.name(
+                            self.__settings.get_settings().get("key_settings", None).get("cancel", None)
+                        ),
+                        True,
+                        colors.red
+                    )
+            self.__screen.blit(cancel_text, self.__setting_rect[i])
+            pygame.display.update()
+            cancel = self.__settings.key_change()
+            self.__settings.set_key_value("cancel", cancel)
+
+        pygame.event.post(pygame.event.Event(events.CHANGE_SETTINGS))
         return None

@@ -36,7 +36,7 @@ class Game:
         self._make_draw_pile()
         self._deal_hands()
         self._flip_top()
-
+        self.start_timer()
         self._players[self._current_turn].turn_start()
 
         return super().__init__()
@@ -66,6 +66,10 @@ class Game:
         # self._player_drawed: bool = False
 
         # self._last_discarded_card = 0
+        self._game_status = False
+        self._name = "single"
+        self._turn_move = False
+        # self._is_fliping = False
 
         return None
 
@@ -74,10 +78,22 @@ class Game:
         self._user: Player = Player(self, username)
         self._players.append(self._user)
         for i in range(1, players_count):
-            self._players.append(Bot(self, "Computer " + str(i)))
+            self._players.append(Bot(self, "CPU " + str(i)))
             continue
         random.shuffle(self._players)
         return None
+
+    def get_user(self) -> Player:
+        return self._user
+
+    def get_bots(self) -> List[Bot]:
+        bots = []
+        index = self._players.index(self._user) + 1
+        for i in range(len(self._players) - 1):
+            bots.append(self._players[index % len(self._players)])
+            index += 1
+            continue
+        return bots
 
     # Draw pile에 카드를 추가하고 섞는 메서드
     def _make_draw_pile(self) -> None:
@@ -106,13 +122,14 @@ class Game:
 
     # Draw pile 맨 위에서 카드를 뒤집어 시작 카드를 정하는 메서드
     def _flip_top(self) -> None:
+        # self._is_fliping = True
         self._discard_pile: List[int] = self._draw_pile[:1]
         self._draw_pile = self._draw_pile[1:]
         self._discarded_card: Dict[str, str | int] = cards.check_card(
             self._discard_pile[0]
         )
 
-        while self._discarded_card.get("type", None) == "draw4":
+        while self._discarded_card.get("color", None) == "wild":
             self._draw_pile += self._discard_pile
             self._discard_pile = self._draw_pile[:1]
             self._draw_pile = self._draw_pile[1:]
@@ -129,9 +146,10 @@ class Game:
         elif self._discarded_card.get("type", None) == "skip":
             self._current_turn = 2 % len(self._players)
             pass
-        elif self._discarded_card.get("color", None) == "wild":
-            self._players[1].choose_color()
-            pass
+        # elif self._discarded_card.get("color", None) == "wild":
+        #     self._players[1]._turn = True
+        #     self._players[1].choose_color()
+        #     pass
 
         self._game_status = True
 
@@ -153,17 +171,25 @@ class Game:
         }
 
     # player에게 Draw pile에서 count만큼 카드를 주는 메서드
-    def draw_cards(self, count: int, player: Type[Player]) -> None:
+    def draw_cards(
+        self, count: int, player: Type[Player], check_force_draw: bool = True
+    ) -> None:
         # 강제 드로우 수 확인
-        if self._force_draw > 0:
-            if count != self._force_draw:
-                raise ValueError("must draw " + str(self._force_draw) + " cards")
+        if check_force_draw is True:
+            if self._force_draw > 0:
+                if count != self._force_draw:
+                    raise ValueError("must draw " + str(self._force_draw) + " cards")
+                pass
+            self._force_draw = 0
             pass
-        self._force_draw = 0
 
         # 남은 카드가 부족하면 패 섞고 드로우
         if count >= len(self._draw_pile):
             self._shuffle()
+            if count > len(self._draw_pile):
+                count = len(self._draw_pile)
+                pass
+            pass
         drawing_cards: List[int] = copy.deepcopy(self._draw_pile[:count])
         self._draw_pile = self._draw_pile[count:]
         player.get_cards(drawing_cards)
@@ -251,10 +277,21 @@ class Game:
     def check_winner(self) -> None:
         if len(self._players[self._current_turn].get_hand_cards()) == 0:
             self._end_round()
+            pass
         return None
 
     # 라운드 종료 후 점수를 계산하는 메서드
     def _end_round(self) -> None:
+        pygame.event.post(
+            pygame.event.Event(
+                events.GAME_END,
+                args={
+                    "stage": self._name,
+                    "status": "win",
+                    "winner": self._players[self._current_turn].get_name(),
+                },
+            )
+        )
         self._game_status = False
         points: int = 0
         for i in range(0, len(self._players)):
@@ -281,14 +318,16 @@ class Game:
         return points
 
     # player가 우노를 외칠 수 있는 상황인지 확인하고 처리하는 메서드
-    def check_uno(self, player: Type[Player]) -> None:
-        if (
-            len(player.get_hand_cards()) == 2
-            and len(player.get_discardable_cards_index()) >= 1
-        ):
-            pass
-        else:
-            self.draw_cards(3, player)
+    def check_uno(self) -> None:
+        for player in self._players:
+            if (
+                not player.is_turn()
+                and len(player.get_hand_cards()) == 1
+                and not player.is_uno()
+            ):
+                self.draw_cards(2, player)
+                pass
+            continue
         return None
 
     # Game 객체 내의 플레이어 배열을 반환하는 메서드
@@ -297,6 +336,10 @@ class Game:
 
     # 플레이어가 턴 종료 시 호출하는 메서드
     def end_turn(self) -> None:
+        # if self._is_fliping is True:
+        #     self._is_fliping = False
+        #     self._current_turn = (self._current_turn - 1) % len(self._players)
+        #     return None
         if self._game_status is False:
             return None
         if self._players[self._current_turn]._can_end_turn is False:
@@ -309,10 +352,6 @@ class Game:
 
     # 다음 턴의 플레이어를 계산하는 메서드
     def _next_turn(self) -> None:
-        # self._player_drawed = False
-
-        # 스킵 및 방향 확인해 턴 넘기기
-        # print("Before" + str(self._current_turn))
         if self._skip_turn is False:
             if self._reverse_direction is False:
                 self._current_turn = (self._current_turn + 1) % len(self._players)
@@ -330,9 +369,7 @@ class Game:
                 pass
             self._skip_turn = False
             pass
-        # print("After" + str(self._current_turn))
-        self._turn_timer.start()
-        self._players[self._current_turn].turn_start()
+        self._turn_move = True
 
         return None
 
@@ -344,18 +381,28 @@ class Game:
 
     # Game 객체 내의 모든 타이머를 일시정지하는 메서드
     def pause_timer(self) -> None:
-        self._turn_timer.pause()
-        self._round_timer.pause()
+        if self._turn_timer.status() == "running":
+            self._turn_timer.pause()
+            pass
+        if self._round_timer.status() == "running":
+            self._round_timer.pause()
+            pass
         for player in self._players:
             player.pause_timer()
+            continue
         return None
 
     # Game 객체 내의 모든 일시정지된 타이머를 재개하는 메서드
     def resume_timer(self) -> None:
-        self._turn_timer.resume()
-        self._round_timer.resume()
+        if self._turn_timer.status() == "paused":
+            self._turn_timer.resume()
+            pass
+        if self._round_timer.status() == "paused":
+            self._round_timer.resume()
+            pass
         for player in self._players:
             player.resume_timer()
+            continue
         return None
 
     def set_color(self, color: int | str) -> None:
@@ -374,21 +421,30 @@ class Game:
         else:
             raise ValueError("Invalid Color")
 
-        self.end_turn()
         return None
 
     def tick(self) -> None:
-        if self._turn_timer.get().total_seconds() > self._turn_seconds:
-            if self._players[self._current_turn].is_turn():
-                self._players[self._current_turn].draw_cards()
+        player = self._players[self._current_turn]
+        if self._turn_move is True:
+            if len(player.get_hand_cards()) == 1 and not player.is_uno():
+                self.draw_cards(1, player, False)
                 pass
-            elif self._discarded_card.get("color") == "wild":
-                self.set_color(random.randrange(1, 5))
+            self._turn_timer.start()
+            player.turn_start()
+            self._turn_move = False
+            pass
+        if self._turn_timer.get().total_seconds() > self._turn_seconds:
+            if player.is_turn():
+                if not player._discarded_wild:
+                    player.draw_cards()
+                    pass
+                else:
+                    player.set_color(random.randrange(1, 5))
                 pass
             pygame.event.post(pygame.event.Event(events.TURN_TIMEOUT))
             pass
         else:
-            self._players[self._current_turn].tick()
+            player.tick()
             pass
         return None
 

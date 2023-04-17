@@ -5,7 +5,7 @@ from typing import Type
 import cards
 from game import Game
 from player import Player
-from bot import Bot
+from combo_bot import Combo_Bot
 
 
 class Stage_A(Game):
@@ -22,15 +22,18 @@ class Stage_A(Game):
         self._make_draw_pile()
         self._deal_hands()
         self._flip_top()
+        self.start_timer()
 
+        # self._computer.set_cards([cards.blue_draw2, cards.red_draw2, cards.yellow_draw2, cards.green_draw2, cards.blue_0, cards.yellow_0])
         self._players[self._current_turn].turn_start()
+        self._name = "stage_a"
 
         return None
 
     @overrides
     def _add_players(self, username: str = "Player", players_count: int = 4) -> None:
         self._user: Player = Player(self, username)
-        self._computer: Bot = Bot(self, "Computer 1")
+        self._computer: Combo_Bot = Combo_Bot(self, "CPU 1")
         self._players.append(self._user)
         self._players.append(self._computer)
         random.shuffle(self._players)
@@ -85,7 +88,7 @@ class Stage_A(Game):
         return None
 
     # 일반 카드 드로우 메서드
-    def _draw_normal_card(self, player: Player | Bot, count: int = 1) -> None:
+    def _draw_normal_card(self, player: Type[Player], count: int = 1) -> None:
         draw_count: int = 0
         for card in self._draw_pile:
             if draw_count >= count:

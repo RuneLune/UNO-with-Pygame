@@ -1,5 +1,7 @@
 import pygame
 from overrides import overrides
+from typing import Dict, Type
+import copy
 
 import colors
 import events
@@ -13,23 +15,29 @@ from scene import Scene
 
 class Game_UI(Scene):
     @overrides
-    def __init__(self, settings: Settings):
-        self.game = Game(6)  # 임시 플레이어 수
+    def __init__(self, settings: Settings, sound_manager: SoundManager):
+        self.game: Type[Game] = Game(2)  # 임시 플레이어 수
         self.cards = Cards(settings)
-        self.sounds = SoundManager()
+        self.sounds = sound_manager
         self.settings = settings
         self.pause = False
         # load user and bot object
         self.players = self.game.get_players()
         self.bots = []
         self.user_card_pos = []
+        self.discard_flag = False
+        self.draw_flag = False
+        self.winner_flag = False
+        self.winner_name = "fuck"
 
         # discrete user and computer
-        for player in self.players:
-            if player.get_name() == "Player":  # 이름 변경에따른 코드 수정 필요
-                self.user = player
-            else:
-                self.bots.append(player)
+        self.user = self.game.get_user()
+        self.bots = self.game.get_bots()
+        # for player in self.players:
+        #     if player.get_name() == "Player":  # 이름 변경에따른 코드 수정 필요
+        #         self.user = player
+        #     else:
+        #         self.bots.append(player)
 
         self.cards.refresh()
         self.card_size = self.cards.get_card_image(000).get_rect().size
@@ -65,6 +73,19 @@ class Game_UI(Scene):
         self.card_render()
         self.time_start_pos = self.user_space_pos
         self.time_end_pos = [self.user_space_size[0] / 10, self.deck_space_size[1]]
+
+        return None
+
+    # @overrides
+    def get_args(self, args: Dict[any, any]) -> None:
+        if "game" in args:
+            self.game: Type[Game] = args.get("game")
+            self.players = self.game.get_players()
+            self.user = self.game.get_user()
+            self.bots = self.game.get_bots()
+            pass
+
+        return None
 
     @overrides
     def render(self):
@@ -102,10 +123,17 @@ class Game_UI(Scene):
         self.font = pygame.font.Font(font_resource("MainFont.ttf"), 25)
         self.user_name_text = self.font.render(self.user.get_name(), True, colors.white)
         self.bot_name_text = [
-            self.font.render("cpu" + str(i + 1), True, colors.white)
-            for i in range(len(self.bots))
+            self.font.render(bot.get_name(), True, colors.white) for bot in self.bots
         ]
         self.font2 = pygame.font.Font(font_resource("MainFont.ttf"), 15)
+
+        # 우승자 이름 렌더링
+        self.winner_font = pygame.font.Font(
+            font_resource("MainFont.ttf"), int(self.screen_size[1] / 8)
+        )
+        self.winner_text1 = self.winner_font.render("You", True, colors.gold)
+        self.winner_text2 = self.winner_font.render(" Are", True, colors.gold)
+        self.winner_text3 = self.winner_font.render("  Winner", True, colors.gold)
 
         # bot card position render
         self.bot_card_first_pos = [
@@ -181,6 +209,7 @@ class Game_UI(Scene):
 
     @overrides
     def refresh(self):
+        pygame.display.set_caption("Game")
         # if full screen
         flag = 0
         if self.settings.get_settings().get("fullscreen", False) is True:
@@ -190,10 +219,11 @@ class Game_UI(Scene):
         self.screen_size = self.settings.get_screen_resolution()
         self.screen = pygame.display.set_mode(self.screen_size)
         self.surface = pygame.Surface(self.screen_size)
-        self.card_back_image = self.cards.get_card_image(000)
 
         self.players = self.game.get_players()
         self.cards.refresh()
+        self.card_size = self.cards.get_card_image(000).get_rect().size
+        self.card_back_image = self.cards.get_card_image(000)
         self.render()
         self.card_render()
         self.time_start_pos = self.user_space_pos
@@ -206,24 +236,37 @@ class Game_UI(Scene):
             pass
         else:
             self.sounds.stop_background_sound()
-            self.__draw_pause_menu()
             pass
         pass
 
     def __draw_game(self):
         self.game.tick()
-        self.tick()
+        # self.tick()
         self.screen.fill(colors.black)
         self.screen.blit(self.surface, (0, 0))
 
         # draw spaces and text
         pygame.draw.rect(self.surface, (0, 150, 100), rect=self.deck_space)
-        pygame.draw.rect(self.surface, colors.white, rect=self.user_space, width=2)
+        pygame.draw.rect(
+            self.surface, self.turn_color(self.user), rect=self.user_space, width=2
+        )
         self.screen.blit(self.user_name_text, self.user_space_pos)
 
         for i in range(len(self.bots)):
-            pygame.draw.rect(self.surface, colors.white, self.bots_space[i], width=2)
+            pygame.draw.rect(
+                self.surface, self.turn_color(self.bots[i]), self.bots_space[i], width=2
+            )
             self.screen.blit(self.bot_name_text[i], self.bots_space_pos[i])
+
+        # 카드 내기 애니메이션
+        if self.discard_flag is True:
+            self.screen.blit(self.discard_card_img, self.discard_pos)
+
+        # 카드 뽑기 애니메이션
+        if self.draw_flag is True:
+            for i in range(len(self.draw_card)):
+                if self.draw_flag_list[i] is True:
+                    self.screen.blit(self.draw_card[i], self.draw_pos[i])
 
         # 플레이어의 카드 그리기
         if self.user_card_num == 1:
@@ -253,7 +296,7 @@ class Game_UI(Scene):
             )
             self.screen.blit(
                 card_num_text,
-                (self.bot_card_first_pos[i][0] + 50, self.bots_space_pos[i][1] + 5),
+                (self.bot_card_first_pos[i][0] + 70, self.bots_space_pos[i][1] + 5),
             )
 
         # 드로우카드 더미 하이라이팅
@@ -279,6 +322,7 @@ class Game_UI(Scene):
         # 드로우 권장 알림
         if (
             self.user.is_turn() is True
+            and self.color_choice is False
             and len(self.user.get_discardable_cards_index()) == 0
         ):
             self.screen.blit(self.draw_img_tran, self.draw_img_pos)
@@ -293,7 +337,7 @@ class Game_UI(Scene):
         )
 
         # 색 변경 버튼 그리기
-        if self.color_choice is True:
+        if self.color_choice is True and self.user.is_turn() is True:
             for i in range(0, 4):
                 pygame.draw.rect(
                     self.surface,
@@ -308,6 +352,20 @@ class Game_UI(Scene):
                 self.surface,
                 color=self.current_color_dict[self.current_color],
                 points=[self.p1, self.p2, self.p3],
+            )
+            pygame.draw.line(
+                self.surface,
+                color=(0, 150, 100),
+                start_pos=self.p1,
+                end_pos=self.p2,
+                width=5,
+            )
+            pygame.draw.line(
+                self.surface,
+                color=(0, 150, 100),
+                start_pos=self.p2,
+                end_pos=self.p3,
+                width=5,
             )
 
         # 턴 남은 시간 그리기
@@ -329,61 +387,26 @@ class Game_UI(Scene):
                 width=10,
             )
 
-    def __draw_pause_menu(self):
-        title_text = self.title_font.render("Pause Menu", True, (255, 255, 255))
-        continue_text = self.menu_font.render("Continue", True, (255, 255, 255))
-        settings_text = self.menu_font.render("Settings", True, (255, 255, 255))
-        start_menu_text = self.menu_font.render("Start Menu", True, (255, 255, 255))
-        exit_text = self.menu_font.render("Exit", True, (255, 255, 255))
+        # 승리 텍스트 표시
+        if self.winner_flag is True:
+            self.screen.blit(
+                self.winner_text1,
+                (self.screen_size[0] / 8, 1 * self.screen_size[1] / 8),
+            )
+            self.screen.blit(
+                self.winner_text2,
+                (self.screen_size[0] / 8, 2 * self.screen_size[1] / 8),
+            )
+            self.screen.blit(
+                self.winner_text3,
+                (self.screen_size[0] / 8, 3 * self.screen_size[1] / 8),
+            )
+            self.screen.blit(
+                self.winner_text4,
+                (5 * self.screen_size[0] / 8, self.screen_size[1] / 4),
+            )
 
-        # Get the size of the screen
-        screen_width, screen_height = self.screen.get_size()
-
-        # Set the position of the menu options
-        title_pos = (self.screen.get_width() // 2 - title_text.get_width() // 2, 50)
-        continue_pos = (
-            screen_width // 2 - continue_text.get_width() // 2,
-            screen_height // 2 - 75,
-        )
-        settings_pos = (
-            screen_width // 2 - settings_text.get_width() // 2,
-            screen_height // 2 - 25,
-        )
-        start_menu_pos = (
-            screen_width // 2 - start_menu_text.get_width() // 2,
-            screen_height // 2 + 25,
-        )
-        exit_pos = (
-            screen_width // 2 - exit_text.get_width() // 2,
-            screen_height // 2 + 75,
-        )
-
-        # Draw the menu options on the screen
-        self.screen.fill((0, 0, 0))
-        self.screen.blit(title_text, title_pos)
-        self.screen.blit(continue_text, continue_pos)
-        self.screen.blit(settings_text, settings_pos)
-        self.screen.blit(start_menu_text, start_menu_pos)
-        self.screen.blit(exit_text, exit_pos)
-
-        # # 정지 메뉴 이벤트
-        # for event in pygame.event.get():
-        #     if event.type == pygame.QUIT:
-        #         pygame.quit()
-        #         sys.exit()
-        #     if event.type == pygame.MOUSEBUTTONDOWN:
-        #         if continue_text.get_rect(center=continue_pos).collidepoint(self.mouse_pos):
-        #             # Code to resume the game
-        #             pass
-        #         elif settings_text.get_rect(center=settings_pos).collidepoint(self.mouse_pos):
-        #             # Code to open the settings menu
-        #             pass
-        #         elif start_menu_text.get_rect(center=start_menu_pos).collidepoint(self.mouse_pos):
-        #             # Code to go back to the start menu
-        #             pass
-        #         elif exit_text.get_rect(center=exit_pos).collidepoint(self.mouse_pos):
-        #             pygame.quit()
-        #             sys.exit()
+        self.tick()
 
     def get_pause(self):
         return self.pause
@@ -416,13 +439,60 @@ class Game_UI(Scene):
             for i, rect in enumerate(self.user_card_rect):
                 self.user_card_hover[i] = self.hover_check(rect)
 
+        # 카드 내기 애니메이션 위치 계산
+        if self.discard_flag is True:
+            if (
+                self.discard_pos[0] < self.discard_end[0]
+                and self.discard_pos[1] > self.discard_end[1]
+            ) or (
+                self.discard_pos[0] > self.discard_end[0]
+                and self.discard_pos[1] > self.discard_end[1]
+            ):
+                self.discard_pos[0] += self.discard_rate_x
+                self.discard_pos[1] += self.discard_rate_y
+            else:
+                self.discard_flag = False
+
+        # 카드 뽑기 애니메이션 위치 계산
+        if self.draw_flag is True:
+            for i in range(len(self.draw_card)):
+                if self.draw_flag_list[i] is True:
+                    if (
+                        self.draw_pos[i][0] > self.draw_end[i][0]
+                        and self.draw_pos[i][1] < self.draw_end[i][1]
+                    ) or (
+                        self.draw_pos[i][0] < self.draw_end[i][0]
+                        and self.draw_pos[i][1] < self.draw_end[i][1]
+                    ):
+                        self.draw_pos[i][0] += self.draw_rate_x[i]
+                        self.draw_pos[i][1] += self.draw_rate_y[i]
+                    else:
+                        self.draw_flag_list[i] = False
+                        self.draw_flag_list[i + 1] = True
+        # if self.draw_flag is True:
+        #     if self.draw_counter < 10 * len(self.draw_card):
+        #         idx = self.draw_counter // 10
+        #         self.draw_pos[idx][0] += self.draw_rate_x[idx]
+        #         self.draw_pos[idx][1] += self.draw_rate_y[idx]
+        #         self.draw_counter += 1
+        #         if self.draw_counter % 10 == 0:
+        #             self.draw_flag_list[idx] = False
+        #             self.draw_flag_list[idx + 1] = True
+        #             pass
+        #         pass
+        #     else:
+        #         self.draw_flag = False
+        #         self.draw_counter = 0
+        #         pass
+        #     pass
+
         # 현재 컬러 확인
         self.discard_card = self.game.get_discard_info().get("discarded_card")
         self.current_color = self.discard_card.get("color")
 
         # 턴 종료시 하이라이팅 비활성화
         if self.user.is_turn() is False:
-            self.user_card_hover = [False for i in range(self.user_card_num)]
+            self.user_card_hover = [False for i in range(len(self.user_card_rect))]
 
         # 진행방향 체크
         if self.game._reverse_direction is True:
@@ -447,8 +517,6 @@ class Game_UI(Scene):
             self.draw_pile_pos[0] - self.draw_img_size[0] / 6,
             self.draw_pile_pos[1] - self.draw_img_size[1] / 3,
         ]
-        # 우승자 체크
-        self.game.check_winner()
 
     @overrides
     def handle(self, event):
@@ -472,15 +540,35 @@ class Game_UI(Scene):
         self.card_lift()
         self.tick()
 
+        # 턴 시간초과시
+        if event.type == events.TURN_TIMEOUT:
+            self.color_choice = False
+
         # 일시정지 화면전환 처리
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 self.set_pause(self.pause)
                 self.game.pause_timer()
                 self.settings.previous_gameui()
+                self.winner_flag = False
                 return pygame.event.post(
                     pygame.event.Event(events.CHANGE_SCENE, target="settings")
                 )
+
+        # 승자 이름 가져오기
+        if event.type == events.GAME_END:
+            if hasattr(event, "args") and "winner" in event.args:
+                self.winner_name = event.args.get("winner")
+                self.winner_text4 = self.winner_font.render(
+                    self.winner_name + "!", True, colors.gold
+                )
+                self.winner_flag = True
+
+        if event.type == events.BOT_DRAW:
+            pass
+
+        if event.type == events.BOT_DISCARD:
+            pass
 
         # 카드 내기 처리
         index_list = self.user.get_discardable_cards_index()
@@ -488,17 +576,25 @@ class Game_UI(Scene):
             for index in index_list:
                 if self.user_card_hover[index] and event.type == pygame.MOUSEBUTTONDOWN:
                     self.sounds.play_effect("discard")
+                    self.ani_discard(index, self.user_card_list[index])
                     self.user.discard_card(index)
-                    break
+                    self.user_card_hover[index] = False
 
         # 카드 뽑기 처리
-        if self.draw_pile_hover is True and event.type == pygame.MOUSEBUTTONDOWN:
+        if (
+            self.draw_pile_hover is True
+            and event.type == pygame.MOUSEBUTTONDOWN
+            and self.color_choice is False
+            and self.user.is_turn() is True
+        ):
             self.sounds.play_effect("draw")
             self.user.draw_cards()
+            self.ani_draw()
 
         # 색깔 고르기 처리
         if event.type == events.ASK_COLOR:
             self.color_choice = True
+            self.draw_flag = False
 
         for i, rect in enumerate(self.choice_rect):
             self.choice_rect_hover[i] = self.hover_check(rect)
@@ -510,22 +606,8 @@ class Game_UI(Scene):
                 self.color_choice = False
 
         # uno 버튼 클릭 이벤트 진행
-        if (
-            self.user.is_turn()
-            and self.uno_btn_hover is True
-            and event.type == pygame.MOUSEBUTTONDOWN
-        ):
-            if (
-                self.user_card_num == 2
-                and len(self.user.get_discardable_cards_index()) > 0
-            ):
-                self.sounds.play_effect("click")
-                self.user._yelled_uno = True
-
-        if self.user.is_turn() and self.user_card_num > 2:
-            self.user._yelled_uno = False
-
-        # 승리 조건 확인
+        if self.uno_btn_hover is True and event.type == pygame.MOUSEBUTTONDOWN:
+            self.user.yell_uno()
 
     def __handle_pause_menu(self, event):
         self.set_pause(self.pause)
@@ -549,7 +631,7 @@ class Game_UI(Scene):
                 self.user_card_first_pos[0] + i * self.card_size[0] * 4 / 5,
                 self.user_card_first_pos[1],
             ]
-            for i in range(0, self.user_card_num)
+            for i in range(0, self.user_card_num + 4)
         ]
 
         # 유저 카드 rect 렌더링
@@ -599,9 +681,60 @@ class Game_UI(Scene):
 
     # 낼 수 있는 카드 위치 변경 함수
     def card_lift(self):
-        if self.user.is_turn():
+        if self.user.is_turn() is True and self.user_card_num <= 1:
+            pass
+        elif self.user.is_turn() is True:
             for index in self.user.get_discardable_cards_index():
                 self.user_card_pos[index][1] -= 10
-                self.user_card_rect[index][1] -= 10
         else:
             self.user_card_pos[:][1] = self.user_card_first_pos[1]
+
+    # 해당 턴이면 빨강색 반환
+    def turn_color(self, player):
+        if player.is_turn() is True:
+            return colors.red
+        else:
+            return colors.white
+
+    def ani_discard(self, index, card):
+        self.discard_flag = True
+        self.discard_card_img = self.cards.get_card_image(card)
+
+        if self.user_card_num == 1:
+            self.discard_start = self.user_card_pos
+        else:
+            self.discard_start = self.user_card_pos[index]
+        self.discard_end = self.discard_pile_pos
+        self.discard_pos = self.discard_start  # initial pos
+
+        self.discard_rate_x = (self.discard_end[0] - self.discard_start[0]) / 10
+        self.discard_rate_y = (self.discard_end[1] - self.discard_start[1]) / 10
+
+    def ani_draw(self):
+        self.draw_flag = True
+        # self.draw_counter = 0
+        self.last_draw_card = self.user.get_last_drawing_cards()
+        print(self.last_draw_card)
+        self.draw_flag_list = []
+        self.draw_card = []
+        self.draw_end = []
+        self.draw_rate_x = []
+        self.draw_rate_y = []
+        self.draw_pos = []
+        self.draw_start = [self.draw_pile_pos[0], self.draw_pile_pos[1]]
+
+        for i, index in enumerate(self.last_draw_card):
+            if i == 0:
+                self.draw_flag_list.append(True)
+            else:
+                self.draw_flag_list.append(False)
+            self.draw_card.append(self.cards.get_card_image(index[1]))
+            if self.user_card_num == 1:
+                self.draw_end.append(self.user_card_pos)
+            else:
+                self.draw_end.append(self.user_card_pos[index[0]])
+            self.draw_rate_x.append((self.draw_end[i][0] - self.draw_start[0]) / 10)
+            self.draw_rate_y.append((self.draw_end[i][1] - self.draw_start[1]) / 10)
+            self.draw_pos.append(copy.deepcopy(self.draw_start))  # initial pos
+
+        self.draw_flag_list.append(False)

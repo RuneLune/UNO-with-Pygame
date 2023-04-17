@@ -2,24 +2,86 @@ import pygame
 from overrides import overrides
 from os.path import join
 
+import copy
+import json
+import os
+
 import colors
 import events
 from sound import SoundManager
 from scene import Scene
 from resource_manager import font_resource, image_resource
 from settings_function import Settings
+from stage_a import Stage_A
+from stage_b import Stage_B
+from stage_c import Stage_C
+from stage_d import Stage_D
 
+
+initial_settings = {
+    "touchable": [
+        True,
+        True,
+        False,
+        False,
+        False
+    ]
+}
 
 class Stage(Scene):
     @overrides
-    def __init__(self, settings: Settings) -> None:
+    def __init__(self, settings: Settings, sound_manager: SoundManager) -> None:
         self.__stage_num = 4
         self.__settings = settings
         self.__is_confirm = False
-        self.sounds = SoundManager()
+        global initial_settings
+        self.__stage_states = initial_settings
+
+        # Create settings.json if not exist
+        if not os.path.isfile("stage_states.json"):
+            self.reset_stage_stages()
+            self.save_stage_states()
+        else:
+            self.load_stage_states()
+
+        self.sounds = sound_manager
         self.refresh()
 
-        return super(Stage, self).__init__()
+        return None
+    
+    # Settings load method
+    def load_stage_states(self):
+        # load saved settings from file
+        if os.path.isfile("stage_states.json"):
+            try:
+                with open("stage_states.json", "r") as f:
+                    self.__stage_states = json.load(f)
+            except BaseException:
+                # Error occurred while loading settings from file
+                pass
+    
+    # Settings reset method
+    def reset_stage_stages(self):
+        global initial_settings
+        self.__stage_states = copy.deepcopy(initial_settings)
+
+    # Settings save method
+    def save_stage_states(self):
+        try:
+            # Save settings to file
+            with open("stage_states.json", "w") as f:
+                json.dump(self.__stage_states, f)
+        except BaseException:
+            # Return -1 if an error occurred
+            return -1
+
+        self.load_stage_states()
+        # Return 0 if save was successful
+        return 0
+    
+    def get_stage_states(self):
+        return copy.deepcopy(self.__stage_states)
+
 
     @overrides
     def render(self) -> None:
@@ -42,13 +104,15 @@ class Stage(Scene):
         )
 
         # title
-        self.__title_text = self.__title_font.render("STAGE", True, colors.white)
+        self.__title_text = self.__title_font.render(
+            "STAGE", True, colors.white)
         self.__title_rect = self.__title_text.get_rect()
         self.__title_rect.centerx = self.__screen.get_rect().centerx
         self.__title_rect.bottom = self.__screen.get_rect().centery / 2
 
         # back button
-        self.__button_text.append(self.__back_font.render("◀ Back", True, colors.white))
+        self.__button_text.append(
+            self.__back_font.render("◀ Back", True, colors.white))
         self.__button_rect.append(self.__button_text[-1].get_rect())
         self.__button_rect[0].right = self.__screen.get_rect().centerx / 3
         self.__button_rect[0].bottom = self.__screen.get_rect().centery / 5
@@ -65,25 +129,32 @@ class Stage(Scene):
         self.__imformation_rect.left = self.__screen.get_rect().right / 10
 
         # stage
-        self.button_rects = self.__touchable[1:]  # 1번 인덱스는 back에 관련된 것이므로 1번부터 슬라이싱
+        # 1번 인덱스는 back에 관련된 것이므로 1번부터 슬라이싱
+        self.button_rects = self.__touchable[1:]
         for i in range(self.__stage_num):
             if self.button_rects[i]:
                 image = pygame.image.load(
                     image_resource(join("stage", f"stage_{i+1}.png"))
                 )
             else:
-                image = pygame.image.load(image_resource(join("stage", "stage_0.png")))
+                image = pygame.image.load(
+                    image_resource(join("stage", "stage_0.png")))
             self.__stage_img.append(image)
             self.__button_rect.append(self.__stage_img[i].get_rect())
-            self.__button_rect[i + 1].centery = self.__screen.get_rect().centery
+            self.__button_rect[i +
+                               1].centery = self.__screen.get_rect().centery
             if i == 0:
-                self.__button_rect[i + 1].left = self.__screen.get_rect().right / 10
+                self.__button_rect[i +
+                                   1].left = self.__screen.get_rect().right / 10
             elif i == 1:
-                self.__button_rect[i + 1].left = self.__screen.get_rect().right / 3.5
+                self.__button_rect[i +
+                                   1].left = self.__screen.get_rect().right / 3.5
             elif i == 2:
-                self.__button_rect[i + 1].left = self.__screen.get_rect().right / 2
+                self.__button_rect[i +
+                                   1].left = self.__screen.get_rect().right / 2
             elif i == 3:
-                self.__button_rect[i + 1].right = self.__screen.get_rect().right / 1.2
+                self.__button_rect[i +
+                                   1].right = self.__screen.get_rect().right / 1.2
 
         # window
         self.__window_text = self.__window_font.render(
@@ -104,9 +175,11 @@ class Stage(Scene):
         for i in range(len(self.__window_rect)):
             self.__window_rect[i].top = self.__screen.get_rect().centery + 200
             if i == 0:
-                self.__window_rect[i].left = self.__screen.get_rect().right / 10
+                self.__window_rect[i].left = self.__screen.get_rect(
+                ).right / 10
             elif i == 1:
-                self.__window_rect[i].right = self.__screen.get_rect().right / 1.2
+                self.__window_rect[i].right = self.__screen.get_rect(
+                ).right / 1.2
 
         self.__background = pygame.Surface(
             (self.__screen.get_width(), self.__screen.get_height())
@@ -135,13 +208,13 @@ class Stage(Scene):
         self.__window_img = []
         self.__imformation_text = []
         self.__imformation = [
-            "첫분배에 컴퓨터가 기술 카드를 50% 더 높은 확률로 받음",
+            "첫 분배에 컴퓨터가 기술 카드를 50% 더 높은 확률로 받음",
             "3명의 컴퓨터 플레이어와 대전, 카드는 같은 수로 분배 (첫 카드 제외)",
             "2명의 컴퓨터 플레이어와 대전, 매 5턴마다 낼 수 있는 카드 색 무작위 변경",
             "미정",
         ]
         # 첫번쨰 인덱스는 back 버튼을 위한 것. 2~5가 스테이지를 위한 엘리먼트들
-        self.__touchable = [True, True, True, True, True]
+        self.__touchable = self.get_stage_states().get("touchable")
         self.__window_rect = []
         self.__selected_stage = 0
         self.__selected_window = 0
@@ -200,6 +273,25 @@ class Stage(Scene):
 
     @overrides
     def handle(self, event: pygame.event.Event):
+        if event.type == events.GAME_END:
+            if hasattr(event, "args") and "stage" in event.args and "status" in event.args:
+                if event.args.get("status") == "win":
+                    if event.args.get("stage") == "stage_a":
+                        self.__stage_states["touchable"][2] = True
+                        self.save_stage_states()
+                        pass
+                    elif event.args.get("stage") == "stage_b":
+                        self.__stage_states["touchable"][3] = True
+                        self.save_stage_states()
+                        pass
+                    elif event.args.get("stage") == "stage_c":
+                        self.__stage_states["touchable"][4] = True
+                        self.save_stage_states()
+                        pass
+                    pass
+                pass
+            
+            pass
         if self.__is_confirm is False:
             if event.type == pygame.MOUSEMOTION:
                 mouse_pos = pygame.mouse.get_pos()
@@ -285,7 +377,42 @@ class Stage(Scene):
 
     def __window_func(self, i, idx):
         if i == 0:
-            # 각 스테이지로 이동 idx 1부터 4까지 a~d 이동
-            pass
+            if idx == 1:
+                self.__is_confirm = False
+                return pygame.event.post(
+                    pygame.event.Event(
+                        events.CHANGE_SCENE,
+                        target="gameui",
+                        args={"game": Stage_A()},
+                    )
+                )
+            elif idx == 2:
+                self.__is_confirm = False
+                return pygame.event.post(
+                    pygame.event.Event(
+                        events.CHANGE_SCENE,
+                        target="gameui",
+                        args={"game": Stage_B()},
+                    )
+                )
+            elif idx == 3:
+                self.__is_confirm = False
+                return pygame.event.post(
+                    pygame.event.Event(
+                        events.CHANGE_SCENE,
+                        target="gameui",
+                        args={"game": Stage_C()},
+                    )
+                )
+            elif idx == 4:
+                self.__is_confirm = False
+                return pygame.event.post(
+                    pygame.event.Event(
+                        events.CHANGE_SCENE,
+                        target="gameui",
+                        args={"game": Stage_D()},
+                    )
+                )
+
         else:
             self.__is_confirm = False
