@@ -184,6 +184,10 @@ class Game:
         # 남은 카드가 부족하면 패 섞고 드로우
         if count >= len(self._draw_pile):
             self._shuffle()
+            if count > len(self._draw_pile):
+                count = len(self._draw_pile)
+                pass
+            pass
         drawing_cards: List[int] = copy.deepcopy(self._draw_pile[:count])
         self._draw_pile = self._draw_pile[count:]
         player.get_cards(drawing_cards)

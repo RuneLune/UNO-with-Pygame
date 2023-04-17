@@ -1,6 +1,9 @@
 from overrides import overrides
+from typing import List
+import random
 
 from game import Game
+import cards
 
 
 class Stage_B(Game):
@@ -23,4 +26,18 @@ class Stage_B(Game):
         self._players[self._current_turn].turn_start()
         self._name = "stage_b"
 
+        return None
+
+    @overrides
+    def _make_draw_pile(self) -> None:
+        self._draw_pile: List[int] = (
+            list(range(cards.blue_0, cards.blue_skip + 1))
+            + list(range(cards.green_0, cards.green_skip + 1))
+            + list(range(cards.red_0, cards.red_skip + 1))
+            + list(range(cards.yellow_0, cards.yellow_skip + 1))
+            + list(range(cards.wild_normal, cards.wild_draw4 + 1))
+            + [cards.wild_shuffle]
+            + [cards.wild_custom]
+        )
+        random.shuffle(self._draw_pile)
         return None
