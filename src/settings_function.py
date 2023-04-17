@@ -21,6 +21,7 @@ initial_settings: Dict[str, str | bool | Dict[str, int] | float] = {
     "previous_scene": "main",
     "background_sound_volume": 1,
     "effect_sound_volume": 0.5,
+    "all_sound_volume": 1
 }
 
 
@@ -152,6 +153,24 @@ class Settings:
             self.__settings.update(effect_sound_volume=0)
         elif self.__settings.get("effect_sound_volume", None) == 1:
             self.__settings.update(effect_sound_volume=0.5)
+        self.save_settings()
+
+    def higher_all_sound_volume(self):
+        if self.__settings.get("all_sound_volume", None) == 0:
+            self.__settings.update(all_sound_volume=0.5)
+        elif self.__settings.get("all_sound_volume", None) == 0.5:
+            self.__settings.update(all_sound_volume=1)
+        elif self.__settings.get("all_sound_volume", None) == 1:
+            self.__settings.update(all_sound_volume=0)
+        self.save_settings()
+
+    def lower_all_sound_volume(self):
+        if self.__settings.get("all_sound_volume", None) == 0:
+            self.__settings.update(all_sound_volume=1)
+        elif self.__settings.get("all_sound_volume", None) == 0.5:
+            self.__settings.update(all_sound_volume=0)
+        elif self.__settings.get("all_sound_volume", None) == 1:
+            self.__settings.update(all_sound_volume=0.5)
         self.save_settings()
         
 
