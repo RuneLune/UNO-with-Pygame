@@ -128,8 +128,11 @@ class Game_UI(Scene):
         self.winner_font = pygame.font.Font(
             font_resource("MainFont.ttf"), int(self.screen_size[1] / 8)
         )
-        self.winner_text = self.winner_font.render(
-            "You Are Winner\n" + self.winner_name + "!", True, colors.gold
+        self.winner_text1 = self.winner_font.render("You", True, colors.gold)
+        self.winner_text2 = self.winner_font.render(" Are", True, colors.gold)
+        self.winner_text3 = self.winner_font.render("  Winner", True, colors.gold)
+        self.winner_text4 = self.winner_font.render(
+            self.winner_name + "!", True, colors.gold
         )
         # bot card position render
         self.bot_card_first_pos = [
@@ -383,9 +386,23 @@ class Game_UI(Scene):
                 width=10,
             )
 
+        # 승리 텍스트 표시
         if self.winner_flag is True:
             self.screen.blit(
-                self.winner_text, (self.screen_size[0] / 8, self.screen_size[1] / 8)
+                self.winner_text1,
+                (self.screen_size[0] / 8, 1 * self.screen_size[1] / 8),
+            )
+            self.screen.blit(
+                self.winner_text2,
+                (self.screen_size[0] / 8, 2 * self.screen_size[1] / 8),
+            )
+            self.screen.blit(
+                self.winner_text3,
+                (self.screen_size[0] / 8, 3 * self.screen_size[1] / 8),
+            )
+            self.screen.blit(
+                self.winner_text4,
+                (5 * self.screen_size[0] / 8, self.screen_size[1] / 4),
             )
 
     def get_pause(self):
@@ -517,6 +534,12 @@ class Game_UI(Scene):
                     pygame.event.Event(events.CHANGE_SCENE, target="settings")
                 )
 
+        # 승자 이름 가져오기
+        if event.type == events.GAME_END:
+            if hasattr(event, "args") and "winner" in event.args:
+                self.winner_name = event.args.get("winner")
+                self.winner_flag = True
+
         # 카드 내기 처리
         index_list = self.user.get_discardable_cards_index()
         if index_list:
@@ -555,13 +578,6 @@ class Game_UI(Scene):
         # uno 버튼 클릭 이벤트 진행
         if self.uno_btn_hover is True and event.type == pygame.MOUSEBUTTONDOWN:
             self.user.yell_uno()
-
-        if event.type == events.GAME_END:
-            if hasattr(event, "args") and "winner" in event.args:
-                self.winner_name = event.args.get("winner")
-                self.winner_flag = True
-
-        # 승리 조건 확인
 
     def __handle_pause_menu(self, event):
         self.set_pause(self.pause)
@@ -655,7 +671,6 @@ class Game_UI(Scene):
         self.discard_flag = True
         self.discard_card_img = self.cards.get_card_image(card)
 
-        # user card num == 1 일때 start pos 지정
         if self.user_card_num == 1:
             self.discard_start = self.user_card_pos
         else:
