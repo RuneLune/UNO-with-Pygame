@@ -390,7 +390,7 @@ class Settings_Scene(Scene):
                     self.sounds.play_effect("click")
                     return self.__setting_func(i)
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
+            if event.key == self.__settings.get_settings().get("key_settings").get("cancel"):
                 return pygame.event.post(
                     pygame.event.Event(
                         events.CHANGE_SCENE,
