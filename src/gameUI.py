@@ -89,6 +89,39 @@ class Game_UI(Scene):
 
     @overrides
     def render(self):
+        if self.settings.get_settings().get("colorblind_mode") is False:
+            self.current_color_dict = {
+                "wild": colors.black,
+                "red": colors.red,
+                "blue": colors.blue,
+                "green": colors.green,
+                "yellow": colors.yellow,
+                "black": colors.black,
+            }
+            self.color_list = [
+                colors.blue,
+                colors.green,
+                colors.red,
+                colors.yellow,
+            ]
+            pass
+        else:
+            self.current_color_dict = {
+                "wild": colors.black,
+                "red": colors.orange,
+                "blue": colors.blue,
+                "green": colors.colorblinemode_green,
+                "yellow": colors.yellow,
+                "black": colors.black,
+            }
+            self.color_list = [
+                colors.blue,
+                colors.colorblinemode_green,
+                colors.orange,
+                colors.yellow,
+            ]
+            pass
+
         # each space's size,position definition
         self.deck_space_size = (
             self.screen_size[0] * (3 / 4),
