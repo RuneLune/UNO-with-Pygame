@@ -20,10 +20,11 @@ initial_settings = {
         "bot2": True,
         "bot3": True,
         "bot4": True,
-        "bot5": True
+        "bot5": True,
     },
-    "user_name": " User_Name "
+    "user_name": " User_Name ",
 }
+
 
 class Game_Lobby(Scene):
     @overrides
@@ -59,7 +60,7 @@ class Game_Lobby(Scene):
             except BaseException:
                 # Error occurred while loading settings from file
                 pass
-    
+
     # Settings reset method
     def reset_game_settings(self):
         global initial_settings
@@ -78,7 +79,7 @@ class Game_Lobby(Scene):
         self.load_game_settings()
         # Return 0 if save was successful
         return 0
-    
+
     def get_game_settings(self):
         return copy.deepcopy(self.__game_settings)
 
@@ -120,7 +121,9 @@ class Game_Lobby(Scene):
         ]
 
         # 뒤로가기 버튼 추가
-        self.__button_text.append(self.__small_font.render("◀ Back", True, colors.white))
+        self.__button_text.append(
+            self.__small_font.render("◀ Back", True, colors.white)
+        )
         self.__button_rect.append(self.__button_text[-1].get_rect())
         self.__button_rect[-1].right = self.__screen.get_rect().centerx / 3
         self.__button_rect[-1].bottom = self.__screen.get_rect().centery / 5
@@ -160,28 +163,43 @@ class Game_Lobby(Scene):
         ]
 
         # 다섯 공간과 봇의 이름을 저장하는 set
-        self.bots = [
-            (self.bots_space[i], self.bot_names[i]) for i in range(5)
-        ]
+        self.bots = [(self.bots_space[i], self.bot_names[i]) for i in range(5)]
 
         # 각 공간에 대한 empty surface
         self.empty_surface = pygame.Surface(self.bots_space_size)
         self.empty_surface.fill(colors.white)
 
         # empty surface 위에 테두리 그리고 글자 쓰기
-        pygame.draw.rect(self.empty_surface, colors.black, self.empty_surface.get_rect(), int(screen_size[1] * (1/100)))
+        pygame.draw.rect(
+            self.empty_surface,
+            colors.black,
+            self.empty_surface.get_rect(),
+            int(screen_size[1] * (1 / 100)),
+        )
         self.empty_text = self.__small_font.render("empty", True, colors.light_gray)
-        self.empty_text_rect = self.empty_text.get_rect(center = self.empty_surface.get_rect().center)
+        self.empty_text_rect = self.empty_text.get_rect(
+            center=self.empty_surface.get_rect().center
+        )
         self.empty_surface.blit(self.empty_text, self.empty_text_rect)
 
         # 각 봇이 눌린 상태인지 저장하기 위한 딕셔너리
         self.pressed_bots = {
-            (self.bots_space[0].x, self.bots_space[0].y): self.__game_settings["pressed_bots"].get("bot1"),
-            (self.bots_space[1].x, self.bots_space[1].y): self.__game_settings["pressed_bots"].get("bot2"),
-            (self.bots_space[2].x, self.bots_space[2].y): self.__game_settings["pressed_bots"].get("bot3"),
-            (self.bots_space[3].x, self.bots_space[3].y): self.__game_settings["pressed_bots"].get("bot4"),
-            (self.bots_space[4].x, self.bots_space[4].y): self.__game_settings["pressed_bots"].get("bot5")
-            }
+            (self.bots_space[0].x, self.bots_space[0].y): self.__game_settings[
+                "pressed_bots"
+            ].get("bot1"),
+            (self.bots_space[1].x, self.bots_space[1].y): self.__game_settings[
+                "pressed_bots"
+            ].get("bot2"),
+            (self.bots_space[2].x, self.bots_space[2].y): self.__game_settings[
+                "pressed_bots"
+            ].get("bot3"),
+            (self.bots_space[3].x, self.bots_space[3].y): self.__game_settings[
+                "pressed_bots"
+            ].get("bot4"),
+            (self.bots_space[4].x, self.bots_space[4].y): self.__game_settings[
+                "pressed_bots"
+            ].get("bot5"),
+        }
 
         # 봇 영역 버튼 리스트에 추가
         for i in range(len(self.bots_space)):
@@ -195,7 +213,10 @@ class Game_Lobby(Scene):
             font_resource("MainFont.ttf"), round(screen_size[1] / 14)
         ).render("Press Enter to edit the name", True, colors.white)
         self.__enter_rect = self.__enter_text.get_rect()
-        self.__enter_rect.center = (self.deck_space.centerx, self.deck_space.height * (1 / 3))
+        self.__enter_rect.center = (
+            self.deck_space.centerx,
+            self.deck_space.height * (1 / 3),
+        )
 
     @overrides
     def refresh(self):
@@ -232,7 +253,7 @@ class Game_Lobby(Scene):
             else:
                 pygame.draw.rect(self.__screen, (50, 50, 50), self.bots_space[i])
                 pygame.draw.rect(self.__screen, colors.red, self.bots_space[i], width=2)
-                self.__screen.blit(self.bot_names_text[i], self.__button_rect[i+2])
+                self.__screen.blit(self.bot_names_text[i], self.__button_rect[i + 2])
 
         # 스크린 위에 뒤로가기 버튼, 스타트 버튼, 수정 방법 텍스트 그리기
         self.__screen.blit(self.__button_text[0], self.__button_rect[0])
@@ -241,9 +262,14 @@ class Game_Lobby(Scene):
 
         # 사용자 이름 렌더링
         self.user_name = self.__game_settings.get("user_name", None)
-        self.user_name_surface = self.__middle_font.render(self.user_name, True, colors.white)
+        self.user_name_surface = self.__middle_font.render(
+            self.user_name, True, colors.white
+        )
         self.user_name_rect = self.user_name_surface.get_rect()
-        self.user_name_rect.center = (self.deck_space.centerx, self.deck_space.bottom * (2 / 3))
+        self.user_name_rect.center = (
+            self.deck_space.centerx,
+            self.deck_space.bottom * (2 / 3),
+        )
 
         # 유저 이름 화면에 출력
         self.__screen.blit(self.user_name_surface, self.user_name_rect)
@@ -258,13 +284,17 @@ class Game_Lobby(Scene):
             mouse_pos = pygame.mouse.get_pos()
             for i in range(len(self.__button_rect)):
                 if self.__button_rect[i].collidepoint(mouse_pos):
-                    self.sounds.play_effect('click')
+                    self.sounds.play_effect("click")
                     return self.__button_func(i)
-            if not self.user_name_editing and self.user_name_rect.collidepoint(mouse_pos):
-                self.sounds.play_effect('click')
+            if not self.user_name_editing and self.user_name_rect.collidepoint(
+                mouse_pos
+            ):
+                self.sounds.play_effect("click")
                 self.user_name_editing = True
-            elif self.user_name_editing and not self.user_name_rect.collidepoint(mouse_pos):
-                self.sounds.play_effect('click')
+            elif self.user_name_editing and not self.user_name_rect.collidepoint(
+                mouse_pos
+            ):
+                self.sounds.play_effect("click")
                 self.user_name_editing = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
@@ -273,9 +303,11 @@ class Game_Lobby(Scene):
                 )
             if self.user_name_editing:
                 if event.key == pygame.K_BACKSPACE and len(self.user_name) > 1:
-                    self.__game_settings.update(user_name = self.user_name[:-1])
+                    self.__game_settings.update(user_name=self.user_name[:-1])
                 elif event.unicode.isprintable() and len(self.user_name) < 20:
-                    self.__game_settings.update(user_name = self.user_name + event.unicode)
+                    self.__game_settings.update(
+                        user_name=self.user_name + event.unicode
+                    )
                 elif event.key == pygame.K_RETURN:
                     self.user_name_editing = False
                 else:
@@ -301,26 +333,48 @@ class Game_Lobby(Scene):
                 pygame.event.Event(
                     events.CHANGE_SCENE,
                     target="gameui",
-                    args={"game": Game(self.__game_settings.get("player_count", None), self.__game_settings.get("user_name", None))},
+                    args={
+                        "game": Game(
+                            self.__game_settings.get("player_count", None),
+                            self.__game_settings.get("user_name", None),
+                        )
+                    },
                 )
             )
         # 봇 추가/삭제 버튼. 없을 때도 버튼이 활성화 되어 있음. 봇 1~5
         elif 1 < i < 7:
             # 이미 눌린 상태인 경우 다시 원래대로 돌리기
-            if self.pressed_bots.get((self.bots_space[i-2].x, self.bots_space[i-2].y), None) and self.next_empty == (i - 1):
-                self.pressed_bots[(self.bots_space[i-2].x, self.bots_space[i-2].y)] = not self.pressed_bots.get((self.bots_space[i-2].x, self.bots_space[i-2].y), None)
+            if self.pressed_bots.get(
+                (self.bots_space[i - 2].x, self.bots_space[i - 2].y), None
+            ) and self.next_empty == (i - 1):
+                self.pressed_bots[
+                    (self.bots_space[i - 2].x, self.bots_space[i - 2].y)
+                ] = not self.pressed_bots.get(
+                    (self.bots_space[i - 2].x, self.bots_space[i - 2].y), None
+                )
                 self.__game_settings["player_count"] += 1
                 self.next_empty += 1
-                self.__game_settings["pressed_bots"][f"bot{i-1}"] = not self.__game_settings["pressed_bots"][f"bot{i-1}"]
+                self.__game_settings["pressed_bots"][
+                    f"bot{i-1}"
+                ] = not self.__game_settings["pressed_bots"][f"bot{i-1}"]
                 self.save_game_settings()
             # 아닌 경우 empty 추가하기
-            elif not self.pressed_bots.get((self.bots_space[i-2].x, self.bots_space[i-2].y), None) and self.next_empty == i:
+            elif (
+                not self.pressed_bots.get(
+                    (self.bots_space[i - 2].x, self.bots_space[i - 2].y), None
+                )
+                and self.next_empty == i
+            ):
                 # bot이 2명 이상일 경우
                 if self.__game_settings.get("player_count", None) > 2:
-                    self.pressed_bots[(self.bots_space[i-2].x, self.bots_space[i-2].y)] = True
+                    self.pressed_bots[
+                        (self.bots_space[i - 2].x, self.bots_space[i - 2].y)
+                    ] = True
                     self.__game_settings["player_count"] -= 1
                     self.next_empty -= 1
-                    self.__game_settings["pressed_bots"][f"bot{i-1}"] = not self.__game_settings["pressed_bots"][f"bot{i-1}"]
+                    self.__game_settings["pressed_bots"][
+                        f"bot{i-1}"
+                    ] = not self.__game_settings["pressed_bots"][f"bot{i-1}"]
                     self.save_game_settings()
                 # bot이 1명일 경우
                 else:
