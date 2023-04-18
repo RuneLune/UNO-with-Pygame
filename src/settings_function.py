@@ -21,7 +21,7 @@ initial_settings: Dict[str, str | bool | Dict[str, int] | float] = {
     "previous_scene": "main",
     "background_sound_volume": 1,
     "effect_sound_volume": 0.5,
-    "all_sound_volume": 1
+    "all_sound_volume": 1,
 }
 
 
@@ -172,8 +172,6 @@ class Settings:
         elif self.__settings.get("all_sound_volume", None) == 1:
             self.__settings.update(all_sound_volume=0.5)
         self.save_settings()
-        
-
 
     def previous_main(self):
         self.__settings.update(previous_scene="main")
@@ -240,9 +238,14 @@ class Settings:
             event = pygame.event.wait()
             if event.type == pygame.KEYDOWN:
                 temp = event.key
-                if (temp == self.__settings["key_settings"]["left"] or temp == self.__settings["key_settings"]["right"] or 
-                    temp == self.__settings["key_settings"]["up"] or temp == self.__settings["key_settings"]["down"] or
-                    temp == self.__settings["key_settings"]["select"] or temp == self.__settings["key_settings"]["cancel"]):
+                if (
+                    temp == self.__settings["key_settings"]["left"]
+                    or temp == self.__settings["key_settings"]["right"]
+                    or temp == self.__settings["key_settings"]["up"]
+                    or temp == self.__settings["key_settings"]["down"]
+                    or temp == self.__settings["key_settings"]["select"]
+                    or temp == self.__settings["key_settings"]["cancel"]
+                ):
                     pass
                 else:
                     break

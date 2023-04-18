@@ -65,60 +65,48 @@ class Main_Scene(Scene):
         )
 
         key_left = pygame.key.name(
-            self.__settings.get_settings().get("key_settings",None).get("left", None)
+            self.__settings.get_settings().get("key_settings", None).get("left", None)
         )
         key_right = pygame.key.name(
-            self.__settings.get_settings().get("key_settings",None).get("right", None)
+            self.__settings.get_settings().get("key_settings", None).get("right", None)
         )
         key_up = pygame.key.name(
-            self.__settings.get_settings().get("key_settings",None).get("up", None)
+            self.__settings.get_settings().get("key_settings", None).get("up", None)
         )
         key_down = pygame.key.name(
-            self.__settings.get_settings().get("key_settings",None).get("down", None)
+            self.__settings.get_settings().get("key_settings", None).get("down", None)
         )
         key_select = pygame.key.name(
-            self.__settings.get_settings().get("key_settings",None).get("select", None)
+            self.__settings.get_settings().get("key_settings", None).get("select", None)
         )
         key_cancel = pygame.key.name(
-            self.__settings.get_settings().get("key_settings",None).get("cancel", None)
+            self.__settings.get_settings().get("key_settings", None).get("cancel", None)
         )
 
         self.__key_settings_text.append(
-            self.__key_font.render(
-                f"Left: {key_left}", True, colors.black
-            )
+            self.__key_font.render(f"Left: {key_left}", True, colors.black)
         )
         self.__key_settings_text.append(
-            self.__key_font.render(
-                f"Right: {key_right}", True, colors.black
-            )
+            self.__key_font.render(f"Right: {key_right}", True, colors.black)
         )
         self.__key_settings_text.append(
-            self.__key_font.render(
-                f"Up: {key_up}", True, colors.black
-            )
+            self.__key_font.render(f"Up: {key_up}", True, colors.black)
         )
         self.__key_settings_text.append(
-            self.__key_font.render(
-                f"Down: {key_down}", True, colors.black
-            )
+            self.__key_font.render(f"Down: {key_down}", True, colors.black)
         )
         self.__key_settings_text.append(
-            self.__key_font.render(
-                f"Select: {key_select}", True, colors.black
-            )
+            self.__key_font.render(f"Select: {key_select}", True, colors.black)
         )
         self.__key_settings_text.append(
-            self.__key_font.render(
-                f"Cancel: {key_cancel}", True, colors.black
-            )
+            self.__key_font.render(f"Cancel: {key_cancel}", True, colors.black)
         )
 
         for i in range(len(self.__key_settings_text)):
             self.__key_settings_rect.append(self.__key_settings_text[i].get_rect())
             self.__key_settings_rect[i].bottomleft = (
                 screen_size[0] / 25,
-                screen_size[1] * (5 / 7) + screen_size[1] * (1 / 3) * (i / 7)
+                screen_size[1] * (5 / 7) + screen_size[1] * (1 / 3) * (i / 7),
             )
 
         return None
