@@ -129,7 +129,7 @@ class Game_UI(Scene):
 
         # 우승자 이름 렌더링
         self.winner_font = pygame.font.Font(
-            font_resource("MainFont.ttf"), int(self.screen_size[1] / 8)
+            font_resource("MainFont.ttf"), round(self.screen_size[1] / 10)
         )
         self.winner_text1 = self.winner_font.render("You", True, colors.gold)
         self.winner_text2 = self.winner_font.render(" Are", True, colors.gold)
@@ -403,7 +403,7 @@ class Game_UI(Scene):
             )
             self.screen.blit(
                 self.winner_text4,
-                (5 * self.screen_size[0] / 8, self.screen_size[1] / 4),
+                (self.screen_size[0] / 2, self.screen_size[1] / 4),
             )
 
         self.tick()
