@@ -2,10 +2,11 @@ import pygame
 import copy
 import json
 import os
-import ctypes  # Get Resolution of PC
+from screeninfo import get_monitors
+from typing import Tuple, Dict
 
 
-initial_settings = {
+initial_settings: Dict[str, str | bool | Dict[str, int] | float] = {
     "screen_size": "SVGA",
     "full_screen": False,
     "key_settings": {
@@ -17,6 +18,10 @@ initial_settings = {
         "cancel": pygame.K_ESCAPE,
     },
     "colorblind_mode": False,
+    "previous_scene": "main",
+    "background_sound_volume": 1,
+    "effect_sound_volume": 0.5,
+    "all_sound_volume": 1,
 }
 
 
@@ -24,7 +29,9 @@ class Settings:
     def __new__(cls):
         return super().__new__(cls)
 
-    def __init__(self):
+    def __init__(self) -> None:
+        global initial_settings
+        self.__settings = initial_settings
         # Create settings.json if not exist
         if not os.path.isfile("settings.json"):
             self.reset_settings()
@@ -49,7 +56,9 @@ class Settings:
     # Settings reset method
     def reset_settings(self):
         global initial_settings
+        copy_previous = self.__settings.get("previous_scene", None)
         self.__settings = copy.deepcopy(initial_settings)
+        self.__settings.update(previous_scene=copy_previous)
 
     # Settings save method
     def save_settings(self):
@@ -83,7 +92,7 @@ class Settings:
         else:
             self.__fullscreen()
 
-    def get_screen_resolution(self):
+    def get_screen_resolution(self) -> Tuple[int, int]:
         return self.__screen_resolution
 
     def lower_screen_size(self):
@@ -108,6 +117,80 @@ class Settings:
         elif self.__settings.get("screen_size", None) == "FHD":
             self.__settings.update(screen_size="SVGA")
             self.__SVGA()
+        self.save_settings()
+
+    def higher_background_sound_volume(self):
+        if self.__settings.get("background_sound_volume", None) == 0:
+            self.__settings.update(background_sound_volume=0.5)
+        elif self.__settings.get("background_sound_volume", None) == 0.5:
+            self.__settings.update(background_sound_volume=1)
+        elif self.__settings.get("background_sound_volume", None) == 1:
+            self.__settings.update(background_sound_volume=0)
+        self.save_settings()
+
+    def lower_background_sound_volume(self):
+        if self.__settings.get("background_sound_volume", None) == 0:
+            self.__settings.update(background_sound_volume=1)
+        elif self.__settings.get("background_sound_volume", None) == 0.5:
+            self.__settings.update(background_sound_volume=0)
+        elif self.__settings.get("background_sound_volume", None) == 1:
+            self.__settings.update(background_sound_volume=0.5)
+        self.save_settings()
+
+    def higher_effect_sound_volume(self):
+        if self.__settings.get("effect_sound_volume", None) == 0:
+            self.__settings.update(effect_sound_volume=0.5)
+        elif self.__settings.get("effect_sound_volume", None) == 0.5:
+            self.__settings.update(effect_sound_volume=1)
+        elif self.__settings.get("effect_sound_volume", None) == 1:
+            self.__settings.update(effect_sound_volume=0)
+        self.save_settings()
+
+    def lower_effect_sound_volume(self):
+        if self.__settings.get("effect_sound_volume", None) == 0:
+            self.__settings.update(effect_sound_volume=1)
+        elif self.__settings.get("effect_sound_volume", None) == 0.5:
+            self.__settings.update(effect_sound_volume=0)
+        elif self.__settings.get("effect_sound_volume", None) == 1:
+            self.__settings.update(effect_sound_volume=0.5)
+        self.save_settings()
+
+    def higher_all_sound_volume(self):
+        if self.__settings.get("all_sound_volume", None) == 0:
+            self.__settings.update(all_sound_volume=0.5)
+        elif self.__settings.get("all_sound_volume", None) == 0.5:
+            self.__settings.update(all_sound_volume=1)
+        elif self.__settings.get("all_sound_volume", None) == 1:
+            self.__settings.update(all_sound_volume=0)
+        self.save_settings()
+
+    def lower_all_sound_volume(self):
+        if self.__settings.get("all_sound_volume", None) == 0:
+            self.__settings.update(all_sound_volume=1)
+        elif self.__settings.get("all_sound_volume", None) == 0.5:
+            self.__settings.update(all_sound_volume=0)
+        elif self.__settings.get("all_sound_volume", None) == 1:
+            self.__settings.update(all_sound_volume=0.5)
+        self.save_settings()
+
+    def previous_main(self):
+        self.__settings.update(previous_scene="main")
+        self.save_settings()
+
+    def previous_gamelobby(self):
+        self.__settings.update(previous_scene="gamelobby")
+        self.save_settings()
+
+    def previous_gameui(self):
+        self.__settings.update(previous_scene="gameui")
+        self.save_settings()
+
+    def previous_none(self):
+        self.__settings.update(previous_scene=None)
+        self.save_settings()
+
+    def previous_stageselect(self):
+        self.__settings.update(previous_scene="stageselect")
         self.save_settings()
 
     def change_fullscreen(self):
@@ -139,7 +222,31 @@ class Settings:
 
     # Fullscreen
     def __fullscreen(self):
+        monitor = get_monitors()[0]
         self.__screen_resolution = (
-            ctypes.windll.user32.GetSystemMetrics(0),
-            ctypes.windll.user32.GetSystemMetrics(1),
+            monitor.width,
+            monitor.height,
         )
+
+    def set_key_value(self, key_name, value):
+        self.__settings["key_settings"][key_name] = value
+        self.save_settings()
+
+    def key_change(self):
+        temp = 0
+        while True:
+            event = pygame.event.wait()
+            if event.type == pygame.KEYDOWN:
+                temp = event.key
+                if (
+                    temp == self.__settings["key_settings"]["left"]
+                    or temp == self.__settings["key_settings"]["right"]
+                    or temp == self.__settings["key_settings"]["up"]
+                    or temp == self.__settings["key_settings"]["down"]
+                    or temp == self.__settings["key_settings"]["select"]
+                    or temp == self.__settings["key_settings"]["cancel"]
+                ):
+                    pass
+                else:
+                    break
+        return temp

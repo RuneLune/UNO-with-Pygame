@@ -1,33 +1,48 @@
+from __future__ import annotations
+
 import math
 import pygame
+from typing import TYPE_CHECKING, Dict
+from os.path import join
+
+from resource_manager import image_resource
+
+if TYPE_CHECKING:
+    from settings_function import Settings
 
 
 class Cards:
+    # Cards 클래스 생성자
     def __new__(cls, *args, **kwargs):
         return super(Cards, cls).__new__(cls)
 
-    def __init__(self, settings):
+    # Cards 객체 초기화 메서드
+    def __init__(self, settings: Settings) -> None:
         self.__settings = settings
         self.__card_images = {}
         self.__render()
         return super(Cards, self).__init__()
 
-    def refresh(self):
+    # refresh 메서드
+    def refresh(self) -> None:
         self.__render()
-        pass
+        return None
 
-    def __render(self):
+    # 카드 이미지 렌더링 메서드
+    def __render(self) -> None:
         if self.__settings.get_settings().get("colorblind_mode") is False:
-            image_directory = "res/img/default/"
+            image_directory = "default"
+            pass
         else:
-            image_directory = "res/img/colorblind/"
+            image_directory = "colorblind"
+            pass
 
         card_height = round(self.__settings.get_screen_resolution()[1] / 8)
         card_width = round(card_height * 409 / 585)
 
         card_code_list = (
             [0, 999]  # 카드 뒷면 및 ? 카드
-            + list(range(wild_normal, wild_shuffle + 1))
+            + list(range(wild_normal, wild_custom + 1))
             + list(range(blue_0, blue_skip + 1))
             + list(range(green_0, green_skip + 1))
             + list(range(red_0, red_skip + 1))
@@ -36,7 +51,7 @@ class Cards:
 
         for card_code in card_code_list:
             card_image = pygame.image.load(
-                image_directory + str(card_code).zfill(3) + ".png"
+                image_resource(join(image_directory, str(card_code).zfill(3) + ".png"))
             )
             self.__card_images.update(
                 {
@@ -45,12 +60,16 @@ class Cards:
                     )
                 }
             )
+            continue
+        return None
 
-    def get_card_image(self, card_code):
+    # card_code에 해당하는 이미지 Surface를 반환하는 메서드
+    def get_card_image(self, card_code: int) -> pygame.Surface:
         return self.__card_images.get(card_code)
 
 
-def check_card(card_code):
+# card_code에 해당하는 카드 정보를 반환하는 함수
+def check_card(card_code: int) -> Dict[str : str | int]:
     color = math.floor(card_code / 100)
     if color == 1:
         color = "blue"
@@ -72,7 +91,7 @@ def check_card(card_code):
     elif number == 12:
         type = "skip"
     elif number == 13:
-        type = "normal"
+        type = "wild"
     elif number == 14:
         type = "draw4"
     elif number == 15:
