@@ -32,7 +32,7 @@ class Bot(Player):
     @overrides
     def turn_start(self) -> None:
         super(Bot, self).turn_start()
-        self._delay = random.uniform(0.5, 1.5)
+        self._delay = random.uniform(1, 3)
         self._timer.start()
         # self._play()
         return None
