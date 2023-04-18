@@ -157,6 +157,13 @@ class Game_UI(Scene):
         self.uno_btn_rect = self.uno_btn.get_rect(
             x=self.uno_btn_pos[0], y=self.uno_btn_pos[1]
         )
+        self.bot_uno_btn_img = self.uno_btn
+        x1 = self.user_space_size[0]
+        x2 = self.bots_space_size[0]/2
+        x3 = self.uno_btn_size[0]/2
+        self.bot_uno_btn_pos = [(x1 + x2 - x3,
+                                self.bots_space_size[1] * i + 15)
+                                for i in range(len(self.bots))]
         self.uno_btn_hover = False
 
         # 색깔 표시 rect 렌더링
@@ -315,6 +322,10 @@ class Game_UI(Scene):
             self.screen.blit(self.uno_btn, self.uno_btn_pos)
         else:
             self.screen.blit(self.uno_btn_gray, self.uno_btn_pos)
+        
+        for i in range(len(self.bots)):
+            if self.bots[i].is_uno() is True:
+                self.screen.blit(self.bot_uno_btn_img, self.bot_uno_btn_pos[i])
 
         # 턴 시작시 알림
         if self.user.is_turn() is True:
