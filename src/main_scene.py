@@ -125,6 +125,7 @@ class Main_Scene(Scene):
         self.__key_settings_text = []
         self.__key_settings_rect = []
         self.__selected_menu = 0
+        self.__key = self.__settings.get_settings().get("key_settings")
         self.render()
         return None
 
@@ -156,18 +157,18 @@ class Main_Scene(Scene):
                     self.sounds.play_effect("click")
                     return self.__menu_func(i)
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
+            if event.key == self.__key.get("up") or event.key == self.__key.get("left"):
                 self.__selected_menu -= 1
                 if self.__selected_menu < 0:
                     self.__selected_menu = len(self.__menu_options) - 1
-            elif event.key == pygame.K_DOWN:
+            elif event.key == self.__key.get("down") or event.key == self.__key.get("right"):
                 self.__selected_menu += 1
                 if self.__selected_menu >= len(self.__menu_options):
                     self.__selected_menu = 0
-            elif event.key == pygame.K_RETURN:
+            elif event.key == self.__key.get("select"):
                 self.sounds.play_effect("click")
                 return self.__menu_func(self.__selected_menu)
-            elif event.key == pygame.K_ESCAPE:
+            elif event.key == self.__key.get("cancel"):
                 return pygame.event.post(pygame.event.Event(pygame.QUIT))
         return ("continue", None)
 
