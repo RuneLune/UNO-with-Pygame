@@ -1,6 +1,7 @@
 import pygame
 from overrides import overrides
 from typing import Dict, Type
+import copy
 
 import colors
 import events
@@ -468,6 +469,23 @@ class Game_UI(Scene):
                     else:
                         self.draw_flag_list[i] = False
                         self.draw_flag_list[i + 1] = True
+        # if self.draw_flag is True:
+        #     if self.draw_counter < 10 * len(self.draw_card):
+        #         idx = self.draw_counter // 10
+        #         self.draw_pos[idx][0] += self.draw_rate_x[idx]
+        #         self.draw_pos[idx][1] += self.draw_rate_y[idx]
+        #         self.draw_counter += 1
+        #         if self.draw_counter % 10 == 0:
+        #             self.draw_flag_list[idx] = False
+        #             self.draw_flag_list[idx + 1] = True
+        #             pass
+        #         pass
+        #     else:
+        #         self.draw_flag = False
+        #         self.draw_counter = 0
+        #         pass
+        #     pass
+
         # 현재 컬러 확인
         self.discard_card = self.game.get_discard_info().get("discarded_card")
         self.current_color = self.discard_card.get("color")
@@ -532,6 +550,7 @@ class Game_UI(Scene):
                 self.set_pause(self.pause)
                 self.game.pause_timer()
                 self.settings.previous_gameui()
+                self.winner_flag = False
                 return pygame.event.post(
                     pygame.event.Event(events.CHANGE_SCENE, target="settings")
                 )
@@ -693,6 +712,7 @@ class Game_UI(Scene):
 
     def ani_draw(self):
         self.draw_flag = True
+        # self.draw_counter = 0
         self.last_draw_card = self.user.get_last_drawing_cards()
         print(self.last_draw_card)
         self.draw_flag_list = []
@@ -715,6 +735,6 @@ class Game_UI(Scene):
                 self.draw_end.append(self.user_card_pos[index[0]])
             self.draw_rate_x.append((self.draw_end[i][0] - self.draw_start[0]) / 10)
             self.draw_rate_y.append((self.draw_end[i][1] - self.draw_start[1]) / 10)
-            self.draw_pos.append(self.draw_start)  # initial pos
+            self.draw_pos.append(copy.deepcopy(self.draw_start))  # initial pos
 
         self.draw_flag_list.append(False)
