@@ -561,6 +561,13 @@ class Game_UI(Scene):
         self.card_lift()
         self.tick()
 
+        # 게임 종료시 마우스 입력 받고 메인메뉴로 이동
+        if self.game._game_status is False:
+            if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.KEYDOWN:
+                pygame.event.post(
+                    pygame.event.Event(events.CHANGE_SCENE, target="main")
+                )
+
         # 턴 시간초과시
         if event.type == events.TURN_TIMEOUT:
             self.color_choice = False
@@ -631,13 +638,6 @@ class Game_UI(Scene):
         # uno 버튼 클릭 이벤트 진행
         if self.uno_btn_hover is True and event.type == pygame.MOUSEBUTTONDOWN:
             self.user.yell_uno()
-
-        # 게임 종료시 마우스 입력 받고 메인메뉴로 이동
-        if self.game._game_status is False:
-            if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.KEYDOWN:
-                pygame.event.post(
-                    pygame.event.Event(events.CHANGE_SCENE, target="main")
-                )
 
     def __handle_pause_menu(self, event):
         self.set_pause(self.pause)
