@@ -68,7 +68,5 @@ class Timer:
         elif self.__timestarted is not None and self.__timepaused is None:
             status = "running"
             pass
-        else:
-            raise ValueError("Timer Error")
 
         return status
