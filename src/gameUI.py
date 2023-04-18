@@ -28,7 +28,7 @@ class Game_UI(Scene):
         self.discard_flag = False
         self.draw_flag = False
         self.winner_flag = False
-        self.winner_name = "fuck"
+        self.winner_name = "undefined"
 
         # discrete user and computer
         self.user = self.game.get_user()
@@ -543,6 +543,8 @@ class Game_UI(Scene):
         # 턴 시간초과시
         if event.type == events.TURN_TIMEOUT:
             self.color_choice = False
+            self.sounds.play_effect("timeout")
+            pass
 
         # 일시정지 화면전환 처리
         if event.type == pygame.KEYDOWN:
