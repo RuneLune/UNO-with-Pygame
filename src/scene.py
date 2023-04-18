@@ -1,5 +1,4 @@
 from abc import abstractmethod, ABC
-from typing import Dict
 import pygame
 
 from settings_function import Settings
