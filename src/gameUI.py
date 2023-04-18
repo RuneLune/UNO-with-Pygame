@@ -134,7 +134,9 @@ class Game_UI(Scene):
         self.winner_text1 = self.winner_font.render("You", True, colors.gold)
         self.winner_text2 = self.winner_font.render(" Are", True, colors.gold)
         self.winner_text3 = self.winner_font.render("  Winner", True, colors.gold)
-        self.winner_text5 = self.winner_font.render("click to main menu", True, colors.gold)
+        self.winner_text5 = self.winner_font.render(
+            "click to main menu", True, colors.gold
+        )
 
         # bot card position render
         self.bot_card_first_pos = [
@@ -158,12 +160,15 @@ class Game_UI(Scene):
             x=self.uno_btn_pos[0], y=self.uno_btn_pos[1]
         )
         self.bot_uno_btn_img = self.uno_btn
-        x1 = self.user_space_size[0]
-        x2 = self.bots_space_size[0]/2
-        x3 = self.uno_btn_size[0]/2
-        self.bot_uno_btn_pos = [(x1 + x2 - x3,
-                                self.bots_space_size[1] * i + 15)
-                                for i in range(len(self.bots))]
+        self.bot_uno_btn_pos = [
+            (
+                self.user_space_size[0]
+                + self.bots_space_size[0] / 2
+                - self.uno_btn_size[0] / 2,
+                self.bots_space_size[1] * i + 15,
+            )
+            for i in range(len(self.bots))
+        ]
         self.uno_btn_hover = False
 
         # 색깔 표시 rect 렌더링
@@ -322,7 +327,7 @@ class Game_UI(Scene):
             self.screen.blit(self.uno_btn, self.uno_btn_pos)
         else:
             self.screen.blit(self.uno_btn_gray, self.uno_btn_pos)
-        
+
         for i in range(len(self.bots)):
             if self.bots[i].is_uno() is True:
                 self.screen.blit(self.bot_uno_btn_img, self.bot_uno_btn_pos[i])
@@ -419,7 +424,7 @@ class Game_UI(Scene):
             )
             self.screen.blit(
                 self.winner_text5,
-                (self.screen_size[0] / 8, 7 * self.screen_size[1] / 8)
+                (self.screen_size[0] / 8, 7 * self.screen_size[1] / 8),
             )
 
         self.tick()
@@ -626,11 +631,13 @@ class Game_UI(Scene):
         # uno 버튼 클릭 이벤트 진행
         if self.uno_btn_hover is True and event.type == pygame.MOUSEBUTTONDOWN:
             self.user.yell_uno()
-        
+
         # 게임 종료시 마우스 입력 받고 메인메뉴로 이동
         if self.game._game_status is False:
             if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.KEYDOWN:
-                pygame.event.post(pygame.event.Event(events.CHANGE_SCENE, target="main"))
+                pygame.event.post(
+                    pygame.event.Event(events.CHANGE_SCENE, target="main")
+                )
 
     def __handle_pause_menu(self, event):
         self.set_pause(self.pause)
