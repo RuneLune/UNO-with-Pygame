@@ -1,17 +1,18 @@
 import pygame
-import colors
-import events
+import util.colors as colors
+import event.events as events
 from overrides import overrides
 
 import copy
 import json
 import os
 
-from resource_manager import font_resource
-from scene import Scene
-from game import Game
-from settings_function import Settings
-from sound import SoundManager
+from util.resource_manager import font_resource
+from scene.scene import Scene
+from game.game import Game
+from config.settings_function import Settings
+from sound.sound import SoundManager
+from util.appdata_manager import game_config_path
 
 initial_settings = {
     "player_count": 2,
@@ -33,7 +34,7 @@ class Game_Lobby(Scene):
         self.__settings = settings
 
         # Create settings.json if not exist
-        if not os.path.isfile("game_settings.json"):
+        if not os.path.isfile(game_config_path):
             self.reset_game_settings()
             self.save_game_settings()
         else:
@@ -53,9 +54,9 @@ class Game_Lobby(Scene):
     # Settings load method
     def load_game_settings(self):
         # load saved settings from file
-        if os.path.isfile("game_settings.json"):
+        if os.path.isfile(game_config_path):
             try:
-                with open("game_settings.json", "r") as f:
+                with open(game_config_path, "r") as f:
                     self.__game_settings = json.load(f)
             except BaseException:
                 # Error occurred while loading settings from file
@@ -70,7 +71,7 @@ class Game_Lobby(Scene):
     def save_game_settings(self):
         try:
             # Save settings to file
-            with open("game_settings.json", "w") as f:
+            with open(game_config_path, "w") as f:
                 json.dump(self.__game_settings, f)
         except BaseException:
             # Return -1 if an error occurred

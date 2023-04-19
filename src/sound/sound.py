@@ -1,7 +1,7 @@
 import pygame
 
-from resource_manager import sound_resource
-from settings_function import Settings
+from util.resource_manager import sound_resource
+from config.settings_function import Settings
 
 
 class SoundManager:

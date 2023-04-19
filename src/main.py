@@ -1,6 +1,6 @@
 import sys
 
-from app import App
+from app.app import App
 
 
 # Create App Object

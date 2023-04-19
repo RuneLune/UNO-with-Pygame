@@ -6,7 +6,7 @@ sys.path.append(
     os.path.join(os.path.dirname(os.path.abspath(os.path.dirname(__file__))), "src")
 )
 
-from timer import Timer
+from util.timer import Timer
 
 
 def test_timer_normal() -> None:

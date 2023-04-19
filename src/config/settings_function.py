@@ -5,6 +5,8 @@ import os
 from screeninfo import get_monitors
 from typing import Tuple, Dict
 
+from util.appdata_manager import config_path
+
 
 initial_settings: Dict[str, str | bool | Dict[str, int] | float] = {
     "screen_size": "SVGA",
@@ -33,7 +35,7 @@ class Settings:
         global initial_settings
         self.__settings = initial_settings
         # Create settings.json if not exist
-        if not os.path.isfile("settings.json"):
+        if not os.path.isfile(config_path):
             self.reset_settings()
             self.save_settings()
         else:
@@ -44,9 +46,9 @@ class Settings:
     # Settings load method
     def load_settings(self):
         # load saved settings from file
-        if os.path.isfile("settings.json"):
+        if os.path.isfile(config_path):
             try:
-                with open("settings.json", "r") as f:
+                with open(config_path, "r") as f:
                     self.__settings = json.load(f)
             except BaseException:
                 # Error occurred while loading settings from file
@@ -64,7 +66,7 @@ class Settings:
     def save_settings(self):
         try:
             # Save settings to file
-            with open("settings.json", "w") as f:
+            with open(config_path, "w") as f:
                 json.dump(self.__settings, f)
         except BaseException:
             # Return -1 if an error occurred
