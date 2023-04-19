@@ -2,8 +2,8 @@ from overrides import overrides
 from typing import List
 import random
 
-from game import Game
-import cards
+from game.game import Game
+import card.cards as cards
 
 
 class Stage_B(Game):

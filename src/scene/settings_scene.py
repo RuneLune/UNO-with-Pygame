@@ -2,12 +2,12 @@ import pygame
 from overrides import overrides
 from typing import Final, List
 
-import colors
-import events
-from settings_function import Settings
-from sound import SoundManager
-from scene import Scene
-from resource_manager import font_resource
+import util.colors as colors
+import event.events as events
+from config.settings_function import Settings
+from sound.sound import SoundManager
+from scene.scene import Scene
+from util.resource_manager import font_resource
 
 
 class Settings_Scene(Scene):
@@ -390,7 +390,7 @@ class Settings_Scene(Scene):
                     self.sounds.play_effect("click")
                     return self.__setting_func(i)
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
+            if event.key == self.__settings.get_settings().get("key_settings").get("cancel"):
                 return pygame.event.post(
                     pygame.event.Event(
                         events.CHANGE_SCENE,

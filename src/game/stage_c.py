@@ -1,7 +1,7 @@
 from overrides import overrides
 import random
 
-from game import Game
+from game.game import Game
 
 
 class Stage_C(Game):
