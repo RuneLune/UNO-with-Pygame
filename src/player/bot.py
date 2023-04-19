@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from overrides import overrides
 import random
-from timer import Timer
+from util.timer import Timer
 from typing import TYPE_CHECKING, Dict, Type
 import pygame
 
-from player import Player
-import events
+from player.player import Player
+import event.events as events
 
 if TYPE_CHECKING:
-    from game import Game
+    from game.game import Game
 
 
 class Bot(Player):

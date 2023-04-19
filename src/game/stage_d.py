@@ -1,8 +1,8 @@
-from game import Game
+from game.game import Game
 from overrides import overrides
 from typing import Type
 
-from player import Player
+from player.player import Player
 
 
 class Stage_D(Game):
