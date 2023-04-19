@@ -2,10 +2,10 @@ import random
 from overrides import overrides
 from typing import Type
 
-import cards
-from game import Game
-from player import Player
-from combo_bot import Combo_Bot
+import card.cards as cards
+from game.game import Game
+from player.player import Player
+from player.combo_bot import Combo_Bot
 
 
 class Stage_A(Game):
@@ -24,6 +24,7 @@ class Stage_A(Game):
         self._flip_top()
         self.start_timer()
 
+        self._user.set_cards([cards.wild_normal] * 3)
         # self._computer.set_cards([cards.blue_draw2, cards.red_draw2, cards.yellow_draw2, cards.green_draw2, cards.blue_0, cards.yellow_0])
         self._players[self._current_turn].turn_start()
         self._name = "stage_a"

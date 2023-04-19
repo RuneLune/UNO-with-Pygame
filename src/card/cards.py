@@ -5,10 +5,10 @@ import pygame
 from typing import TYPE_CHECKING, Dict
 from os.path import join
 
-from resource_manager import image_resource
+from util.resource_manager import image_resource
 
 if TYPE_CHECKING:
-    from settings_function import Settings
+    from config.settings_function import Settings
 
 
 class Cards:

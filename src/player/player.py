@@ -4,11 +4,11 @@ import copy
 import pygame
 from typing import List, Iterable, TYPE_CHECKING, Dict, Type, Tuple
 
-import cards
-import events
+import card.cards as cards
+import event.events as events
 
 if TYPE_CHECKING:
-    from game import Game
+    from game.game import Game
 
 
 class Player:

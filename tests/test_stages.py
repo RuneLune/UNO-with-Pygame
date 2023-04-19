@@ -7,11 +7,11 @@ sys.path.append(
     os.path.join(os.path.dirname(os.path.abspath(os.path.dirname(__file__))), "src")
 )
 
-from game import Game
-from stage_a import Stage_A
-from stage_b import Stage_B
-from stage_c import Stage_C
-from stage_d import Stage_D
+from game.game import Game
+from game.stage_a import Stage_A
+from game.stage_b import Stage_B
+from game.stage_c import Stage_C
+from game.stage_d import Stage_D
 
 pygame.init()
 

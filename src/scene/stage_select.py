@@ -6,16 +6,17 @@ import copy
 import json
 import os
 
-import colors
-import events
-from sound import SoundManager
-from scene import Scene
-from resource_manager import font_resource, image_resource
-from settings_function import Settings
-from stage_a import Stage_A
-from stage_b import Stage_B
-from stage_c import Stage_C
-from stage_d import Stage_D
+import util.colors as colors
+import event.events as events
+from sound.sound import SoundManager
+from scene.scene import Scene
+from util.resource_manager import font_resource, image_resource
+from config.settings_function import Settings
+from game.stage_a import Stage_A
+from game.stage_b import Stage_B
+from game.stage_c import Stage_C
+from game.stage_d import Stage_D
+from util.appdata_manager import stage_access_path
 
 
 initial_settings = {"touchable": [True, True, False, False, False]}
@@ -31,7 +32,7 @@ class Stage(Scene):
         self.__stage_states = initial_settings
 
         # Create settings.json if not exist
-        if not os.path.isfile("stage_states.json"):
+        if not os.path.isfile(stage_access_path):
             self.reset_stage_stages()
             self.save_stage_states()
         else:
@@ -45,9 +46,9 @@ class Stage(Scene):
     # Settings load method
     def load_stage_states(self):
         # load saved settings from file
-        if os.path.isfile("stage_states.json"):
+        if os.path.isfile(stage_access_path):
             try:
-                with open("stage_states.json", "r") as f:
+                with open(stage_access_path, "r") as f:
                     self.__stage_states = json.load(f)
             except BaseException:
                 # Error occurred while loading settings from file
@@ -62,7 +63,7 @@ class Stage(Scene):
     def save_stage_states(self):
         try:
             # Save settings to file
-            with open("stage_states.json", "w") as f:
+            with open(stage_access_path, "w") as f:
                 json.dump(self.__stage_states, f)
         except BaseException:
             # Return -1 if an error occurred

@@ -3,14 +3,14 @@ from overrides import overrides
 from typing import Dict, Type
 import copy
 
-import colors
-import events
-from cards import Cards
-from game import Game
-from settings_function import Settings
-from sound import SoundManager
-from resource_manager import image_resource, font_resource
-from scene import Scene
+import util.colors as colors
+import event.events as events
+from card.cards import Cards
+from game.game import Game
+from config.settings_function import Settings
+from sound.sound import SoundManager
+from util.resource_manager import image_resource, font_resource
+from scene.scene import Scene
 
 
 class Game_UI(Scene):
@@ -600,6 +600,7 @@ class Game_UI(Scene):
                 pygame.event.post(
                     pygame.event.Event(events.CHANGE_SCENE, target="main")
                 )
+                self.winner_flag = False
 
         # 턴 시간초과시
         if event.type == events.TURN_TIMEOUT:
