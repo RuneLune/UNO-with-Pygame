@@ -5,11 +5,11 @@ from typing import TYPE_CHECKING, Type, List, Dict
 import copy
 import random
 
-from bot import Bot
-import cards
+from player.bot import Bot
+import card.cards as cards
 
 if TYPE_CHECKING:
-    from game import Game
+    from game.game import Game
 
 
 class Combo_Bot(Bot):

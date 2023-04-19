@@ -5,7 +5,7 @@ sys.path.append(
     os.path.join(os.path.dirname(os.path.abspath(os.path.dirname(__file__))), "src")
 )
 
-from resource_manager import (
+from util.resource_manager import (
     resource_path,
     font_resource,
     image_resource,

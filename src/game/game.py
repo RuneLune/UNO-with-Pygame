@@ -3,11 +3,11 @@ import pygame
 import random
 from typing import List, Dict, Iterable, Type
 
-from bot import Bot
-import cards
-import events
-from player import Player
-from timer import Timer
+from player.bot import Bot
+import card.cards as cards
+import event.events as events
+from player.player import Player
+from util.timer import Timer
 
 
 class Game:
@@ -282,16 +282,30 @@ class Game:
 
     # 라운드 종료 후 점수를 계산하는 메서드
     def _end_round(self) -> None:
-        pygame.event.post(
-            pygame.event.Event(
-                events.GAME_END,
-                args={
-                    "stage": self._name,
-                    "status": "win",
-                    "winner": self._players[self._current_turn].get_name(),
-                },
+        if self._players[self._current_turn] is self._user:
+            pygame.event.post(
+                pygame.event.Event(
+                    events.GAME_END,
+                    args={
+                        "stage": self._name,
+                        "status": "win",
+                        "winner": self._players[self._current_turn].get_name(),
+                    },
+                )
             )
-        )
+            pass
+        else:
+            pygame.event.post(
+                pygame.event.Event(
+                    events.GAME_END,
+                    args={
+                        "stage": self._name,
+                        "status": "lose",
+                        "winner": self._players[self._current_turn].get_name(),
+                    },
+                )
+            )
+            pass
         self._game_status = False
         points: int = 0
         for i in range(0, len(self._players)):

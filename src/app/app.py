@@ -1,18 +1,18 @@
 import pygame
 from typing import Dict, Type
 
-from settings_function import Settings
-import events
+from config.settings_function import Settings
+import event.events as events
 
 # from game_scene import Game_Scene
-from main_scene import Main_Scene
-from settings_scene import Settings_Scene
-from gameUI import Game_UI
-from game_lobby import Game_Lobby
-from scene import Scene
-from stage_select import Stage
-from sound import SoundManager
-from resource_manager import image_resource
+from scene.main_scene import Main_Scene
+from scene.settings_scene import Settings_Scene
+from scene.gameUI import Game_UI
+from scene.game_lobby import Game_Lobby
+from scene.scene import Scene
+from scene.stage_select import Stage
+from sound.sound import SoundManager
+from util.resource_manager import image_resource
 
 
 class App:

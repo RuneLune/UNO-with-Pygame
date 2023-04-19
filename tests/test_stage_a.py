@@ -6,8 +6,8 @@ sys.path.append(
     os.path.join(os.path.dirname(os.path.abspath(os.path.dirname(__file__))), "src")
 )
 
-from stage_a import Stage_A
-import cards
+from game.stage_a import Stage_A
+import card.cards as cards
 
 
 class Stage_A_test(Stage_A):

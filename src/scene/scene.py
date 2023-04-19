@@ -1,8 +1,8 @@
 from abc import abstractmethod, ABC
 import pygame
 
-from settings_function import Settings
-from sound import SoundManager
+from config.settings_function import Settings
+from sound.sound import SoundManager
 
 
 class Scene(ABC):
