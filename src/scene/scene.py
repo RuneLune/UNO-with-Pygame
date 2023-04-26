@@ -1,34 +1,54 @@
-from abc import abstractmethod, ABC
+from __future__ import annotations
+
 import pygame
+from typing import Type, List, TYPE_CHECKING
 
-from config.settings_function import Settings
-from sound.sound import SoundManager
+from gameobj.gameobj import GameObject
+
+if TYPE_CHECKING:
+    from manager.scenemgr import SceneManager
 
 
-class Scene(ABC):
-    def __new__(cls, *args, **kwargs):
-        return super(Scene, cls).__new__(cls)
+class Scene:
+    def __init__(self, scene_manager: SceneManager) -> None:
+        self.scene_manager: SceneManager = scene_manager
+        self.game_objects: List[Type[GameObject]] = []
+        self.start()
+        return None
 
-    @abstractmethod
-    def __init__(self, settings: Settings, sound_manager: SoundManager) -> None:
-        return super(Scene, self).__init__()
+    def start(self) -> None:
+        """Scene에 필요한 GameObject 추가"""
+        return None
 
-    @abstractmethod
-    def refresh(self) -> None:
-        raise NotImplementedError("Must override refresh() method")
+    def instantiate(self, game_object: Type[GameObject]) -> None:
+        self.game_objects.append(game_object)
+        return None
 
-    @abstractmethod
-    def render(self) -> None:
-        raise NotImplementedError("Must override render() method")
+    def destroy(self, game_object: Type[GameObject]) -> None:
+        if game_object in self.game_objects:
+            self.game_objects.remove(game_object)
+            game_object.on_destroy()
+            pass
+        else:
+            raise ValueError("game_object not found")
+        return None
 
-    @abstractmethod
-    def handle(self, event: pygame.event.Event) -> None:
-        raise NotImplementedError("Must override handle() method")
+    def update(self) -> None:
+        self.game_objects.sort()
+        if self.game_objects:
+            for game_object in self.game_objects:
+                game_object.tick()
+                continue
+            pass
+        return None
 
-    @abstractmethod
-    def draw(self) -> None:
-        raise NotImplementedError("Must override draw() method")
+    def handle(self, event: Type[pygame.event.Event]) -> None:
+        if self.game_objects:
+            for game_object in reversed(self.game_objects):
+                if game_object.handle(event):
+                    break
+                continue
+            pass
+        return None
 
-    # @abstractmethod
-    # def get_args(self, args: Dict[any, any]) -> None:
-    #     raise NotImplementedError("Must override draw() method")
+    pass

@@ -6,7 +6,7 @@ import util.colors as colors
 import event.events as events
 from config.settings_function import Settings
 from sound.sound import SoundManager
-from scene.scene import Scene
+from scene.scene_old import Scene
 from util.resource_manager import font_resource
 
 

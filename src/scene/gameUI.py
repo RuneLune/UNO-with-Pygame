@@ -10,7 +10,7 @@ from game.game import Game
 from config.settings_function import Settings
 from sound.sound import SoundManager
 from util.resource_manager import image_resource, font_resource
-from scene.scene import Scene
+from scene.scene_old import Scene
 
 
 class Game_UI(Scene):
