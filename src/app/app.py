@@ -18,7 +18,7 @@ class App(metaclass=SingletonMeta):
 
     def start(self) -> None:
         while self.running:
-            self.screen.fill((0, 0, 0))
+            self.screen.fill((255, 255, 255))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False

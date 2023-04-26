@@ -9,6 +9,7 @@ from abstrclass.observer import Observer
 from scene.scene import Scene
 from scene.scene1 import Scene1
 from scene.scene2 import Scene2
+from scene.mainmenu import MainMenu
 
 if TYPE_CHECKING:
     from abstrclass.subject import Subject
@@ -19,8 +20,9 @@ class SceneManager(Observer, metaclass=SingletonMeta):
         self.scenes: Dict[str, Type[Scene]] = {
             "scene1": Scene1(self),
             "scene2": Scene2(self),
+            "main_menu": MainMenu(self),
         }
-        self.current_scene = "scene1"
+        self.current_scene = "main_menu"
 
     @overrides
     def update(self, subject: Type[Subject]) -> None:

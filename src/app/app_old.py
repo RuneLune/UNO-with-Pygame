@@ -5,7 +5,7 @@ from config.settings_function import Settings
 import event.events as events
 
 # from game_scene import Game_Scene
-from scene.main_scene import Main_Scene
+from scene.main_scene_old import Main_Scene
 from scene.settings_scene import Settings_Scene
 from scene.gameUI import Game_UI
 from scene.game_lobby import Game_Lobby
