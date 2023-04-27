@@ -7,7 +7,7 @@ from typing import List, Type, final
 class GameObject(pygame.sprite.Sprite):
     """Abstract class for game objects"""
 
-    @final
+    # @final
     def __init__(
         self,
         surface: pygame.Surface,
