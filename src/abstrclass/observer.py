@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from .subject import Subject
 
 
-class Observer():
+class Observer(ABC):
     """
     The Observer interface declares the update method, used by subjects.
     """
