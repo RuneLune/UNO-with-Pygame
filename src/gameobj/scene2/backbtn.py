@@ -1,24 +1,17 @@
 from __future__ import annotations
 
 from overrides import overrides
-from typing import Type, List, TYPE_CHECKING
 import pygame
 
-from ..textobj import TextObject
-from abstrclass.subject import Subject
+from ..txtobj import TextObject
 from util.resource_manager import font_resource
 import util.colors as colors
 
-if TYPE_CHECKING:
-    from abstrclass.observer import Observer
 
-
-class BackButton(TextObject, Subject):
-    _observers: List[Observer] = []
-
+class BackButton(TextObject):
     def __init__(self) -> None:
         return super(BackButton, self).__init__(
-            "Back to scene1",
+            "Back to Previous Scene",
             pygame.font.Font(font_resource("MainFont.ttf"), 30),
             colors.white,
             "Scene2_BackButton",
@@ -37,30 +30,6 @@ class BackButton(TextObject, Subject):
     @overrides
     def on_mouse_exit(self) -> None:
         self.image = self.font.render(self.text, True, self.color)
-        return None
-
-    @overrides
-    def on_mouse_up_as_button(self) -> None:
-        self.target_scene = "scene1"
-        self.notify()
-        return None
-
-    @overrides
-    def attach(self, observer: Type[Observer]) -> None:
-        self._observers.append(observer)
-        return None
-
-    @overrides
-    def detach(self, observer: Type[Observer]) -> None:
-        if observer in self._observers:
-            self._observers.remove(observer)
-        return None
-
-    @overrides
-    def notify(self) -> None:
-        for observer in self._observers:
-            observer.update(self)
-            continue
         return None
 
     pass

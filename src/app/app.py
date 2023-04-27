@@ -10,7 +10,7 @@ class App(metaclass=SingletonMeta):
 
         self.clock = pygame.time.Clock()
         self.fps = 60
-        self.screen = pygame.display.set_mode((800, 600))
+        self.screen = pygame.display.set_mode((1920, 1080))
         self.scene_manager = SceneManager()
 
         self.running: bool = True
@@ -18,7 +18,6 @@ class App(metaclass=SingletonMeta):
 
     def start(self) -> None:
         while self.running:
-            self.screen.fill((255, 255, 255))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
@@ -35,3 +34,5 @@ class App(metaclass=SingletonMeta):
 
         pygame.quit()
         return None
+
+    pass

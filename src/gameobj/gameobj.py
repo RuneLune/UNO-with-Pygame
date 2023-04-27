@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import pygame
-from typing import List, Type
+from typing import List, Type, final
 
 
 class GameObject(pygame.sprite.Sprite):
     """Abstract class for game objects"""
 
+    @final
     def __init__(
         self,
         surface: pygame.Surface,
@@ -107,6 +108,8 @@ class GameObject(pygame.sprite.Sprite):
         return None
 
     # Methods under here should not be overrided
+
+    @final
     def handle(self, event: Type[pygame.event.Event]) -> bool:
         """!DO NOT OVERRIDE! method for checking status"""
         if not self._active:
@@ -134,6 +137,7 @@ class GameObject(pygame.sprite.Sprite):
             pass
         return self._mouse_over
 
+    @final
     def _check_mouse_over(self) -> None:
         """!DO NOT OVERRIDE! method for checking mouse collision"""
         mouse_position = pygame.mouse.get_pos()
@@ -152,6 +156,7 @@ class GameObject(pygame.sprite.Sprite):
             pass
         return None
 
+    @final
     def tick(self) -> None:
         """!DO NOT OVERRIDE! method calls update() and render() method"""
         if not self._active:
@@ -166,11 +171,13 @@ class GameObject(pygame.sprite.Sprite):
             pass
         return None
 
+    @final
     def _render(self) -> None:
         """!DO NOT OVERRIDE! method renders this object"""
         self._screen.blit(self.image, self.rect)
         return None
 
+    @final
     def __lt__(self, other: Type[GameObject]):
         return self.z_index < other.z_index
 
