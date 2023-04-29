@@ -1,26 +1,37 @@
+from __future__ import annotationsF
+
 import copy
 import pygame
 import random
-from typing import List, Dict, Iterable, Type
+from typing import List, Dict, Iterable, Type, TYPE_CHECKING
 
 from player.bot import Bot
 import card.cards as cards
 import event.events as events
 from player.player import Player
 from util.timer import Timer
-from metaclass.singleton import SingletonMeta
+from abstrclass.subject import Subject
+
+if TYPE_CHECKING:
+    from abstrclass.observer import Observer
 
 
-class Game(SingletonMeta):
-    # MAX_Inst = 1
-    # Inst_created = 0
+class Game(Subject):
+    _observers: List[Observer] = []
 
-    # Game 클래스 생성자
-    # def __new__(cls, *args, **kwargs):
-    #     # if cls.Inst_created >= cls.MAX_Inst:
-    #     #     raise ValueError("Cannot create more Game object")
-    #     # cls.Inst_created += 1
-    #     return super(Game, cls).__new__(cls)
+    def attach(self, observer: Observer) -> None:
+        self._observers.append(observer)
+        return None
+
+    def detach(self, observer: Observer) -> None:
+        self._observers.remove(observer)
+        return None
+
+    def notify(self) -> None:
+        for observer in self._observers:
+            observer.update(self)
+            pass
+        return None
 
     # Game 객체 초기화 메서드
     def __init__(
