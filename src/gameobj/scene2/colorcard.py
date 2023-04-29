@@ -11,6 +11,7 @@ class ColorCard(GameObject):
     def start(self) -> None:
         self._color = color.white
         self.image.fill(self._color)
+        self.rect_y_move = 0
         return None
 
     @overrides
@@ -45,10 +46,6 @@ class ColorCard(GameObject):
         return None
 
     @overrides
-    def start(self) -> None:
-        self.rect_y_move = 0
-
-    @overrides
     def update(self) -> None:
         if self.rect_y_move < 0:
             self.rect.move_ip(0, 5)
@@ -68,6 +65,14 @@ class ColorCard(GameObject):
     def color(self, value: Tuple[int, int, int]) -> None:
         self._color = value
         self.image.fill(self._color)
+        return None
+
+    def visible(self) -> None:
+        self._visible = True
+        return None
+
+    def invisible(self):
+        self._visible = False
         return None
 
     pass

@@ -405,9 +405,9 @@ class Settings_Scene(Scene):
     def __button_func(self, i):
         if self.__settings.get_settings().get("fullscreen", False) is False:
             if i == 0:  # Lower Screen Resolution
-                self.__settings.lower_screen_size()
+                self.__settings.decrease_screen_size()
             elif i == 1:  # Higher Screen Resolution
-                self.__settings.higher_screen_size()
+                self.__settings.increase_screen_size()
         if i == 2 or i == 3:  # Change Fullscreen Option
             self.__settings.change_fullscreen()
         elif i == 4 or i == 5:  # Change Colorblind Mode Option

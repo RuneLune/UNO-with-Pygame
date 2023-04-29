@@ -23,7 +23,7 @@ class Scene2(Scene, metaclass=SingletonMeta):
         menu_font = pygame.font.Font(
             font_resource("MainFont.ttf"), screen_rect.height // 12
         )
-        card_size = (screen_rect.height * 3 // 40, screen_rect.height // 10)
+        card_size = (screen_rect.height * 3 // 24, screen_rect.height // 6)
 
         self.background = GameObject(
             background_surface, "Scene2_Background", z_index=-999
@@ -43,7 +43,7 @@ class Scene2(Scene, metaclass=SingletonMeta):
             "Scene2_RedCard",
             -1,
             -1,
-            screen_rect.height * 1 // 40,
+            card_size[0] * 1 // 4,
             screen_rect.height // 2,
             1,
         )
@@ -52,7 +52,7 @@ class Scene2(Scene, metaclass=SingletonMeta):
             "Scene2_GreenCard",
             -1,
             -1,
-            screen_rect.height * 5 // 40,
+            card_size[0] * 6 // 4,
             screen_rect.height // 2,
             1,
         )
@@ -61,7 +61,7 @@ class Scene2(Scene, metaclass=SingletonMeta):
             "Scene2_BlueCard",
             -1,
             -1,
-            screen_rect.height * 9 // 40,
+            card_size[0] * 11 // 4,
             screen_rect.height // 2,
             1,
         )
@@ -75,6 +75,9 @@ class Scene2(Scene, metaclass=SingletonMeta):
         self.red_card.color = color.red
         self.green_card.color = color.green
         self.blue_card.color = color.blue
+
+        self.green_card.invisible()
+        self.red_card.on_mouse_up = lambda: self.green_card.visible()
 
         self.back_button.on_mouse_up_as_button = (
             lambda: self.scene_manager.load_previous_scene()

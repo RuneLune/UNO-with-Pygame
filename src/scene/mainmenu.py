@@ -27,19 +27,19 @@ class MainMenu(Scene, metaclass=SingletonMeta):
             background_surface, "MainMenu_Background", z_index=-999
         )
         self.title_text = TextObject(
-            "UNO", title_font, color.black, "MainMenu_TitleText", z_index=999
+            "UNO", title_font, color.black, "MainMenu_TitleText"
         )
         self.play_button = TextButtonObject(
-            "Play", menu_font, color.black, "MainMenu_PlayButton", z_index=999
+            "Play", menu_font, color.black, "MainMenu_PlayButton"
         )
         self.stage_button = TextButtonObject(
-            "Stage", menu_font, color.black, "MainMenu_StageButton", z_index=999
+            "Stage", menu_font, color.black, "MainMenu_StageButton"
         )
         self.settings_button = TextButtonObject(
-            "Settings", menu_font, color.black, "MainMenu_SettingsButton", z_index=999
+            "Settings", menu_font, color.black, "MainMenu_SettingsButton"
         )
         self.quit_button = TextButtonObject(
-            "Quit", menu_font, color.black, "QuitButton", z_index=999
+            "Quit", menu_font, color.black, "QuitButton"
         )
 
         self.title_text.rect.center = (
@@ -70,7 +70,7 @@ class MainMenu(Scene, metaclass=SingletonMeta):
             "scene2"
         )
         self.settings_button.on_mouse_up_as_button = (
-            lambda: self.scene_manager.load_scene("scene1")
+            lambda: self.scene_manager.load_scene("config_menu")
         )
         self.quit_button.on_mouse_up_as_button = lambda: pygame.event.post(
             pygame.event.Event(pygame.QUIT)

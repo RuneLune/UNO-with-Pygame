@@ -6,11 +6,12 @@ from screeninfo import get_monitors
 from typing import Tuple, Dict
 
 from util.appdata_manager import config_path
+from metaclass.singleton import SingletonMeta
 
 
 initial_settings: Dict[str, str | bool | Dict[str, int] | float] = {
     "screen_size": "SVGA",
-    "full_screen": False,
+    "fullscreen": False,
     "key_settings": {
         "left": pygame.K_LEFT,
         "right": pygame.K_RIGHT,
@@ -27,10 +28,7 @@ initial_settings: Dict[str, str | bool | Dict[str, int] | float] = {
 }
 
 
-class Settings:
-    def __new__(cls):
-        return super().__new__(cls)
-
+class Settings(metaclass=SingletonMeta):
     def __init__(self) -> None:
         global initial_settings
         self.__settings = initial_settings
@@ -79,25 +77,35 @@ class Settings:
     def get_settings(self):
         return copy.deepcopy(self.__settings)
 
-    def set_screen_resolution(self):
+    def set_screen_resolution(self) -> None:
         if self.__settings.get("fullscreen", False) is False:
             screen_type = self.__settings.get("screen_size", "SVGA")
             if screen_type == "SVGA":
                 self.__SVGA()
+                pass
             elif screen_type == "HD":
                 self.__HD()
+                pass
             elif screen_type == "FHD":
                 self.__FHD()
+                pass
             else:
                 self.__settings.update(screen_size="SVGA")
                 self.__SVGA()
+                pass
+            pygame.display.set_mode(self.__screen_resolution)
+            pass
         else:
             self.__fullscreen()
+            pygame.display.set_mode(self.__screen_resolution, pygame.FULLSCREEN)
+            pass
+
+        return None
 
     def get_screen_resolution(self) -> Tuple[int, int]:
         return self.__screen_resolution
 
-    def lower_screen_size(self):
+    def decrease_screen_size(self):
         if self.__settings.get("screen_size", None) == "SVGA":
             self.__settings.update(screen_size="FHD")
             self.__FHD()
@@ -109,7 +117,7 @@ class Settings:
             self.__HD()
         self.save_settings()
 
-    def higher_screen_size(self):
+    def increase_screen_size(self):
         if self.__settings.get("screen_size", None) == "SVGA":
             self.__settings.update(screen_size="HD")
             self.__HD()
@@ -195,7 +203,7 @@ class Settings:
         self.__settings.update(previous_scene="stageselect")
         self.save_settings()
 
-    def change_fullscreen(self):
+    def toggle_fullscreen(self):
         if self.__settings.get("fullscreen", False) is False:
             self.__settings.update(fullscreen=True)
         else:
@@ -203,7 +211,7 @@ class Settings:
         self.set_screen_resolution()
         self.save_settings()
 
-    def change_colorblind_mode(self):
+    def toggle_colorblind_mode(self):
         if self.__settings.get("colorblind_mode", False) is False:
             self.__settings.update(colorblind_mode=True)
         else:
