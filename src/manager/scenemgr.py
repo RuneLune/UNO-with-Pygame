@@ -30,6 +30,6 @@ class SceneManager(metaclass=SingletonMeta):
         return self.scenes.get(self.current_scene).handle(event)
 
     def update_scene(self) -> None:
-        return self.scenes.get(self.current_scene).update()
+        return self.scenes.get(self.current_scene).tick()
 
     pass

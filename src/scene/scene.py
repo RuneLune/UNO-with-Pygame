@@ -21,6 +21,10 @@ class Scene:
         """Scene에 필요한 GameObject 추가"""
         return None
 
+    def update(self) -> None:
+        """매 프레임마다 실행"""
+        return None
+
     @final
     def instantiate(self, game_object: Type[GameObject]) -> None:
         self.game_objects.append(game_object)
@@ -37,7 +41,7 @@ class Scene:
         return None
 
     @final
-    def update(self) -> None:
+    def tick(self) -> None:
         self.game_objects.sort()
         if self.game_objects:
             for game_object in self.game_objects:
