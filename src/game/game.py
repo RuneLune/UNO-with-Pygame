@@ -8,18 +8,19 @@ import card.cards as cards
 import event.events as events
 from player.player import Player
 from util.timer import Timer
+from metaclass.singleton import SingletonMeta
 
 
-class Game:
+class Game(SingletonMeta):
     # MAX_Inst = 1
     # Inst_created = 0
 
     # Game 클래스 생성자
-    def __new__(cls, *args, **kwargs):
-        # if cls.Inst_created >= cls.MAX_Inst:
-        #     raise ValueError("Cannot create more Game object")
-        # cls.Inst_created += 1
-        return super(Game, cls).__new__(cls)
+    # def __new__(cls, *args, **kwargs):
+    #     # if cls.Inst_created >= cls.MAX_Inst:
+    #     #     raise ValueError("Cannot create more Game object")
+    #     # cls.Inst_created += 1
+    #     return super(Game, cls).__new__(cls)
 
     # Game 객체 초기화 메서드
     def __init__(
