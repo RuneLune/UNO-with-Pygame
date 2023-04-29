@@ -396,6 +396,7 @@ class Game(Subject):
             self._skip_turn = False
             pass
         self._turn_move = True
+        self.notify()
 
         return None
 
