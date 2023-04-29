@@ -48,6 +48,7 @@ class Scene:
                 game_object.tick()
                 continue
             pass
+        self.update()
         return None
 
     @final
