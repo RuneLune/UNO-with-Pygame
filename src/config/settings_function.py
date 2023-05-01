@@ -21,7 +21,6 @@ initial_settings: Dict[str, str | bool | Dict[str, int] | float] = {
         "cancel": pygame.K_ESCAPE,
     },
     "colorblind_mode": False,
-    "previous_scene": "main",
     "background_sound_volume": 1,
     "effect_sound_volume": 0.5,
     "all_sound_volume": 1,
@@ -34,7 +33,7 @@ class Settings(metaclass=SingletonMeta):
         self.__settings = initial_settings
         # Create settings.json if not exist
         if not os.path.isfile(config_path):
-            self.reset_settings()
+            self.reset()
             self.save_settings()
         else:
             self.load_settings()
@@ -54,11 +53,10 @@ class Settings(metaclass=SingletonMeta):
         self.set_screen_resolution()
 
     # Settings reset method
-    def reset_settings(self):
+    def reset(self):
         global initial_settings
-        copy_previous = self.__settings.get("previous_scene", None)
         self.__settings = copy.deepcopy(initial_settings)
-        self.__settings.update(previous_scene=copy_previous)
+        self.save_settings()
 
     # Settings save method
     def save_settings(self):
@@ -183,26 +181,6 @@ class Settings(metaclass=SingletonMeta):
             self.__settings.update(all_sound_volume=0.5)
         self.save_settings()
 
-    def previous_main(self):
-        self.__settings.update(previous_scene="main")
-        self.save_settings()
-
-    def previous_gamelobby(self):
-        self.__settings.update(previous_scene="gamelobby")
-        self.save_settings()
-
-    def previous_gameui(self):
-        self.__settings.update(previous_scene="gameui")
-        self.save_settings()
-
-    def previous_none(self):
-        self.__settings.update(previous_scene=None)
-        self.save_settings()
-
-    def previous_stageselect(self):
-        self.__settings.update(previous_scene="stageselect")
-        self.save_settings()
-
     def toggle_fullscreen(self):
         if self.__settings.get("fullscreen", False) is False:
             self.__settings.update(fullscreen=True)
@@ -238,9 +216,12 @@ class Settings(metaclass=SingletonMeta):
             monitor.height,
         )
 
-    def set_key_value(self, key_name, value):
+    def set_key_value(self, key_name, value) -> bool:
+        if value in self.__settings["key_settings"].values():
+            return False
         self.__settings["key_settings"][key_name] = value
         self.save_settings()
+        return True
 
     def key_change(self):
         temp = 0

@@ -8,6 +8,9 @@ from gameobj.gameobj import GameObject
 from gameobj.txtobj import TextObject
 from config.settings_function import Settings
 from gameobj.txtbtnobj import TextButtonObject
+from gameobj.cfgmenu.keycfgval import KeyConfigValue
+from gameobj.cfgmenu.keyinput import KeyInput
+
 # from metaclass.singleton import SingletonMeta
 
 
@@ -31,6 +34,18 @@ class ConfigMenu(Scene):
         )
         self.title_text = TextObject(
             "Settings", title_font, color.white, "ConfigMenu_TitleText"
+        )
+        self.reset_config_button = TextButtonObject(
+            "Reset Settings",
+            menu_font,
+            color.white,
+            "ConfigMenu_ResetConfigButton",
+        )
+        self.back_button = TextButtonObject(
+            "Save and Back",
+            menu_font,
+            color.white,
+            "ConfigMenu_BackButton",
         )
         self.screen_size_key = TextObject(
             "Screen Size |", menu_font, color.white, "ConfigMenu_ScreenSizeKey"
@@ -77,55 +92,61 @@ class ConfigMenu(Scene):
         self.left_key = TextObject(
             "Left |", menu_font, color.white, "ConfigMenu_LeftKey"
         )
-        self.left_value = TextObject(
+        self.left_value = KeyConfigValue(
             pygame.key.name(config["key_settings"]["left"]),
             menu_font,
             color.white,
             "ConfigMenu_LeftValue",
         )
+        self.left_value.target_key = "left"
         self.right_key = TextObject(
             "Right |", menu_font, color.white, "ConfigMenu_RightKey"
         )
-        self.right_value = TextObject(
+        self.right_value = KeyConfigValue(
             pygame.key.name(config["key_settings"]["right"]),
             menu_font,
             color.white,
             "ConfigMenu_RightValue",
         )
+        self.right_value.target_key = "right"
         self.up_key = TextObject("Up |", menu_font, color.white, "ConfigMenu_UpKey")
-        self.up_value = TextObject(
+        self.up_value = KeyConfigValue(
             pygame.key.name(config["key_settings"]["up"]),
             menu_font,
             color.white,
             "ConfigMenu_UpValue",
         )
+        self.up_value.target_key = "up"
         self.down_key = TextObject(
             "Down |", menu_font, color.white, "ConfigMenu_DownKey"
         )
-        self.down_value = TextObject(
+        self.down_value = KeyConfigValue(
             pygame.key.name(config["key_settings"]["down"]),
             menu_font,
             color.white,
             "ConfigMenu_DownValue",
         )
+        self.down_value.target_key = "down"
         self.select_key = TextObject(
             "Select |", menu_font, color.white, "ConfigMenu_SelectKey"
         )
-        self.select_value = TextObject(
+        self.select_value = KeyConfigValue(
             pygame.key.name(config["key_settings"]["select"]),
             menu_font,
             color.white,
             "ConfigMenu_SelectValue",
         )
+        self.select_value.target_key = "select"
         self.cancel_key = TextObject(
             "Cancel |", menu_font, color.white, "ConfigMenu_CancelKey"
         )
-        self.cancel_value = TextObject(
+        self.cancel_value = KeyConfigValue(
             pygame.key.name(config["key_settings"]["cancel"]),
             menu_font,
             color.white,
             "ConfigMenu_CancelValue",
         )
+        self.cancel_value.target_key = "cancel"
         self.colorblind_mode_key = TextObject(
             "Colorblind Mode |", menu_font, color.white, "ConfigMenu_ColorblindModeKey"
         )
@@ -147,9 +168,16 @@ class ConfigMenu(Scene):
             color.white,
             "ConfigMenu_ColorblindRightBtn",
         )
+        self.key_input = KeyInput(
+            pygame.Surface((0, 0)), "ConfigMenu_KeyInput", 0, 0, -1, -1, -999, 999
+        )
 
         self.title_text.rect.centerx = screen_rect.centerx
         self.title_text.rect.bottom = screen_rect.height // 8
+        self.reset_config_button.rect.right = screen_rect.centerx * 9 // 10
+        self.reset_config_button.rect.bottom = screen_rect.height * 15 // 16
+        self.back_button.rect.left = screen_rect.centerx * 11 // 10
+        self.back_button.rect.bottom = screen_rect.height * 15 // 16
         self.screen_size_key.rect.topright = (
             screen_rect.centerx * 9 // 10,
             screen_rect.height * 3 // 16,
@@ -221,6 +249,9 @@ class ConfigMenu(Scene):
         self.colorblind_right_button.rect.right = screen_rect.width * 6 // 8
         self.colorblind_right_button.rect.top = screen_rect.height * 12 // 16
 
+        self.reset_config_button.on_mouse_up = lambda: self.start()
+        self.reset_config_button.on_click = lambda: Settings().reset()
+        self.back_button.on_click = lambda: self.scene_manager.load_previous_scene()
         self.screen_size_left_button.on_mouse_up = lambda: self.start()
         self.screen_size_right_button.on_mouse_up = lambda: self.start()
         self.screen_size_left_button.on_click = (
@@ -231,12 +262,8 @@ class ConfigMenu(Scene):
         )
         self.fullscreen_left_button.on_mouse_up = lambda: self.start()
         self.fullscreen_right_button.on_mouse_up = lambda: self.start()
-        self.fullscreen_left_button.on_click = (
-            lambda: Settings().toggle_fullscreen()
-        )
-        self.fullscreen_right_button.on_click = (
-            lambda: Settings().toggle_fullscreen()
-        )
+        self.fullscreen_left_button.on_click = lambda: Settings().toggle_fullscreen()
+        self.fullscreen_right_button.on_click = lambda: Settings().toggle_fullscreen()
         self.colorblind_left_button.on_mouse_up = lambda: self.start()
         self.colorblind_right_button.on_mouse_up = lambda: self.start()
         self.colorblind_left_button.on_click = (
@@ -246,8 +273,18 @@ class ConfigMenu(Scene):
             lambda: Settings().toggle_colorblind_mode()
         )
 
+        self.left_value.attach(self.key_input)
+        self.right_value.attach(self.key_input)
+        self.up_value.attach(self.key_input)
+        self.down_value.attach(self.key_input)
+        self.select_value.attach(self.key_input)
+        self.cancel_value.attach(self.key_input)
+
         self.instantiate(self.background)
         self.instantiate(self.title_text)
+        self.instantiate(self.key_input)
+        self.instantiate(self.reset_config_button)
+        self.instantiate(self.back_button)
         self.instantiate(self.screen_size_key)
         self.instantiate(self.screen_size_value)
         self.instantiate(self.screen_size_left_button)

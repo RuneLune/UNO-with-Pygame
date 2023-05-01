@@ -54,7 +54,13 @@ class Scene:
     @final
     def handle(self, event: Type[pygame.event.Event]) -> None:
         if self.game_objects:
-            for game_object in reversed(self.game_objects):
+            if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
+                game_objects = sorted(self.game_objects, key=lambda x: x.key_index)
+                pass
+            else:
+                game_objects = reversed(self.game_objects)
+                pass
+            for game_object in game_objects:
                 if game_object.handle(event):
                     break
                 continue

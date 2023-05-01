@@ -17,6 +17,7 @@ class GameObject(pygame.sprite.Sprite):
         left: int = 0,
         top: int = 0,
         z_index: int = -1,
+        key_index: int = -1.0,
     ) -> None:
         pygame.sprite.Sprite.__init__(self)
         self._screen: pygame.Surface = pygame.display.get_surface()
@@ -27,6 +28,7 @@ class GameObject(pygame.sprite.Sprite):
         self.tag: List[str] = []
         self.name: str = name
         self.z_index = z_index
+        self.key_index = key_index
         self._mouse_over: bool = False
         self._clicked: bool = False
         if width < 0 or height < 0:
@@ -101,6 +103,11 @@ class GameObject(pygame.sprite.Sprite):
 
     def on_mouse_up_as_button(self) -> None:
         """only called when the mouse is released over the same object"""
+        return None
+
+    def on_key_down(self, key: int) -> bool:
+        """called when the user has pressed the key"""
+        return False
 
     def print(self) -> None:
         """logs message to console"""
@@ -114,6 +121,8 @@ class GameObject(pygame.sprite.Sprite):
         """!DO NOT OVERRIDE! method for checking status"""
         if not self._active:
             return False
+        if event.type == pygame.KEYDOWN:
+            return self.on_key_down(event.key)
         if event.type == pygame.MOUSEMOTION:
             if self._clicked:
                 self.on_mouse_drag()

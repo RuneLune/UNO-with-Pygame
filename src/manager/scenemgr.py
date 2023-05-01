@@ -21,16 +21,18 @@ class SceneManager(metaclass=SingletonMeta):
             "main_menu": MainMenu,
             "config_menu": ConfigMenu,
         }
-        self.current_scene = MainMenu(self)
+        self.current_scene_name = "main_menu"
+        self.current_scene = self.scenes[self.current_scene_name](self)
         self.previous_scene = None
 
     def load_scene(self, scene_name: str) -> None:
-        self.previous_scene = self.current_scene
-        self.current_scene = self.scenes[scene_name](self)
+        self.previous_scene_name = self.current_scene_name
+        self.current_scene_name = scene_name
+        self.current_scene = self.scenes[self.current_scene_name](self)
         return None
 
     def load_previous_scene(self) -> None:
-        return self.load_scene(self.previous_scene)
+        return self.load_scene(self.previous_scene_name)
 
     def handle_scene(self, event: pygame.event.Event) -> None:
         return self.current_scene.handle(event)

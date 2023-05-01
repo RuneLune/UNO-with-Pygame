@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Type, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .observer import Observer
 
 
-class Subject(ABC):
+class Subject:
     """
     The Subject interface declares a set of methods for managing subscribers.
     """

@@ -7,10 +7,10 @@ from .scene import Scene
 from gameobj.gameobj import GameObject
 from gameobj.txtobj import TextObject
 from gameobj.txtbtnobj import TextButtonObject
-from metaclass.singleton import SingletonMeta
+# from metaclass.singleton import SingletonMeta
 
 
-class MainMenu(Scene, metaclass=SingletonMeta):
+class MainMenu(Scene):
     @overrides
     def start(self) -> None:
         screen_rect = pygame.display.get_surface().get_rect()

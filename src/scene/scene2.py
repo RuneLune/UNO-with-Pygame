@@ -6,12 +6,12 @@ from gameobj.gameobj import GameObject
 from gameobj.txtobj import TextObject
 from gameobj.txtbtnobj import TextButtonObject
 from gameobj.scene2.colorcard import ColorCard
-from metaclass.singleton import SingletonMeta
+# from metaclass.singleton import SingletonMeta
 import util.colors as color
 from util.resource_manager import font_resource
 
 
-class Scene2(Scene, metaclass=SingletonMeta):
+class Scene2(Scene):
     @overrides
     def start(self) -> None:
         screen_rect = pygame.display.get_surface().get_rect()

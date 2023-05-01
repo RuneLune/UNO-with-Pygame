@@ -31,7 +31,6 @@ class TextButtonObject(TextObject):
         return None
 
     def on_click(self) -> None:
-        print("TextButtonObject.on_click()")
         return None
 
     pass
