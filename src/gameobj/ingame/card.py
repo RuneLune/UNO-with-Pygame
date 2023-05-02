@@ -1,6 +1,11 @@
-from gameobj.gameobj import GameObject
-from overrides import overrides
 import pygame
+from overrides import overrides
+
+from gameobj.gameobj import GameObject
+from config.settings_function import Settings
+
+from abstrclass.subject import Subject
+from typing import Type
 
 # 게임에서 사용될 카드를 시작시 모두 로딩, not visible 상태
 # 처음 분배된 카드는 순서에 맞춰서 유저와 봇 공간으로 이동
@@ -33,16 +38,59 @@ class Card(GameObject):
         left: int = 0,
         top: int = 0,
         z_index: int = -1,
+        code: int = -1,
+        target_pos: tuple = (0, 0),
     ) -> None:
         super().__init__(surface, name, width, height, left, top, z_index)
-        self.hands = False
+        self.left = left
+        self.top = top
+        self.target_pos = target_pos
+        self.code = code
+        self.user = False
 
-    def on_mouse_enter(self) -> None:
-        # 낼 수 있는 카드인 경우 리프트
-        return super().on_mouse_enter()
+        settings = Settings()
+        screen_size = settings.get_screen_resolution()
 
-    def on_mouse_exit(self) -> None:
-        return super().on_mouse_exit()
+        card_size = self.rect.size
 
+        self.discard_pile_pos = (
+            screen_size[0] * 3 / 4 * 1 / 2 + card_size[0],
+            screen_size[1] * 1 / 3 - card_size[1] / 2,
+        )
+        self.user_card_pos = [
+            (
+                (i + 1) * self.card_size[0] / 3,
+                self.screen_size[1] * (2 / 3) + self.card_size[1] / 2,
+            )
+            for i in range(100)
+        ]
+
+    @overrides
     def on_mouse_over(self) -> None:
-        return super().on_mouse_over()
+        self.rect.y += 10
+
+    @overrides
+    def on_mouse_exit(self) -> None:
+        self.rect.y -= 10
+
+    @overrides
+    def on_mouse_down(self) -> None:
+        if self._visible is True:
+            if (
+                self.rect.x < self.target_pos[0] and self.rect.y > self.target_pos[1]
+            ) or (
+                self.rect.x > self.target_pos[0] and self.rect.y > self.target_pos[1]
+            ):
+                self.rect.x += (self.target_pos[0] - self.left) / 30
+                self.rect.y += (self.target_pos[1] - self.top) / 30
+            else:
+                self.rect.x = self.discard_pile_pos[0]
+                self.rect.y = self.discard_pile_pos[1]
+
+    def update(self, subject: Type[Subject]):
+        if self.user is True and self._visible is True:
+            self.user_card_list = subject.get_user().get_hand_cards()
+            for i, code in enumerate(self.user_card_list):
+                if self.code == code:
+                    self.rect.x = self.user_card_pos[i][0]
+                    self.rect.y = self.user_card_pos[i][1]

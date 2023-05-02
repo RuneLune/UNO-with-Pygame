@@ -1,4 +1,4 @@
-from __future__ import annotationss
+from __future__ import annotations
 
 from gameobj.gameobj import GameObject
 import util.colors as colors
@@ -37,6 +37,6 @@ class Space(GameObject):
         else:
             self.image.fill(self.color)
 
-    def update(self, subject: Type[Subject]):
-        self.turn = subject.get_user().is_turn()
-        pass
+    # def update(self, subject: Type[Subject]):
+    #     self.turn = subject.get_user().is_turn()
+    #     pass
