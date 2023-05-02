@@ -11,6 +11,7 @@ from scene.scene1 import Scene1
 from scene.scene2 import Scene2
 from scene.mainmenu import MainMenu
 from scene.cfgmenu import ConfigMenu
+from scene.game_scene import GameScene
 
 
 class SceneManager(metaclass=SingletonMeta):
@@ -20,6 +21,7 @@ class SceneManager(metaclass=SingletonMeta):
             "scene2": Scene2,
             "main_menu": MainMenu,
             "config_menu": ConfigMenu,
+            "game_scene": GameScene,
         }
         self.current_scene_name = "main_menu"
         self.current_scene = self.scenes[self.current_scene_name](self)

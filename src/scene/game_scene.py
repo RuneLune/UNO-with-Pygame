@@ -111,7 +111,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
         )
 
         # 처음 유저 카드 정의
-        self.user_cards = self.user.get_cards()
+        self.user_cards = self.user.get_hand_cards()
 
     @overrides
     def update(self):

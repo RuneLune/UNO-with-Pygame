@@ -63,7 +63,7 @@ class MainMenu(Scene):
         )
 
         self.play_button.on_mouse_up_as_button = lambda: self.scene_manager.load_scene(
-            "scene1"
+            "game_scene"
         )
         self.stage_button.on_mouse_up_as_button = lambda: self.scene_manager.load_scene(
             "scene2"
