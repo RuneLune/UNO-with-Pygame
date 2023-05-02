@@ -6,7 +6,7 @@ import util.colors as color
 from .scene import Scene
 
 from game.game import Game
-from config.settings_function import Settings
+from manager.cfgmgr import Config
 from card.cards import Cards
 
 from gameobj.gameobj import GameObject
@@ -22,8 +22,8 @@ class GameScene(Scene, metaclass=SingletonMeta):
     @overrides
     def start(self) -> None:
         self.game = Game(2)
-        self.settings = Settings()
-        self.cards_cls = Cards(Settings)
+        self.settings = Config()
+        self.cards_cls = Cards(self.settings)
 
         self.cards_cls.refresh()
         self.card_size = self.cards_cls.get_card_image(000).get_rect().size

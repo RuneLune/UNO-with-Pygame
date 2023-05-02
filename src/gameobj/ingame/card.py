@@ -2,7 +2,7 @@ import pygame
 from overrides import overrides
 
 from gameobj.gameobj import GameObject
-from config.settings_function import Settings
+from manager.cfgmgr import Config
 
 from abstrclass.subject import Subject
 from typing import Type
@@ -48,7 +48,7 @@ class Card(GameObject):
         self.code = code
         self.user = False
 
-        settings = Settings()
+        settings = Config()
         screen_size = settings.get_screen_resolution()
 
         card_size = self.rect.size

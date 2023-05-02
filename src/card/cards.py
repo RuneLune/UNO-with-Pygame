@@ -8,7 +8,7 @@ from os.path import join
 from util.resource_manager import image_resource
 
 if TYPE_CHECKING:
-    from config.settings_function import Settings
+    from manager.cfgmgr import Config
 
 
 class Cards:
@@ -17,8 +17,8 @@ class Cards:
         return super(Cards, cls).__new__(cls)
 
     # Cards 객체 초기화 메서드
-    def __init__(self, settings: Settings) -> None:
-        self.__settings = settings
+    def __init__(self) -> None:
+        self.__settings = Config()
         self.__card_images = {}
         self.__render()
         return super(Cards, self).__init__()
