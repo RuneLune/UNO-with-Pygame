@@ -1,5 +1,4 @@
 from overrides import overrides
-import pygame
 
 from .scene import Scene
 from gameobj.bgobj import BackgroundObject

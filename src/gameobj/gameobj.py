@@ -400,4 +400,12 @@ class GameObject(pygame.sprite.Sprite):
     def __lt__(self, other: Type[GameObject]):
         return self.z_index < other.z_index
 
+    def visible(self) -> None:
+        self._visible = True
+        return None
+
+    def invisible(self):
+        self._visible = False
+        return None
+
     pass
