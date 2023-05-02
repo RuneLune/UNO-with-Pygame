@@ -28,6 +28,14 @@ class SceneManager(metaclass=SingletonMeta):
     def load_scene(self, scene_name: str) -> None:
         self.previous_scene_name = self.current_scene_name
         self.current_scene_name = scene_name
+        self.current_scene.exit()
+        del self.current_scene
+        self.current_scene = self.scenes[self.current_scene_name](self)
+        return None
+
+    def reload_scene(self) -> None:
+        self.current_scene.exit()
+        del self.current_scene
         self.current_scene = self.scenes[self.current_scene_name](self)
         return None
 

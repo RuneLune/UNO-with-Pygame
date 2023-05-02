@@ -25,6 +25,10 @@ class Scene:
         """매 프레임마다 실행"""
         return None
 
+    def end(self) -> None:
+        """Scene 종료시 실행"""
+        return None
+
     @final
     def instantiate(self, game_object: Type[GameObject]) -> None:
         self.game_objects.append(game_object)
@@ -65,6 +69,15 @@ class Scene:
                     break
                 continue
             pass
+        return None
+
+    @final
+    def exit(self) -> None:
+        self.end()
+        for game_object in self.game_objects:
+            game_object.on_destroy()
+            del game_object
+            continue
         return None
 
     pass

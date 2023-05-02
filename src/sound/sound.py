@@ -1,13 +1,12 @@
 import pygame
 
 from util.resource_manager import sound_resource
-from config.settings_function import Settings
+from manager.cfgmgr import Config
+from metaclass.singleton import SingletonMeta
 
 
-class SoundManager:
-    def __init__(self, settings: Settings):
-        self.settings = settings
-
+class SoundManager(metaclass=SingletonMeta):
+    def __init__(self):
         pygame.mixer.init()  # pygame.mixer 초기화
         self.background_sound = pygame.mixer.Sound(sound_resource("background.mp3"))
         self.deal_effect_sound = pygame.mixer.Sound(sound_resource("deal1.mp3"))
@@ -32,16 +31,13 @@ class SoundManager:
 
         return None
 
-    def refresh(self) -> None:
-        self.background_sound_volume = self.settings.get_settings().get(
-            "background_sound_volume", 0.5
-        )
-        self.effect_sound_volume = self.settings.get_settings().get(
-            "effect_sound_volume", 0.5
-        )
-        self.all_sound_volume = self.settings.get_settings().get(
-            "all_sound_volume", 0.5
-        )
+    def refresh(self, key: str) -> None:
+        def getconfig() -> dict:
+            return Config().config.get(key)
+
+        self.background_sound_volume = getconfig("background_sound_volume", 0.5)
+        self.effect_sound_volume = getconfig("effect_sound_volume", 0.5)
+        self.all_sound_volume = getconfig("all_sound_volume", 0.5)
         self.set_background_sound_volume()
         self.set_effect_sound_volume()
 

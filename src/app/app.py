@@ -1,6 +1,6 @@
 import pygame
 
-from config.settings_function import Settings
+from manager.cfgmgr import Config
 from manager.scenemgr import SceneManager
 from metaclass.singleton import SingletonMeta
 
@@ -11,14 +11,14 @@ class App(metaclass=SingletonMeta):
 
         self.clock = pygame.time.Clock()
         self.fps = 60
-        settings = Settings().get_settings()
+        settings = Config().config
         if settings.get("full_screen", False):
             self.screen = pygame.display.set_mode(
-                Settings().get_screen_resolution(), pygame.FULLSCREEN
+                Config().get_screen_resolution(), pygame.FULLSCREEN
             )
             pass
         else:
-            self.screen = pygame.display.set_mode(Settings().get_screen_resolution())
+            self.screen = pygame.display.set_mode(Config().get_screen_resolution())
         self.scene_manager = SceneManager()
 
         self.running: bool = True

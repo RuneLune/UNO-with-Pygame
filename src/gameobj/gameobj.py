@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import pygame
-from typing import List, Type, final
+from typing import List, Type, final, Tuple
+import copy
 
 
 class GameObject(pygame.sprite.Sprite):
@@ -10,7 +11,7 @@ class GameObject(pygame.sprite.Sprite):
     # @final
     def __init__(
         self,
-        surface: pygame.Surface,
+        surface: pygame.Surface = pygame.Surface((0, 0)),
         name: str = "GameObject",
         width: int = -1,
         height: int = -1,
@@ -115,6 +116,215 @@ class GameObject(pygame.sprite.Sprite):
         return None
 
     # Methods under here should not be overrided
+
+    @property
+    def width(self) -> int:
+        """width of this object"""
+        return self.rect.width
+
+    @property
+    def height(self) -> int:
+        """height of this object"""
+        return self.rect.height
+
+    @property
+    def left(self) -> int:
+        """left position of this object"""
+        return self.rect.left
+
+    @property
+    def top(self) -> int:
+        """top position of this object"""
+        return self.rect.top
+
+    @property
+    def right(self) -> int:
+        """right position of this object"""
+        return self.rect.right
+
+    @property
+    def bottom(self) -> int:
+        """bottom position of this object"""
+        return self.rect.bottom
+
+    @property
+    def center(self) -> int:
+        """center position of this object"""
+        return self.rect.center
+
+    @property
+    def centerx(self) -> int:
+        """center x position of this object"""
+        return self.rect.centerx
+
+    @property
+    def centery(self) -> int:
+        """center y position of this object"""
+        return self.rect.centery
+
+    @property
+    def topleft(self) -> Tuple[int, int]:
+        """top left position of this object"""
+        return self.rect.topleft
+
+    @property
+    def topright(self) -> Tuple[int, int]:
+        """top right position of this object"""
+        return self.rect.topright
+
+    @property
+    def bottomleft(self) -> Tuple[int, int]:
+        """bottom left position of this object"""
+        return self.rect.bottomleft
+
+    @property
+    def bottomright(self) -> Tuple[int, int]:
+        """bottom right position of this object"""
+        return self.rect.bottomright
+
+    @property
+    def midtop(self) -> Tuple[int, int]:
+        """mid top position of this object"""
+        return self.rect.midtop
+
+    @property
+    def midleft(self) -> Tuple[int, int]:
+        """mid left position of this object"""
+        return self.rect.midleft
+
+    @property
+    def midbottom(self) -> Tuple[int, int]:
+        """mid bottom position of this object"""
+        return self.rect.midbottom
+
+    @property
+    def midright(self) -> Tuple[int, int]:
+        """mid right position of this object"""
+        return self.rect.midright
+
+    @property
+    def size(self) -> Tuple[int, int]:
+        """size of this object"""
+        return self.rect.size
+
+    @property
+    def area(self) -> pygame.Rect:
+        """area of this object"""
+        return copy.deepcopy(self.rect)
+
+    @width.setter
+    def width(self, value: int) -> None:
+        """width of this object"""
+        self.rect.width = value
+        return None
+
+    @height.setter
+    def height(self, value: int) -> None:
+        """height of this object"""
+        self.rect.height = value
+        return None
+
+    @left.setter
+    def left(self, value: int) -> None:
+        """left position of this object"""
+        self.rect.left = value
+        return None
+
+    @top.setter
+    def top(self, value: int) -> None:
+        """top position of this object"""
+        self.rect.top = value
+        return None
+
+    @right.setter
+    def right(self, value: int) -> None:
+        """right position of this object"""
+        self.rect.right = value
+        return None
+
+    @bottom.setter
+    def bottom(self, value: int) -> None:
+        """bottom position of this object"""
+        self.rect.bottom = value
+        return None
+
+    @center.setter
+    def center(self, value: int) -> None:
+        """center position of this object"""
+        self.rect.center = value
+        return None
+
+    @centerx.setter
+    def centerx(self, value: int) -> None:
+        """center x position of this object"""
+        self.rect.centerx = value
+        return None
+
+    @centery.setter
+    def centery(self, value: int) -> None:
+        """center y position of this object"""
+        self.rect.centery = value
+        return None
+
+    @topleft.setter
+    def topleft(self, value: Tuple[int, int]) -> None:
+        """top left position of this object"""
+        self.rect.topleft = value
+        return None
+
+    @topright.setter
+    def topright(self, value: Tuple[int, int]) -> None:
+        """top right position of this object"""
+        self.rect.topright = value
+        return None
+
+    @bottomleft.setter
+    def bottomleft(self, value: Tuple[int, int]) -> None:
+        """bottom left position of this object"""
+        self.rect.bottomleft = value
+        return None
+
+    @bottomright.setter
+    def bottomright(self, value: Tuple[int, int]) -> None:
+        """bottom right position of this object"""
+        self.rect.bottomright = value
+        return None
+
+    @midtop.setter
+    def midtop(self, value: Tuple[int, int]) -> None:
+        """mid top position of this object"""
+        self.rect.midtop = value
+        return None
+
+    @midleft.setter
+    def midleft(self, value: Tuple[int, int]) -> None:
+        """mid left position of this object"""
+        self.rect.midleft = value
+        return None
+
+    @midbottom.setter
+    def midbottom(self, value: Tuple[int, int]) -> None:
+        """mid bottom position of this object"""
+        self.rect.midbottom = value
+        return None
+
+    @midright.setter
+    def midright(self, value: Tuple[int, int]) -> None:
+        """mid right position of this object"""
+        self.rect.midright = value
+        return None
+
+    @size.setter
+    def size(self, value: Tuple[int, int]) -> None:
+        """size of this object"""
+        self.rect.size = value
+        return None
+
+    @area.setter
+    def area(self, value: pygame.Rect) -> None:
+        """area of this object"""
+        self.rect = value
+        return None
 
     @final
     def handle(self, event: Type[pygame.event.Event]) -> bool:
