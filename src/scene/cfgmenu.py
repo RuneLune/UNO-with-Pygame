@@ -12,6 +12,7 @@ from gameobj.cfgmenu.leftbtn import LeftButton
 from gameobj.cfgmenu.rightbtn import RightButton
 from gameobj.cfgmenu.keymenuval import KeyMenuValue
 from gameobj.cfgmenu.keyinput import KeyInput
+from gameobj.cfgmenu.keybindarea import KeyBindArea
 import util.colors as color
 
 
@@ -26,6 +27,7 @@ class ConfigMenu(Scene):
         self.instantiate(
             ConfigResetButton("Reset Configurations").attach_mgr(self.scene_manager)
         )
+        self.instantiate(KeyInput().attach_mgr(self.scene_manager))
 
         MenuKey.destroy_all()
         self.instantiate(MenuKey("Screen Size"))
@@ -62,10 +64,12 @@ class ConfigMenu(Scene):
         self.instantiate(KeyMenuValue("select"))
         self.instantiate(KeyMenuValue("cancel"))
 
-        self.key_input = KeyInput(
-            pygame.Surface((0, 0)), "ConfigMenu_KeyInput", z_index=-999, key_index=999
-        )
-
-        self.instantiate(self.key_input)
+        KeyBindArea.destroy_all()
+        self.instantiate(KeyBindArea("left"))
+        self.instantiate(KeyBindArea("right"))
+        self.instantiate(KeyBindArea("up"))
+        self.instantiate(KeyBindArea("down"))
+        self.instantiate(KeyBindArea("select"))
+        self.instantiate(KeyBindArea("cancel"))
 
         return None

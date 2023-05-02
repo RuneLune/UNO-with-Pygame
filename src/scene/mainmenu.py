@@ -7,7 +7,6 @@ from .scene import Scene
 from gameobj.gameobj import GameObject
 from gameobj.txtobj import TextObject
 from gameobj.txtbtnobj import TextButtonObject
-# from metaclass.singleton import SingletonMeta
 
 
 class MainMenu(Scene):

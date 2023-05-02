@@ -23,6 +23,7 @@ class LeftButton(TextButtonObject):
 
     @overrides
     def start(self) -> None:
+        LeftButton.Insts.append(self)
         screen_rect = pygame.display.get_surface().get_rect()
         self.font = pygame.font.Font(
             font_resource("MainFont.ttf"), screen_rect.height // 20

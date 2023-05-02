@@ -26,7 +26,7 @@ class ConfigResetButton(TextButtonObject):
         self.bottomright = (screen_rect.width * 9 // 20, screen_rect.height * 15 // 16)
         return None
 
-    def attach_mgr(self, scene_manager: SceneManager) -> BackButton:
+    def attach_mgr(self, scene_manager: SceneManager) -> ConfigResetButton:
         self.scene_manager = scene_manager
         return self
 

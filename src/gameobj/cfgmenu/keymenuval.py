@@ -51,4 +51,17 @@ class KeyMenuValue(TextObject):
         KeyMenuValue.Inst_created = 0
         return None
 
+    def keybind_start(self) -> None:
+        self.color = color.red
+        self.image = self.font.render(self.text, True, self.color)
+        return None
+
+    def keybind_end(self) -> None:
+        self.color = color.white
+        self.text = pygame.key.name(
+            Config().config.get("keybindings").get(self.target_config_key)
+        )
+        self.image = self.font.render(self.text, True, self.color)
+        return None
+
     pass
