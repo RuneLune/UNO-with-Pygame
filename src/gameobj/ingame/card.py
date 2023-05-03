@@ -1,11 +1,16 @@
+from __future__ import annotations
+
 import pygame
 from overrides import overrides
 
 from gameobj.gameobj import GameObject
 from manager.cfgmgr import Config
 
-from abstrclass.subject import Subject
-from typing import Type
+from abstrclass.observer import Observer
+from typing import Type, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from abstrclass.subject import Subject
 
 # 게임에서 사용될 카드를 시작시 모두 로딩, not visible 상태
 # 처음 분배된 카드는 순서에 맞춰서 유저와 봇 공간으로 이동
@@ -27,7 +32,7 @@ from typing import Type
 # 2. 유저 카드들 각각의 인덱스(순서)
 
 
-class Card(GameObject):
+class Card(GameObject, Observer):
     @overrides
     def __init__(
         self,
@@ -59,8 +64,8 @@ class Card(GameObject):
         )
         self.user_card_pos = [
             (
-                (i + 1) * self.card_size[0] / 3,
-                self.screen_size[1] * (2 / 3) + self.card_size[1] / 2,
+                (i + 1) * card_size[0] / 3,
+                screen_size[1] * (2 / 3) + card_size[1] / 2,
             )
             for i in range(100)
         ]
@@ -87,7 +92,7 @@ class Card(GameObject):
                 self.rect.x = self.discard_pile_pos[0]
                 self.rect.y = self.discard_pile_pos[1]
 
-    def update(self, subject: Type[Subject]):
+    def observer_update(self, subject: Type[Subject]):
         if self.user is True and self._visible is True:
             self.user_card_list = subject.get_user().get_hand_cards()
             for i, code in enumerate(self.user_card_list):
