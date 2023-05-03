@@ -21,9 +21,9 @@ from metaclass.singleton import SingletonMeta
 class GameScene(Scene, metaclass=SingletonMeta):
     @overrides
     def start(self) -> None:
-        self.game = Game(2)
+        self.game = Game(6)
         self.settings = Config()
-        self.cards_cls = Cards(self.settings)
+        self.cards_cls = Cards()
 
         self.cards_cls.refresh()
         self.card_size = self.cards_cls.get_card_image(000).get_rect().size
@@ -35,6 +35,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
 
         # space 정의
         self.user_space = Space(
+            surface=pygame.Surface((0, 0)),
             name="user_space",
             width=self.screen_size[0] * 3 / 4,
             height=self.screen_size[1] * 1 / 3,
@@ -42,24 +43,22 @@ class GameScene(Scene, metaclass=SingletonMeta):
             top=self.screen_size[1] * 2 / 3,
             z_index=0,
         )
-        self.instantiate(self.user_space)
 
-        self.game.attach(self.user_space)
         self.bot_spaces = [
             Space(
+                surface=pygame.Surface((0, 0)),
                 name="bot_space",
                 width=self.screen_size[0] * 1 / 4,
                 height=self.screen_size[1] * 1 / 5,
                 left=self.screen_size[0] * 3 / 4,
-                top=self.screen_size[1] * 1 / 5 * i,
+                top=self.screen_size[1] * (1 / 5) * i,
                 z_index=0,
             )
             for i in range(len(self.bots))
         ]
-        for i in range(len(self.bots)):
-            self.instantiate(self.bot_spaces[i])
 
         self.deck_space = Space(
+            surface=pygame.Surface((0, 0)),
             name="deck_space",
             width=self.screen_size[0] * 3 / 4,
             height=self.screen_size[1] * 2 / 3,
@@ -67,18 +66,18 @@ class GameScene(Scene, metaclass=SingletonMeta):
             top=0,
             z_index=0,
         )
-        self.instantiate(self.deck_space)
 
         # 드로우 파일 카드 위치 정의
         self.draw_cards_pos = (
-            self.screen_size[0] * 3 / 4 * 1 / 2 - self.card_size[0],
+            self.screen_size[0] * 3 / 8 - self.card_size[0],
             self.screen_size[1] * 1 / 3 - self.card_size[1] / 2,
         )
+
         # 드로우 카드 객체 모두 로드
         self.draw_cards = []
         for i, code in enumerate(self.game._draw_pile):
             temp = Card(
-                self.cards_cls.get_card_image(code),
+                surface=self.cards_cls.get_card_image(code),
                 name=code,
                 width=self.card_size[0],
                 height=self.card_size[1],
@@ -90,19 +89,17 @@ class GameScene(Scene, metaclass=SingletonMeta):
             temp._active = False
             self.draw_cards.append(temp)
 
-        for i in range(len(self.draw_cards)):
-            self.instantiate(self.draw_cards[i])
-
         # 버린 카드 위치 정의
         self.discard_pile_pos = (
-            self.screen_size[0] * 3 / 4 * 1 / 2 + self.card_size[0],
+            self.screen_size[0] * 3 / 8 + self.card_size[0],
             self.screen_size[1] * 1 / 3 - self.card_size[1] / 2,
         )
+
         # 버린 카드 객체 로드
         self.last_cards = []
         self.last_cards.append(
             Card(
-                self.cards_cls.get_card_image(self.game._discard_pile[0]),
+                surface=self.cards_cls.get_card_image(self.game._discard_pile[0]),
                 name=self.game._discard_pile[0],
                 width=self.card_size[0],
                 height=self.card_size[1],
@@ -111,7 +108,6 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 code=self.game._discard_pile[0],
             )
         )
-        self.instantiate(self.last_cards[0])
 
         # 플레이어 카드 위치 정의
         self.user_card_pos = [
@@ -126,7 +122,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
         self.user_cards_list = self.user.get_hand_cards()
         self.user_cards = [
             Card(
-                self.cards_cls.get_card_image(code),
+                surface=self.cards_cls.get_card_image(code),
                 name="user_card",
                 width=self.card_size[0],
                 height=self.card_size[1],
@@ -139,7 +135,14 @@ class GameScene(Scene, metaclass=SingletonMeta):
         ]
 
         for i in range(len(self.user_cards)):
-            self.instantiate(self.user_cards)
+            self.instantiate(self.user_cards[i])
+        self.instantiate(self.user_space)
+        for i in range(len(self.bots)):
+            self.instantiate(self.bot_spaces[i])
+        self.instantiate(self.deck_space)
+        for i in range(len(self.draw_cards)):
+            self.instantiate(self.draw_cards[i])
+        self.instantiate(self.last_cards[0])
 
     @overrides
     def update(self):
