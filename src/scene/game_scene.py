@@ -41,18 +41,16 @@ class GameScene(Scene, metaclass=SingletonMeta):
             height=self.screen_size[1] * 1 / 3,
             left=0,
             top=self.screen_size[1] * 2 / 3,
-            z_index=0,
         )
 
         self.bot_spaces = [
             Space(
                 surface=pygame.Surface((0, 0)),
-                name="bot_space",
+                name=f"bot{i}_space",
                 width=self.screen_size[0] * 1 / 4,
                 height=self.screen_size[1] * 1 / 5,
                 left=self.screen_size[0] * 3 / 4,
                 top=self.screen_size[1] * (1 / 5) * i,
-                z_index=0,
             )
             for i in range(len(self.bots))
         ]
@@ -64,7 +62,6 @@ class GameScene(Scene, metaclass=SingletonMeta):
             height=self.screen_size[1] * 2 / 3,
             left=0,
             top=0,
-            z_index=0,
         )
 
         # 드로우 파일 카드 위치 정의
@@ -85,8 +82,8 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 top=self.draw_cards_pos[1],
                 code=code,
             )
-            temp._visible = False
-            temp._active = False
+            temp._visible = True
+            temp._active = True
             self.draw_cards.append(temp)
 
         # 버린 카드 위치 정의
@@ -143,10 +140,12 @@ class GameScene(Scene, metaclass=SingletonMeta):
         for i in range(len(self.draw_cards)):
             self.instantiate(self.draw_cards[i])
         self.instantiate(self.last_cards[0])
+        for i in range(len(self.user_cards)):
+            self.instantiate(self.user_cards[i])
 
     @overrides
     def update(self):
-        if self.user.is_turn():
+        if self.user.is_turn() is True:
             self.user_space.turn = True
         else:
             self.user_space.turn = False
@@ -157,4 +156,4 @@ class GameScene(Scene, metaclass=SingletonMeta):
             else:
                 self.bot_spaces[i].turn = False
 
-        # self.user_cards_list = self.user.get_hand_cards()
+    # self.user_cards_list = self.user.get_hand_cards()
