@@ -6,9 +6,10 @@ from typing import TYPE_CHECKING, Dict
 from os.path import join
 
 from util.resource_manager import image_resource
+from manager.cfgmgr import Config
 
-if TYPE_CHECKING:
-    from manager.cfgmgr import Config
+# if TYPE_CHECKING:
+#     from manager.cfgmgr import Config
 
 
 class Cards:
@@ -18,7 +19,6 @@ class Cards:
 
     # Cards 객체 초기화 메서드
     def __init__(self) -> None:
-        self.__settings = Config()
         self.__card_images = {}
         self.__render()
         return super(Cards, self).__init__()
@@ -30,14 +30,14 @@ class Cards:
 
     # 카드 이미지 렌더링 메서드
     def __render(self) -> None:
-        if self.__settings.get_settings().get("colorblind_mode") is False:
+        if Config().config.get("colorblind_mode") is False:
             image_directory = "default"
             pass
         else:
             image_directory = "colorblind"
             pass
 
-        card_height = round(self.__settings.get_screen_resolution()[1] / 8)
+        card_height = round(Config().get_screen_resolution()[1] / 8)
         card_width = round(card_height * 409 / 585)
 
         card_code_list = (
