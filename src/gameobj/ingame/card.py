@@ -52,6 +52,7 @@ class Card(GameObject, Observer):
         self.target_pos = target_pos
         self.code = code
         self.user = False
+        self.ani = False
 
         settings = Config()
         screen_size = settings.get_screen_resolution()
@@ -59,7 +60,7 @@ class Card(GameObject, Observer):
         card_size = self.rect.size
 
         self.discard_pile_pos = (
-            screen_size[0] * 3 / 4 * 1 / 2 + card_size[0],
+            screen_size[0] * 3 / 8 + card_size[0],
             screen_size[1] * 1 / 3 - card_size[1] / 2,
         )
         self.user_card_pos = [
@@ -71,26 +72,16 @@ class Card(GameObject, Observer):
         ]
 
     @overrides
-    def on_mouse_over(self) -> None:
-        self.rect.y += 10
-
-    @overrides
-    def on_mouse_exit(self) -> None:
+    def on_mouse_enter(self) -> None:
         self.rect.y -= 10
 
     @overrides
+    def on_mouse_exit(self) -> None:
+        self.rect.y += 10
+
+    @overrides
     def on_mouse_down(self) -> None:
-        if self._visible is True:
-            if (
-                self.rect.x < self.target_pos[0] and self.rect.y > self.target_pos[1]
-            ) or (
-                self.rect.x > self.target_pos[0] and self.rect.y > self.target_pos[1]
-            ):
-                self.rect.x += (self.target_pos[0] - self.left) / 30
-                self.rect.y += (self.target_pos[1] - self.top) / 30
-            else:
-                self.rect.x = self.discard_pile_pos[0]
-                self.rect.y = self.discard_pile_pos[1]
+        self.ani = True
 
     def observer_update(self, subject: Type[Subject]):
         if self.user is True and self._visible is True:
@@ -99,3 +90,19 @@ class Card(GameObject, Observer):
                 if self.code == code:
                     self.rect.x = self.user_card_pos[i][0]
                     self.rect.y = self.user_card_pos[i][1]
+
+    @overrides
+    def update(self) -> None:
+        if self._visible is True and self.ani is True:
+            if (
+                self.rect.x < self.target_pos[0] and self.rect.y > self.target_pos[1]
+            ) or (
+                self.rect.x > self.target_pos[0] and self.rect.y > self.target_pos[1]
+            ):
+                self.rect.x += (self.target_pos[0] - self.left) / 10 + 1
+                self.rect.y += (self.target_pos[1] - self.top) / 10 + 1
+            else:
+                self.rect.x = self.discard_pile_pos[0]
+                self.rect.y = self.discard_pile_pos[1]
+                self.ani = False
+                self._visible = False
