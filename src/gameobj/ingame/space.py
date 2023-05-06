@@ -25,29 +25,29 @@ class Space(GameObject):
     ) -> None:
         self.turn = False
         self.color = color
-        self.turn_color = colors.alice_blue
+        self.turn_color = colors.red
         super().__init__(surface, name, width, height, left, top, z_index)
 
     @overrides
     def start(self) -> None:
-        self.rect_copy = self.rect
+        self.border = pygame.rect.Rect((0, 0), self.rect.size)
         if self.turn is True:
-            self.rect = pygame.draw.rect(
-                surface=self.image, color=self.turn_color, rect=self.rect_copy, width=2
+            pygame.draw.rect(
+                surface=self.image, color=self.turn_color, rect=self.border, width=2
             )
         else:
-            self.rect = pygame.draw.rect(
-                surface=self.image, color=colors.white, rect=self.rect_copy, width=2
+            pygame.draw.rect(
+                surface=self.image, color=colors.white, rect=self.border, width=2
             )
 
     @overrides
     def update(self):
         # 턴 시작하면 테두리 색 변화
         if self.turn is True:
-            self.rect = pygame.draw.rect(
-                surface=self.image, color=self.turn_color, rect=self.rect_copy, width=2
+            pygame.draw.rect(
+                surface=self.image, color=self.turn_color, rect=self.border, width=2
             )
         else:
-            self.rect = pygame.draw.rect(
-                surface=self.image, color=colors.white, rect=self.rect_copy, width=2
+            pygame.draw.rect(
+                surface=self.image, color=colors.white, rect=self.border, width=2
             )

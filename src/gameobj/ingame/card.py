@@ -53,6 +53,9 @@ class Card(GameObject, Observer):
         self.code = code
         self.user = False
         self.ani = False
+        self.discard_flag = False
+        self.draw_flag = False
+        self.user_turn = False
 
         settings = Config()
         screen_size = settings.get_screen_resolution()
@@ -86,19 +89,40 @@ class Card(GameObject, Observer):
 
     @overrides
     def on_mouse_down(self) -> None:
-        self.ani = True
+        if self.user_turn is True:
+            self.ani = True
+            self.discard_flag = True
 
     def observer_update(self, subject: Type[Subject]):
         if self.user is True and self._visible is True:
+            self.user_turn = subject.get_user().is_turn()
             self.user_card_list = subject.get_user().get_hand_cards()
             for i, code in enumerate(self.user_card_list):
                 if self.code == code:
                     self.rect.x = self.user_card_pos[i][0]
                     self.rect.y = self.user_card_pos[i][1]
+        if self.ani is True:
+            if (
+                (self.rect.x < self.target_pos[0] and self.rect.y < self.target_pos[1])
+                or (
+                    self.rect.x > self.target_pos[0]
+                    and self.rect.y < self.target_pos[1]
+                )
+                or (
+                    self.rect.x < self.target_pos[0]
+                    and self.rect.y > self.target_pos[1]
+                )
+            ):
+                self.rect.x += (self.target_pos[0] - self.left) / 10 + 1
+                self.rect.y += (self.target_pos[1] - self.top) / 10 + 1
+            else:
+                self.rect.x = self.target_pos[0]
+                self.rect.y = self.target_pos[1]
+                self.ani = False
 
     @overrides
     def update(self) -> None:
-        if self._visible is True and self.ani is True:
+        if self.discard_flag is True:
             if (
                 self.rect.x < self.target_pos[0] and self.rect.y > self.target_pos[1]
             ) or (
@@ -111,3 +135,24 @@ class Card(GameObject, Observer):
                 self.rect.y = self.discard_pile_pos[1]
                 self.ani = False
                 self._visible = False
+                self.discard_flag = False
+
+        if self.draw_flag is True:
+            if (
+                (self.rect.x < self.target_pos[0] and self.rect.y < self.target_pos[1])
+                or (
+                    self.rect.x > self.target_pos[0]
+                    and self.rect.y < self.target_pos[1]
+                )
+                or (
+                    self.rect.x < self.target_pos[0]
+                    and self.rect.y > self.target_pos[1]
+                )
+            ):
+                self.rect.x += (self.target_pos[0] - self.left) / 10 + 1
+                self.rect.y += (self.target_pos[1] - self.top) / 10 + 1
+            else:
+                self.rect.x = self.target_pos[0]
+                self.rect.y = self.target_pos[1]
+                self.ani = False
+                self.draw_flag = False
