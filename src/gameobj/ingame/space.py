@@ -40,18 +40,14 @@ class Space(GameObject):
                 surface=self.image, color=colors.white, rect=self.rect_copy, width=2
             )
 
-    # @overrides
-    # def update(self):
-    #     # 턴 시작하면 테두리 색 변화
-    #     if self.turn is True:
-    #         self.rect = pygame.draw.rect(
-    #             surface=self.image, color=self.turn_color, rect=self.rect_copy, width=2
-    #         )
-    #     else:
-    #         self.rect = pygame.draw.rect(
-    #             surface=self.image, color=colors.white, rect=self.rect_copy, width=2
-    #         )
-
-    # def update(self, subject: Type[Subject]):
-    #     self.turn = subject.get_user().is_turn()
-    #     pass
+    @overrides
+    def update(self):
+        # 턴 시작하면 테두리 색 변화
+        if self.turn is True:
+            self.rect = pygame.draw.rect(
+                surface=self.image, color=self.turn_color, rect=self.rect_copy, width=2
+            )
+        else:
+            self.rect = pygame.draw.rect(
+                surface=self.image, color=colors.white, rect=self.rect_copy, width=2
+            )
