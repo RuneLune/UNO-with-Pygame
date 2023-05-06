@@ -33,14 +33,13 @@ class GameObject(pygame.sprite.Sprite):
         self._mouse_over: bool = False
         self._clicked: bool = False
         if width < 0 or height < 0:
-            self.image = surface
-            self.rect = surface.get_rect()
-            self.rect.left = left
-            self.rect.top = top
+            self._image = surface
+            self._rect = surface.get_rect()
+            self._rect.topleft = (left, top)
             pass
         else:
-            self.image = pygame.transform.scale(surface, (width, height))
-            self.rect = pygame.Rect(left, top, width, height)
+            self._image = pygame.transform.scale(surface, (width, height))
+            self._rect = pygame.Rect(left, top, width, height)
             pass
         self.reset()
         self.start()
@@ -327,17 +326,30 @@ class GameObject(pygame.sprite.Sprite):
         return None
 
     @final
-    def handle(self, event: Type[pygame.event.Event]) -> bool:
+    def handle(
+        self, event: Type[pygame.event.Event], mouse_overed: bool = False
+    ) -> None:
         """!DO NOT OVERRIDE! method for checking status"""
         if not self._active:
             return False
         if event.type == pygame.KEYDOWN:
             return self.on_key_down(event.key)
+        if not self._visible:
+            return False
+        # self._check_mouse_over(mouse_overed)
         if event.type == pygame.MOUSEMOTION:
             if self._clicked:
                 self.on_mouse_drag()
                 pass
-            # self._check_mouse_over()
+            pass
+        elif event.type == pygame.MOUSEBUTTONUP:
+            if self._clicked and self._mouse_over:
+                self.on_mouse_up_as_button()
+                pass
+            if self._mouse_over:
+                self.on_mouse_up()
+                pass
+            self._clicked = False
             pass
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if self._mouse_over:
@@ -345,38 +357,42 @@ class GameObject(pygame.sprite.Sprite):
                 self._clicked = True
                 pass
             pass
-        elif event.type == pygame.MOUSEBUTTONUP:
-            if self._clicked:
-                self.on_mouse_up_as_button()
-                self._clicked = False
-                pass
-            if self._mouse_over:
-                self.on_mouse_up()
-                pass
-            pass
+
         return self._mouse_over
 
     @final
-    def _check_mouse_over(self) -> None:
+    def _check_mouse_over(self, mouse_overed: bool = False) -> None:
         """!DO NOT OVERRIDE! method for checking mouse collision"""
         mouse_position = pygame.mouse.get_pos()
-        if self.rect.collidepoint(mouse_position[0], mouse_position[1]):
-            if not self._mouse_over:
-                self.on_mouse_enter()
-                pass
-            self._mouse_over = True
+        if (
+            self.rect.collidepoint(mouse_position[0], mouse_position[1])
+            and not mouse_overed
+        ):
+            self._check_mouse_enter()
             pass
         else:
-            if self._mouse_over:
-                self.on_mouse_exit()
-                self._clicked = False
-                pass
-            self._mouse_over = False
+            self._check_mouse_exit()
             pass
         return None
 
     @final
-    def tick(self) -> None:
+    def _check_mouse_enter(self) -> None:
+        if not self._mouse_over:
+            self.on_mouse_enter()
+            pass
+        self._mouse_over = True
+        return None
+
+    @final
+    def _check_mouse_exit(self) -> None:
+        if self._mouse_over:
+            self.on_mouse_exit()
+            pass
+        self._mouse_over = False
+        return None
+
+    @final
+    def tick(self, mouse_overed: bool = False) -> bool:
         """!DO NOT OVERRIDE! method calls update() and render() method"""
         if not self._active:
             return None
@@ -388,7 +404,7 @@ class GameObject(pygame.sprite.Sprite):
         if self._visible:
             self._render()
             pass
-        return None
+        return self._mouse_over
 
     @final
     def _render(self) -> None:
@@ -406,6 +422,28 @@ class GameObject(pygame.sprite.Sprite):
 
     def invisible(self):
         self._visible = False
+        return None
+
+    @property
+    def image(self) -> pygame.Surface:
+        return self._image
+
+    @image.setter
+    def image(self, image: pygame.Surface) -> None:
+        self._image = image
+        coordinates = self._rect.topleft
+        self._rect = self._image.get_rect()
+        self._rect.topleft = coordinates
+        return None
+
+    @property
+    def rect(self) -> pygame.Rect:
+        return self._rect
+
+    @rect.setter
+    def rect(self, rect: pygame.Rect) -> None:
+        self._rect = rect
+        self._image = pygame.transform.scale(self._image, self._rect.size)
         return None
 
     pass

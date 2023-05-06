@@ -27,7 +27,7 @@ class BackgroundObject(GameObject):
     @color.setter
     def color(self, value: Tuple[int, int, int]) -> None:
         self._color = value
-        self.image.fill(self._color)
+        self._image.fill(self._color)
         return None
 
     pass

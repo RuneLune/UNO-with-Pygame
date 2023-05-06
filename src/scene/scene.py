@@ -46,17 +46,23 @@ class Scene:
 
     @final
     def tick(self) -> None:
+        mouse_overed = False
         self.game_objects.sort()
         if self.game_objects:
             for game_object in self.game_objects:
-                game_object.tick()
-                continue
+                if not mouse_overed:
+                    mouse_overed = game_object.tick(False)
+                    continue
+                else:
+                    game_object.tick(True)
+                    continue
             pass
         self.update()
         return None
 
     @final
     def handle(self, event: Type[pygame.event.Event]) -> None:
+        mouse_overed = False
         if self.game_objects:
             if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
                 game_objects = sorted(self.game_objects, key=lambda x: x.key_index)
@@ -65,9 +71,12 @@ class Scene:
                 game_objects = reversed(self.game_objects)
                 pass
             for game_object in game_objects:
-                if game_object.handle(event):
-                    break
-                continue
+                if not mouse_overed:
+                    mouse_overed = game_object.handle(event, False)
+                    continue
+                else:
+                    game_object.handle(event, True)
+                    continue
             pass
         return None
 
