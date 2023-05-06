@@ -10,7 +10,7 @@ from scene.settings_scene_old import Settings_Scene
 from scene.gameUI import Game_UI
 from scene.game_lobby import Game_Lobby
 from scene.scene_old import Scene
-from scene.stage_select import Stage
+from config.stage_select import Stage
 from sound.sound import SoundManager
 from util.resource_manager import image_resource
 
