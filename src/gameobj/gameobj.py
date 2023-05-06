@@ -33,13 +33,13 @@ class GameObject(pygame.sprite.Sprite):
         self._mouse_over: bool = False
         self._clicked: bool = False
         if width < 0 or height < 0:
-            self._image = surface
-            self._rect = surface.get_rect()
-            self._rect.topleft = (left, top)
+            self.image = surface
+            self.rect = surface.get_rect()
+            self.rect.topleft = (left, top)
             pass
         else:
-            self._image = pygame.transform.scale(surface, (width, height))
-            self._rect = pygame.Rect(left, top, width, height)
+            self.image = pygame.transform.scale(surface, (width, height))
+            self.rect = pygame.Rect(left, top, width, height)
             pass
         self.reset()
         self.start()
@@ -424,26 +424,26 @@ class GameObject(pygame.sprite.Sprite):
         self._visible = False
         return None
 
-    @property
-    def image(self) -> pygame.Surface:
-        return self._image
+    # @property
+    # def image(self) -> pygame.Surface:
+    #     return self.image
 
-    @image.setter
-    def image(self, image: pygame.Surface) -> None:
-        self._image = image
-        coordinates = self._rect.topleft
-        self._rect = self._image.get_rect()
-        self._rect.topleft = coordinates
-        return None
+    # @image.setter
+    # def image(self, image: pygame.Surface) -> None:
+    #     self.image = image
+    #     coordinates = self.rect.topleft
+    #     self.rect = self.image.get_rect()
+    #     self.rect.topleft = coordinates
+    #     return None
 
-    @property
-    def rect(self) -> pygame.Rect:
-        return self._rect
+    # @property
+    # def rect(self) -> pygame.Rect:
+    #     return self.rect
 
-    @rect.setter
-    def rect(self, rect: pygame.Rect) -> None:
-        self._rect = rect
-        self._image = pygame.transform.scale(self._image, self._rect.size)
-        return None
+    # @rect.setter
+    # def rect(self, rect: pygame.Rect) -> None:
+    #     self.rect = rect
+    #     self.image = pygame.transform.scale(self.image, self.rect.size)
+    #     return None
 
     pass
