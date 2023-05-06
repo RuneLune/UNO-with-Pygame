@@ -22,6 +22,7 @@ from gameobj.story.nobtn import NoButton
 from gameobj.story.yesbtn import YesButton
 from gameobj.story.windowbg import WindowBackground
 from gameobj.story.windowtxt import WindowText
+from gameobj.story.handlewindow import HandleWindow
 from manager.storymgr import StoryManager
 
 
@@ -39,12 +40,6 @@ class StoryScene(Scene):
         menu_font = pygame.font.Font(
             font_resource("MainFont.ttf"), screen_rect.height // 12
         )
-
-        self.story_a_button = StoryAButton()
-        self.story_b_button = StoryBButton()
-        self.story_c_button = StoryCButton()
-        self.story_d_button = StoryDButton()
-
         
         self.background = GameObject(
             background_surface, "StoryScene_Background", z_index=-999)
@@ -52,6 +47,11 @@ class StoryScene(Scene):
             "Story", title_font, color.white, "StoryScene_TitleText", z_index=997)
         self.back_button = TextButtonObject(
             "◀ Back", menu_font, color.white, "StoryScene_BackButton", z_index=997)
+
+        self.story_a_button = StoryAButton()
+        self.story_b_button = StoryBButton()
+        self.story_c_button = StoryCButton()
+        self.story_d_button = StoryDButton()
 
         self.story_a_text = StoryAText()
         self.story_b_text = StoryBText()
@@ -61,6 +61,10 @@ class StoryScene(Scene):
         self.yes_button = YesButton()
         self.no_button = NoButton()
         self.window_text = WindowText()
+
+        handle_window = HandleWindow()
+
+        self.no_button.on_mouse_up_as_button = lambda: handle_window.invisible_window()
     
 
         self.window_background = WindowBackground()

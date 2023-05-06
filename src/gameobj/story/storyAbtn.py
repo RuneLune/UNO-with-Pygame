@@ -13,6 +13,8 @@ from util.resource_manager import image_resource
 from gameobj.story.storyAtxt import StoryAText
 import util.colors as color
 from manager.storymgr import StoryManager
+from gameobj.story.handlewindow import HandleWindow
+from gameobj.story.yesbtn import YesButton
 
 
 class StoryAButton(GameObject):
@@ -45,6 +47,13 @@ class StoryAButton(GameObject):
             self.image = self.img_copy
             self.story_a_text.invisible()
         return None
+    
+    @overrides
+    def on_mouse_up_as_button(self) -> None:
+        if self.touchable[0]:
+            HandleWindow().visible_window()
+            YesButton().target = "storyA"
+        return super().on_mouse_up_as_button()
 
 
     def create_neon(self, surf):

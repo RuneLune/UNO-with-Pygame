@@ -9,9 +9,10 @@ from gameobj.gameobj import GameObject
 from util.resource_manager import font_resource
 from util.resource_manager import image_resource
 import util.colors as color
+from metaclass.singleton import SingletonMeta
 
 
-class WindowBackground(GameObject):
+class WindowBackground(GameObject, metaclass=SingletonMeta):
     @overrides
     def start(self) -> None:
         screen_rect = pygame.display.get_surface().get_rect()

@@ -13,7 +13,8 @@ from util.resource_manager import image_resource
 from gameobj.story.storyCtxt import StoryCText
 import util.colors as color
 from manager.storymgr import StoryManager
-
+from gameobj.story.handlewindow import HandleWindow
+from gameobj.story.yesbtn import YesButton
 
 class StoryCButton(GameObject):
     @overrides
@@ -45,6 +46,13 @@ class StoryCButton(GameObject):
             self.image = self.img_copy
             self.story_c_text.invisible()
         return None
+    
+    @overrides
+    def on_mouse_up_as_button(self) -> None:
+        if self.touchable[2]:
+            HandleWindow().visible_window()
+            YesButton().target = "storyC"
+        return super().on_mouse_up_as_button()
 
     def create_neon(self, surf):
         surf_alpha = surf.convert_alpha()
