@@ -65,10 +65,15 @@ class Card(GameObject, Observer):
         )
         self.user_card_pos = [
             (
-                (i + 1) * card_size[0] / 3,
+                (i + 1) * card_size[0] * 3 / 4,
                 screen_size[1] * (2 / 3) + card_size[1] / 2,
             )
-            for i in range(100)
+            if i <= 14
+            else (
+                (i + 1) * card_size[0] * 3 / 4,
+                screen_size[1] * (2 / 3) + card_size[1] * 3 / 2,
+            )
+            for i in range(40)
         ]
 
     @overrides
