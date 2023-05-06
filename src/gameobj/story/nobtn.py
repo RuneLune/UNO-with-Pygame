@@ -6,11 +6,9 @@ from os.path import join
 import cv2
 import numpy
 
-from gameobj.txtobj import TextObject
 from gameobj.gameobj import GameObject
 from util.resource_manager import font_resource
 from util.resource_manager import image_resource
-import util.colors as color
 from metaclass.singleton import SingletonMeta
 
 

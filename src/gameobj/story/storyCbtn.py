@@ -6,12 +6,10 @@ from os.path import join
 import cv2
 import numpy
 
-from gameobj.txtobj import TextObject
 from gameobj.gameobj import GameObject
 from util.resource_manager import font_resource
 from util.resource_manager import image_resource
 from gameobj.story.storyCtxt import StoryCText
-import util.colors as color
 from manager.storymgr import StoryManager
 from gameobj.story.handlewindow import HandleWindow
 from gameobj.story.yesbtn import YesButton

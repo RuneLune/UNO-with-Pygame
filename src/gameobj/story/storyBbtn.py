@@ -8,9 +8,7 @@ import numpy
 
 from gameobj.story.storyBtxt import StoryBText
 from gameobj.gameobj import GameObject
-from util.resource_manager import font_resource
 from util.resource_manager import image_resource
-import util.colors as color
 from manager.storymgr import StoryManager
 from gameobj.story.handlewindow import HandleWindow
 from gameobj.story.yesbtn import YesButton

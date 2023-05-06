@@ -1,9 +1,7 @@
 from overrides import overrides
 import pygame
-from os.path import join
 
 from util.resource_manager import font_resource
-from util.resource_manager import image_resource
 import util.colors as color
 from .scene import Scene
 from gameobj.gameobj import GameObject
@@ -23,7 +21,6 @@ from gameobj.story.yesbtn import YesButton
 from gameobj.story.windowbg import WindowBackground
 from gameobj.story.windowtxt import WindowText
 from gameobj.story.handlewindow import HandleWindow
-from manager.storymgr import StoryManager
 
 
 

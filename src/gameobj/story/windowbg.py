@@ -2,13 +2,9 @@ from __future__ import annotations
 
 from overrides import overrides
 import pygame
-from os.path import join
 
-from gameobj.txtobj import TextObject
 from gameobj.gameobj import GameObject
-from util.resource_manager import font_resource
-from util.resource_manager import image_resource
-import util.colors as color
+
 from metaclass.singleton import SingletonMeta
 
 
