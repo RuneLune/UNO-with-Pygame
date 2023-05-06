@@ -175,7 +175,8 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 self.bot_spaces[i].turn = False
 
         if self.deck_card.draw_flag is True:
-            # 드로우 카드 수 확인후 유저 카드 인스턴스 생성
+            # 드로우 카드 수 확인후 유저 카드 인스턴스 덱 위치에 생성
+            # 각각의 인스턴스들은 자동으로 유저 공간으로 애니메이션을 보이며 이동 -> observer update 실행
             self.user.draw_cards()
 
     # self.user_cards_list = self.user.get_hand_cards()

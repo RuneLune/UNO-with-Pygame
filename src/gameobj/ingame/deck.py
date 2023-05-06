@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pygame
 from gameobj.gameobj import GameObject
 import util.colors as colors
@@ -12,6 +14,7 @@ if TYPE_CHECKING:
 
 
 class Deck(GameObject):
+    @overrides
     def __init__(
         self,
         surface: pygame.Surface,
@@ -25,6 +28,7 @@ class Deck(GameObject):
     ) -> None:
         super().__init__(surface, name, width, height, left, top, z_index, key_index)
         self.draw_flag = False
+        self.user_turn = False
         self.rect_size = self.rect.size
         self.img_copy = self.image
 
@@ -53,7 +57,8 @@ class Deck(GameObject):
     @overrides
     def on_mouse_down(self) -> None:
         # 카드 드로우
-        self.draw_flag = True
+        if self.user_turn is True:
+            self.draw_flag = True
 
     def observer_update(self, subject: Type[Subject]):
         self.user_turn = subject.get_user().is_turn()
