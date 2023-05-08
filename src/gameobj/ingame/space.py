@@ -21,33 +21,40 @@ class Space(GameObject):
         left: int = 0,
         top: int = 0,
         z_index: int = -1,
-        color: tuple = colors.black,
+        color: tuple = colors.white,
     ) -> None:
         self.turn = False
         self.color = color
         self.turn_color = colors.red
+        self.deck = False
         super().__init__(surface, name, width, height, left, top, z_index)
 
     @overrides
-    def start(self) -> None:
+    def start(self):
         self.border = pygame.rect.Rect((0, 0), self.rect.size)
-        if self.turn is True:
+        if self.turn is True and self.deck is False:
             pygame.draw.rect(
                 surface=self.image, color=self.turn_color, rect=self.border, width=2
             )
-        else:
+        elif self.turn is False and self.deck is False:
             pygame.draw.rect(
-                surface=self.image, color=colors.white, rect=self.border, width=2
+                surface=self.image, color=self.color, rect=self.border, width=2
             )
+
+        if self.deck is True:
+            self.image.fill(self.color)
 
     @overrides
     def update(self):
         # 턴 시작하면 테두리 색 변화
-        if self.turn is True:
+        if self.turn is True and self.deck is False:
             pygame.draw.rect(
                 surface=self.image, color=self.turn_color, rect=self.border, width=2
             )
-        else:
+        elif self.turn is False and self.deck is False:
             pygame.draw.rect(
-                surface=self.image, color=colors.white, rect=self.border, width=2
+                surface=self.image, color=self.color, rect=self.border, width=2
             )
+
+        if self.deck is True:
+            self.image.fill(self.color)

@@ -64,8 +64,9 @@ class GameScene(Scene, metaclass=SingletonMeta):
             height=self.screen_size[1] * (2 / 3),
             left=0,
             top=0,
-            color=color.alice_blue,
+            color=(0, 150, 100),
         )
+        self.deck_space.deck = True
 
         # 드로우 파일 카드 위치 정의
         self.draw_pile_pos = (
