@@ -34,26 +34,12 @@ class Deck(GameObject):
         self.img_copy = self.image
         self.cards_cls = Cards()
 
-    # @overrides
-    # def on_mouse_over(self) -> None:
-    #     # 하이라이팅
-    #     # self.rect = self.rect.scale_by(1.2, 1.2)
-    #     # self.rect = pygame.draw.rect(
-    #     #     surface=self.image, color=colors.red, rect=self.rect
-    #     # )
-    #     self.image = self.create_neon(self.image)
-
     @overrides
     def on_mouse_enter(self) -> None:
         self.image = self.create_neon(self.image)
 
     @overrides
     def on_mouse_exit(self) -> None:
-        # 하이라이팅 제거
-        # self.rect = self.rect.scale_by(0.8, 0.8)
-        # self.rect = pygame.draw.rect(
-        #     surface=self.image, color=colors.red, rect=self.rect
-        # )
         self.image = self.img_copy
 
     @overrides

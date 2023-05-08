@@ -64,6 +64,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
             height=self.screen_size[1] * (2 / 3),
             left=0,
             top=0,
+            color=color.alice_blue,
         )
 
         # 드로우 파일 카드 위치 정의
@@ -142,6 +143,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
         self.game.tick()
         self.deck_card.observer_update(self.game)
         self.last_card.observer_update(self.game)
+        self.turn_update(self.user_cards)
 
         # 현재 턴 플레이어 표시
         if self.user.is_turn() is True:
@@ -154,19 +156,14 @@ class GameScene(Scene, metaclass=SingletonMeta):
             else:
                 self.bot_spaces[i].turn = False
 
-        # 유저의 턴이면 유저카드 위치 업데이트
-        if self.user.is_turn() is True and self.iter == 0:
-            self.index_update(self.user_cards)
-            self.itor = 1
-        elif self.user.is_turn() is False:
-            self.itor = 0
-
         # 카드 뽑기
-        if self.deck_card.draw_flag is True:
-            # 드로우 카드 수 확인후 유저 카드 인스턴스 덱 위치에 생성
-            # 각각의 인스턴스들은 자동으로 유저 공간으로 애니메이션을 보이며 이동 -> observer update 실행
-            # self.user.draw_cards()
+        if self.deck_card.draw_flag is True or (
+            self.user_cards_list != self.user.get_hand_cards()
+        ):
+            self.user_cards_list = self.user.get_hand_cards()
+            self.user.draw_cards()
             drawing_cards = self.user.get_last_drawing_cards()
+            # 뽑은 카드 생성 후 유저 공간으로 이동
             for i, tuple in enumerate(drawing_cards):
                 idx = tuple[0]
                 code = tuple[1]
@@ -181,22 +178,32 @@ class GameScene(Scene, metaclass=SingletonMeta):
                     code=code,
                 )
                 temp.user = True
-                temp.ani = True
-                temp.draw_flag = True
-                self.instantiate(temp)
+                temp.draw_start = True
                 self.user_cards.append(temp)
+                self.instantiate(temp)
 
-            self.index_update(self.user_cards)
             self.deck_card.draw_flag = False
 
         # 카드 내기
         for i, card in enumerate(self.user_cards):
-            if card.discard_flag is True:
+            if card.discard_start is True:
                 self.user.discard_card(i)
+
+        # 애니메이션 종료후 카드 위치 재정의
+        for i, card in enumerate(self.user_cards):
+            if card.discard_end is True:
                 self.user_cards.remove(card)
+                self.index_update(self.user_cards)
+            if card.draw_end is True:
+                self.index_update(self.user_cards)
+                break
 
     def index_update(self, list):
         for i in range(len(list)):
             list[i].observer_update(self.game)
+
+    def turn_update(self, list):
+        for i in range(len(list)):
+            list[i].turn_update(self.game)
 
     # self.user_cards_list = self.user.get_hand_cards()

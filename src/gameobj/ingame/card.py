@@ -52,9 +52,10 @@ class Card(GameObject, Observer):
         self.target_pos = target_pos
         self.code = code
         self.user = False
-        self.ani = False
-        self.discard_flag = False
-        self.draw_flag = False
+        self.discard_start = False
+        self.discard_end = False
+        self.draw_start = False
+        self.draw_end = False
         self.user_turn = False
 
         settings = Config()
@@ -81,23 +82,22 @@ class Card(GameObject, Observer):
 
     @overrides
     def on_mouse_enter(self) -> None:
-        self.rect.y -= 10
+        if self.user_turn is True:
+            self.rect.y -= 10
 
     @overrides
     def on_mouse_exit(self) -> None:
-        self.rect.y += 10
+        if self.user_turn is True:
+            self.rect.y += 10
 
     @overrides
     def on_mouse_down(self) -> None:
         if self.user_turn is True:
-            self.ani = True
-            self.discard_flag = True
+            self.discard_start = True
         else:
-            self.ani = False
-            self.discard_flag = False
+            self.discard_start = False
 
     def observer_update(self, subject: Type[Subject]):
-        self.user_turn = subject.get_user().is_turn()
         # 카드 위치 재정렬
         if self.user is True:
             self.user_card_list = subject.get_user().get_hand_cards()
@@ -106,29 +106,12 @@ class Card(GameObject, Observer):
                     self.rect.x = self.user_card_pos[i][0]
                     self.rect.y = self.user_card_pos[i][1]
 
-        # 에니메이션
-        # if self.ani is True:
-        #     if (
-        #         (self.rect.x < self.target_pos[0] and self.rect.y < self.target_pos[1])
-        #         or (
-        #             self.rect.x > self.target_pos[0]
-        #             and self.rect.y < self.target_pos[1]
-        #         )
-        #         or (
-        #             self.rect.x < self.target_pos[0]
-        #             and self.rect.y > self.target_pos[1]
-        #         )
-        #     ):
-        #         self.rect.x += (self.target_pos[0] - self.left) / 10 + 1
-        #         self.rect.y += (self.target_pos[1] - self.top) / 10 + 1
-        #     else:
-        #         self.rect.x = self.target_pos[0]
-        #         self.rect.y = self.target_pos[1]
-        #         self.ani = False
+    def turn_update(self, subject: Type[Subject]):
+        self.user_turn = subject.get_user().is_turn()
 
     @overrides
     def update(self) -> None:
-        if self.discard_flag is True:
+        if self.discard_start is True:
             if (
                 self.rect.x < self.target_pos[0] and self.rect.y > self.target_pos[1]
             ) or (
@@ -139,11 +122,12 @@ class Card(GameObject, Observer):
             else:
                 self.rect.x = self.discard_pile_pos[0]
                 self.rect.y = self.discard_pile_pos[1]
-                self.ani = False
                 self._visible = False
-                self.discard_flag = False
+                self._enabled = False
+                self.discard_start = False
+                self.discard_end = True
 
-        if self.draw_flag is True:
+        if self.draw_start is True:
             if (
                 (self.rect.x < self.target_pos[0] and self.rect.y < self.target_pos[1])
                 or (
@@ -160,5 +144,6 @@ class Card(GameObject, Observer):
             else:
                 self.rect.x = self.target_pos[0]
                 self.rect.y = self.target_pos[1]
-                self.ani = False
-                self.draw_flag = False
+                self.draw_start = False
+                self.draw_end = True
+                self.target_pos = self.discard_pile_pos
