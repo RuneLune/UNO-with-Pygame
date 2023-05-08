@@ -33,6 +33,8 @@ class GameScene(Scene, metaclass=SingletonMeta):
         self.user = self.game.get_user()
         self.bots = self.game.get_bots()
 
+        self.iter = 0
+
         # space 정의
         self.user_space = Space(
             surface=pygame.Surface((0, 0)),
@@ -85,17 +87,11 @@ class GameScene(Scene, metaclass=SingletonMeta):
         )
 
         # 버린 카드 객체 로드
-        self.last_cards = []
-        self.last_cards.append(
-            Card(
-                surface=self.cards_cls.get_card_image(self.game._discard_pile[0]),
-                name=self.game._discard_pile[0],
-                width=self.card_size[0],
-                height=self.card_size[1],
-                left=self.discard_pile_pos[0],
-                top=self.discard_pile_pos[1],
-                code=self.game._discard_pile[0],
-            )
+        self.last_card = LastCard(
+            surface=self.cards_cls.get_card_image(self.game._discard_pile[0]),
+            name="LastCard",
+            left=self.discard_pile_pos[0],
+            top=self.discard_pile_pos[1],
         )
 
         # 플레이어 카드 위치 정의
@@ -138,14 +134,16 @@ class GameScene(Scene, metaclass=SingletonMeta):
         for i in range(len(self.user_cards)):
             self.instantiate(self.user_cards[i])
 
-        self.instantiate(self.last_cards[0])
+        self.instantiate(self.last_card)
         self.instantiate(self.deck_card)
 
     @overrides
     def update(self):
         self.game.tick()
         self.deck_card.observer_update(self.game)
+        self.last_card.observer_update(self.game)
 
+        # 현재 턴 플레이어 표시
         if self.user.is_turn() is True:
             self.user_space.turn = True
         else:
@@ -155,10 +153,19 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 self.bot_spaces[i].turn = True
             else:
                 self.bot_spaces[i].turn = False
+
+        # 유저의 턴이면 유저카드 위치 업데이트
+        if self.user.is_turn() is True and self.iter == 0:
+            self.index_update(self.user_cards)
+            self.itor = 1
+        elif self.user.is_turn() is False:
+            self.itor = 0
+
+        # 카드 뽑기
         if self.deck_card.draw_flag is True:
             # 드로우 카드 수 확인후 유저 카드 인스턴스 덱 위치에 생성
             # 각각의 인스턴스들은 자동으로 유저 공간으로 애니메이션을 보이며 이동 -> observer update 실행
-            self.user.draw_cards()
+            # self.user.draw_cards()
             drawing_cards = self.user.get_last_drawing_cards()
             for i, tuple in enumerate(drawing_cards):
                 idx = tuple[0]
@@ -176,10 +183,17 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 temp.user = True
                 temp.ani = True
                 temp.draw_flag = True
+                self.instantiate(temp)
                 self.user_cards.append(temp)
 
             self.index_update(self.user_cards)
             self.deck_card.draw_flag = False
+
+        # 카드 내기
+        for i, card in enumerate(self.user_cards):
+            if card.discard_flag is True:
+                self.user.discard_card(i)
+                self.user_cards.remove(card)
 
     def index_update(self, list):
         for i in range(len(list)):

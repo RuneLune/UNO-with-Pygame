@@ -8,6 +8,7 @@ import cv2
 import numpy
 from abstrclass.observer import Observer
 from typing import Type, TYPE_CHECKING
+from card.cards import Cards
 
 if TYPE_CHECKING:
     from abstrclass.subject import Subject
@@ -31,6 +32,7 @@ class Deck(GameObject):
         self.user_turn = False
         self.rect_size = self.rect.size
         self.img_copy = self.image
+        self.cards_cls = Cards()
 
     # @overrides
     # def on_mouse_over(self) -> None:

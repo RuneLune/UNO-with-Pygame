@@ -92,33 +92,39 @@ class Card(GameObject, Observer):
         if self.user_turn is True:
             self.ani = True
             self.discard_flag = True
+        else:
+            self.ani = False
+            self.discard_flag = False
 
     def observer_update(self, subject: Type[Subject]):
-        if self.user is True and self._visible is True:
-            self.user_turn = subject.get_user().is_turn()
+        self.user_turn = subject.get_user().is_turn()
+        # 카드 위치 재정렬
+        if self.user is True:
             self.user_card_list = subject.get_user().get_hand_cards()
             for i, code in enumerate(self.user_card_list):
                 if self.code == code:
                     self.rect.x = self.user_card_pos[i][0]
                     self.rect.y = self.user_card_pos[i][1]
-        if self.ani is True:
-            if (
-                (self.rect.x < self.target_pos[0] and self.rect.y < self.target_pos[1])
-                or (
-                    self.rect.x > self.target_pos[0]
-                    and self.rect.y < self.target_pos[1]
-                )
-                or (
-                    self.rect.x < self.target_pos[0]
-                    and self.rect.y > self.target_pos[1]
-                )
-            ):
-                self.rect.x += (self.target_pos[0] - self.left) / 10 + 1
-                self.rect.y += (self.target_pos[1] - self.top) / 10 + 1
-            else:
-                self.rect.x = self.target_pos[0]
-                self.rect.y = self.target_pos[1]
-                self.ani = False
+
+        # 에니메이션
+        # if self.ani is True:
+        #     if (
+        #         (self.rect.x < self.target_pos[0] and self.rect.y < self.target_pos[1])
+        #         or (
+        #             self.rect.x > self.target_pos[0]
+        #             and self.rect.y < self.target_pos[1]
+        #         )
+        #         or (
+        #             self.rect.x < self.target_pos[0]
+        #             and self.rect.y > self.target_pos[1]
+        #         )
+        #     ):
+        #         self.rect.x += (self.target_pos[0] - self.left) / 10 + 1
+        #         self.rect.y += (self.target_pos[1] - self.top) / 10 + 1
+        #     else:
+        #         self.rect.x = self.target_pos[0]
+        #         self.rect.y = self.target_pos[1]
+        #         self.ani = False
 
     @overrides
     def update(self) -> None:
