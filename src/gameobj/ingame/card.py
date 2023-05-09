@@ -45,18 +45,25 @@ class Card(GameObject, Observer):
         z_index: int = -1,
         code: int = -1,
         target_pos: tuple = (0, 0),
+        index: int = -1,
     ) -> None:
         super().__init__(surface, name, width, height, left, top, z_index)
         self.left = left
         self.top = top
         self.target_pos = target_pos
         self.code = code
+        self.index = index
+
         self.user = False
+        self.user_turn = False
+
         self.discard_start = False
         self.discard_end = False
+
         self.draw_start = False
         self.draw_end = False
-        self.user_turn = False
+
+        self.playable = False
 
         settings = Config()
         screen_size = settings.get_screen_resolution()
@@ -82,51 +89,59 @@ class Card(GameObject, Observer):
 
     @overrides
     def on_mouse_enter(self) -> None:
-        if self.user_turn is True:
+        if self.user_turn is True and self.playable is True:
             self.rect.y -= 10
 
     @overrides
     def on_mouse_exit(self) -> None:
-        if self.user_turn is True:
+        if self.user_turn is True and self.playable is True:
             self.rect.y += 10
 
     @overrides
     def on_mouse_down(self) -> None:
-        if self.user_turn is True:
+        if self.user_turn is True and self.playable is True:
             self.discard_start = True
         else:
             self.discard_start = False
 
-    def observer_update(self, subject: Type[Subject]):
+    def position_update(self, subject: Type[Subject]):
         # 카드 위치 재정렬
-        if self.user is True:
-            self.user_card_list = subject.get_user().get_hand_cards()
-            for i, code in enumerate(self.user_card_list):
-                if self.code == code:
-                    self.rect.x = self.user_card_pos[i][0]
-                    self.rect.y = self.user_card_pos[i][1]
+        if self.user is True and self.user_turn is False:
+            user_cards = subject.get_user().get_hand_cards()
+            for i, code in enumerate(user_cards):
+                if code == self.code and i != self.index:
+                    self.index = i
+            self.rect.x = self.user_card_pos[self.index][0]
+            self.rect.y = self.user_card_pos[self.index][1]
 
     def turn_update(self, subject: Type[Subject]):
         self.user_turn = subject.get_user().is_turn()
+        # 유저턴이면 낼수 있는 카드인지 확인
+        if self.user_turn is True:
+            self.discardable_cards = subject.get_user().get_discardable_cards_index()
+            if self.index in self.discardable_cards:
+                self.playable = True
 
     @overrides
     def update(self) -> None:
+        # 카드 내기 애니메이션
         if self.discard_start is True:
             if (
                 self.rect.x < self.target_pos[0] and self.rect.y > self.target_pos[1]
             ) or (
                 self.rect.x > self.target_pos[0] and self.rect.y > self.target_pos[1]
             ):
-                self.rect.x += (self.target_pos[0] - self.left) / 10 + 1
-                self.rect.y += (self.target_pos[1] - self.top) / 10 + 1
+                self.rect.x += (self.target_pos[0] - self.left) / 10
+                self.rect.y += (self.target_pos[1] - self.top) / 10
             else:
-                self.rect.x = self.discard_pile_pos[0]
-                self.rect.y = self.discard_pile_pos[1]
-                self._visible = False
-                self._enabled = False
+                # self.rect.x = self.discard_pile_pos[0]
+                # self.rect.y = self.discard_pile_pos[1]
                 self.discard_start = False
                 self.discard_end = True
+                self._visible = False
+                self._enabled = False
 
+        # 카드 뽑기 애니메이션
         if self.draw_start is True:
             if (
                 (self.rect.x < self.target_pos[0] and self.rect.y < self.target_pos[1])

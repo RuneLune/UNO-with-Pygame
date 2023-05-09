@@ -18,6 +18,14 @@ from gameobj.ingame.lastcard import LastCard
 from metaclass.singleton import SingletonMeta
 
 
+# -봇 처음 카드 생성
+# -봇 카드수 업데이트
+#   -봇 카드 뽑기 및 내기 애니메이션
+# -턴 스킵 표시
+# -턴 남은 시간 표시
+# -유저 턴 표시 이미지
+# -뽑을 카드 없을 시 드로우 권장 표시
+# 카드 오브젝트에 인덱스 변수 추가?
 class GameScene(Scene, metaclass=SingletonMeta):
     @overrides
     def start(self) -> None:
@@ -112,7 +120,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
 
         # 처음 유저 카드 정의
         self.user_cards_list = self.user.get_hand_cards()
-        self.user_cards = []
+        self.user_cards_obj = []
         for i, code in enumerate(self.user_cards_list):
             temp = Card(
                 surface=self.cards_cls.get_card_image(code),
@@ -123,18 +131,19 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 top=self.user_card_pos[i][1],
                 target_pos=self.discard_pile_pos,
                 code=code,
+                index=i,
             )
             temp.user = True
-            temp.observer_update(self.game)
-            self.user_cards.append(temp)
+            temp.position_update(self.game)
+            self.user_cards_obj.append(temp)
 
         self.instantiate(self.deck_space)
         self.instantiate(self.user_space)
         for i in range(len(self.bots)):
             self.instantiate(self.bot_spaces[i])
 
-        for i in range(len(self.user_cards)):
-            self.instantiate(self.user_cards[i])
+        for i in range(len(self.user_cards_obj)):
+            self.instantiate(self.user_cards_obj[i])
 
         self.instantiate(self.last_card)
         self.instantiate(self.deck_card)
@@ -144,7 +153,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
         self.game.tick()
         self.deck_card.observer_update(self.game)
         self.last_card.observer_update(self.game)
-        self.turn_update(self.user_cards)
+        self.turn_update(self.user_cards_obj)
 
         # 현재 턴 플레이어 표시
         if self.user.is_turn() is True:
@@ -157,13 +166,12 @@ class GameScene(Scene, metaclass=SingletonMeta):
             else:
                 self.bot_spaces[i].turn = False
 
-        # 카드 뽑기
-        if self.deck_card.draw_flag is True or (
-            self.user_cards_list != self.user.get_hand_cards()
-        ):
-            self.user_cards_list = self.user.get_hand_cards()
+        # 카드 더미를 눌러서 카드 뽑기
+        if self.deck_card.draw_flag is True:
             self.user.draw_cards()
             drawing_cards = self.user.get_last_drawing_cards()
+            self.user_cards_list = self.user.get_hand_cards()
+
             # 뽑은 카드 생성 후 유저 공간으로 이동
             for i, tuple in enumerate(drawing_cards):
                 idx = tuple[0]
@@ -177,34 +185,43 @@ class GameScene(Scene, metaclass=SingletonMeta):
                     top=self.draw_pile_pos[1],
                     target_pos=self.user_card_pos[idx],
                     code=code,
+                    index=idx,
                 )
                 temp.user = True
                 temp.draw_start = True
-                self.user_cards.append(temp)
+                self.user_cards_obj.append(temp)
                 self.instantiate(temp)
-
+            self.turn_update(self.user_cards_obj)
             self.deck_card.draw_flag = False
+        # 카드 더미를 누르지 않았는데 카드가 바뀌는 경우
+        # elif self.deck_card.draw_flag is False and (
+        #     self.user_cards_list != self.user.get_hand_cards()
+        # ):
+        #     pass
 
         # 카드 내기
-        for i, card in enumerate(self.user_cards):
+        for i, card in enumerate(self.user_cards_obj):
             if card.discard_start is True:
                 self.user.discard_card(i)
+                self.user_cards_list = self.user.get_hand_cards()
 
         # 애니메이션 종료후 카드 위치 재정의
-        for i, card in enumerate(self.user_cards):
+        for i, card in enumerate(self.user_cards_obj, -1):
             if card.discard_end is True:
-                self.user_cards.remove(card)
-                self.index_update(self.user_cards)
+                self.user_cards_obj.remove(card)
+                self.destroy(card)
+                self.position_update(self.user_cards_obj)
+                print(self.user_cards_list)
+                break
             if card.draw_end is True:
-                self.index_update(self.user_cards)
+                self.position_update(self.user_cards_obj)
+                print(self.user_cards_list)
                 break
 
-    def index_update(self, list):
+    def position_update(self, list):
         for i in range(len(list)):
-            list[i].observer_update(self.game)
+            list[i].position_update(self.game)
 
     def turn_update(self, list):
         for i in range(len(list)):
             list[i].turn_update(self.game)
-
-    # self.user_cards_list = self.user.get_hand_cards()
