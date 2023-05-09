@@ -17,7 +17,7 @@ class MainMenu(Scene):
         self.settings_button = Menu("Settings").attach_mgr(self.scene_manager)
         self.quit_button = Menu("Quit").attach_mgr(self.scene_manager)
 
-        self.play_button.target_scene = "game_scene"
+        self.play_button.target_scene = "gamelobby"
         self.stage_button.target_scene = "story_scene"
         self.achievements_button.target_scene = "achievements_scene"
         self.settings_button.target_scene = "config_menu"

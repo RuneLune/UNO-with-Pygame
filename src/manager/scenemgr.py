@@ -13,6 +13,7 @@ from scene.mainmenu import MainMenu
 from scene.cfgmenu import ConfigMenu
 from scene.game_scene import GameScene
 from scene.story_scene import StoryScene
+from scene.gamelobby import GameLobby
 
 
 class SceneManager(metaclass=SingletonMeta):
@@ -23,7 +24,8 @@ class SceneManager(metaclass=SingletonMeta):
             "main_menu": MainMenu,
             "config_menu": ConfigMenu,
             "game_scene": GameScene,
-            "story_scene": StoryScene
+            "story_scene": StoryScene,
+            "gamelobby": GameLobby,
         }
         self.current_scene_name = "main_menu"
         self.current_scene = self.scenes[self.current_scene_name](self)

@@ -1,4 +1,3 @@
-import pygame
 import copy
 import json
 import os
@@ -10,14 +9,15 @@ from metaclass.singleton import SingletonMeta
 initial_settings: Dict[str, int | Dict[str, bool] | str] = {
     "player_count": 2,
     "pressed_bots": {
-        "bot1": False,
-        "bot2": True,
-        "bot3": True,
-        "bot4": True,
-        "bot5": True,
+        "bot1": True,
+        "bot2": False,
+        "bot3": False,
+        "bot4": False,
+        "bot5": False,
     },
     "user_name": " User_Name ",
 }
+
 
 class LobbyManager(metaclass=SingletonMeta):
     def __init__(self) -> None:
@@ -25,10 +25,10 @@ class LobbyManager(metaclass=SingletonMeta):
         self.__game_settings = initial_settings
         # Create settings.json if not exist
         if not os.path.isfile(game_config_path):
-            self.reset()
-            self.save_settings()
+            self.reset_game_settings()
+            self.save_game_settings()
         else:
-            self.load_settings()
+            self.load_game_settings()
 
         return super().__init__()
 
@@ -47,14 +47,14 @@ class LobbyManager(metaclass=SingletonMeta):
     def reset_game_settings(self):
         global initial_settings
         self.__game_settings = copy.deepcopy(initial_settings)
-        self.save_settings()
+        self.save_game_settings()
 
-        # Settings save method
+    # Settings save method
     def save_game_settings(self):
         try:
             # Save settings to file
             with open(game_config_path, "w") as f:
-                json.dump(self.__settings, f)
+                json.dump(self.__game_settings, f)
         except BaseException:
             # Return -1 if an error occurred
             return -1
@@ -62,26 +62,37 @@ class LobbyManager(metaclass=SingletonMeta):
         self.load_game_settings()
         # Return 0 if save was successful
         return 0
-    
+
     def get_game_settings(self):
         return copy.deepcopy(self.__game_settings)
-    
+
     def bot1_toggle(self):
-        self.__game_settings["pressed_bots"]["bot1"] = not self.__game_settings["pressed_bots"]["bot1"]
+        self.__game_settings["pressed_bots"]["bot1"] = not self.__game_settings[
+            "pressed_bots"
+        ]["bot1"]
         self.save_game_settings()
 
     def bot2_toggle(self):
-        self.__game_settings["pressed_bots"]["bot2"] = not self.__game_settings["pressed_bots"]["bot2"]
+        self.__game_settings["pressed_bots"]["bot2"] = not self.__game_settings[
+            "pressed_bots"
+        ]["bot2"]
         self.save_game_settings()
 
+
     def bot3_toggle(self):
-        self.__game_settings["pressed_bots"]["bot3"] = not self.__game_settings["pressed_bots"]["bot3"]
+        self.__game_settings["pressed_bots"]["bot3"] = not self.__game_settings[
+            "pressed_bots"
+        ]["bot3"]
         self.save_game_settings()
-    
+
     def bot4_toggle(self):
-        self.__game_settings["pressed_bots"]["bot4"] = not self.__game_settings["pressed_bots"]["bot4"]
+        self.__game_settings["pressed_bots"]["bot4"] = not self.__game_settings[
+            "pressed_bots"
+        ]["bot4"]
         self.save_game_settings()
-    
+
     def bot5_toggle(self):
-        self.__game_settings["pressed_bots"]["bot5"] = not self.__game_settings["pressed_bots"]["bot5"]
+        self.__game_settings["pressed_bots"]["bot5"] = not self.__game_settings[
+            "pressed_bots"
+        ]["bot5"]
         self.save_game_settings()
