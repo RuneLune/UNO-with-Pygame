@@ -76,16 +76,20 @@ class Card(GameObject, Observer):
         )
         self.user_card_pos = [
             (
-                (i + 1) * card_size[0] * 3 / 4,
+                (i + 1) * card_size[0],
                 screen_size[1] * (2 / 3) + card_size[1] / 2,
             )
-            if i <= 14
+            if i < 10
             else (
-                (i + 1) * card_size[0] * 3 / 4,
+                (i - 9) * card_size[0],
                 screen_size[1] * (2 / 3) + card_size[1] * 3 / 2,
             )
-            for i in range(40)
+            for i in range(30)
         ]
+
+        self.vec_target = pygame.Vector2(self.target_pos)
+        self.vec_rect = pygame.Vector2((self.rect.x, self.rect.y))
+        self.move_rate = (self.vec_target - self.vec_rect).normalize() * 10
 
     @overrides
     def on_mouse_enter(self) -> None:
@@ -104,13 +108,10 @@ class Card(GameObject, Observer):
         else:
             self.discard_start = False
 
-    def position_update(self, subject: Type[Subject]):
+    def position_update(self, subject: Type[Subject], index):
         # 카드 위치 재정렬
-        if self.user is True and self.user_turn is False:
-            user_cards = subject.get_user().get_hand_cards()
-            for i, code in enumerate(user_cards):
-                if code == self.code and i != self.index:
-                    self.index = i
+        if self.user is True:
+            self.index = index
             self.rect.x = self.user_card_pos[self.index][0]
             self.rect.y = self.user_card_pos[self.index][1]
 
@@ -118,47 +119,55 @@ class Card(GameObject, Observer):
         self.user_turn = subject.get_user().is_turn()
         # 유저턴이면 낼수 있는 카드인지 확인
         if self.user_turn is True:
-            self.discardable_cards = subject.get_user().get_discardable_cards_index()
-            if self.index in self.discardable_cards:
+            discardable_cards = subject.get_user().get_discardable_cards_index()
+            if self.index in discardable_cards:
                 self.playable = True
+            else:
+                self.playable = False
 
     @overrides
     def update(self) -> None:
         # 카드 내기 애니메이션
+        # 벡터로 변환
         if self.discard_start is True:
             if (
-                self.rect.x < self.target_pos[0] and self.rect.y > self.target_pos[1]
+                self.vec_rect[0] < self.target_pos[0]
+                and self.vec_rect[1] > self.target_pos[1]
             ) or (
-                self.rect.x > self.target_pos[0] and self.rect.y > self.target_pos[1]
+                self.vec_rect[0] > self.target_pos[0]
+                and self.vec_rect[1] > self.target_pos[1]
             ):
-                self.rect.x += (self.target_pos[0] - self.left) / 10
-                self.rect.y += (self.target_pos[1] - self.top) / 10
+                # self.rect.x += self.move_rate[0]
+                # self.rect.y += self.move_rate[1]
+                self.vec_rect += self.move_rate
+                self.rect.x = self.vec_rect[0]
+                self.rect.y = self.vec_rect[1]
             else:
-                # self.rect.x = self.discard_pile_pos[0]
-                # self.rect.y = self.discard_pile_pos[1]
+                print(self.rect.x, self.rect.y)
+                self.rect.x = self.discard_pile_pos[0]
+                self.rect.y = self.discard_pile_pos[1]
+                print(self.rect.x, self.rect.y)
                 self.discard_start = False
                 self.discard_end = True
-                self._visible = False
-                self._enabled = False
 
         # 카드 뽑기 애니메이션
         if self.draw_start is True:
+            # 멈출 조건
             if (
-                (self.rect.x < self.target_pos[0] and self.rect.y < self.target_pos[1])
-                or (
-                    self.rect.x > self.target_pos[0]
-                    and self.rect.y < self.target_pos[1]
-                )
-                or (
-                    self.rect.x < self.target_pos[0]
-                    and self.rect.y > self.target_pos[1]
-                )
+                self.vec_rect.x > self.target_pos[0]
+                and self.vec_rect.y > self.target_pos[1]
+            ) or (
+                self.vec_rect.x < self.target_pos[0]
+                and self.vec_rect.y > self.target_pos[1]
             ):
-                self.rect.x += (self.target_pos[0] - self.left) / 10 + 1
-                self.rect.y += (self.target_pos[1] - self.top) / 10 + 1
-            else:
+                print(self.rect.x, self.rect.y)
                 self.rect.x = self.target_pos[0]
                 self.rect.y = self.target_pos[1]
                 self.draw_start = False
                 self.draw_end = True
                 self.target_pos = self.discard_pile_pos
+                self.move_rate = (self.vec_target - self.vec_rect).normalize() * 20
+            else:
+                self.vec_rect += self.move_rate
+                self.rect.x = self.vec_rect[0]
+                self.rect.y = self.vec_rect[1]

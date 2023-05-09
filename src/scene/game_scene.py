@@ -78,8 +78,8 @@ class GameScene(Scene, metaclass=SingletonMeta):
 
         # 드로우 파일 카드 위치 정의
         self.draw_pile_pos = (
-            self.screen_size[0] * (3 / 8) - self.card_size[0],
-            self.screen_size[1] * (1 / 3) - self.card_size[1] / 2,
+            self.screen_size[0] * (3 / 8) - self.card_size[0] + 1,
+            self.screen_size[1] * (1 / 3) - self.card_size[1] / 2 + 1,
         )
         self.deck_card = Deck(
             surface=self.cards_cls.get_card_image(000),
@@ -92,8 +92,8 @@ class GameScene(Scene, metaclass=SingletonMeta):
 
         # 버린 카드 위치 정의
         self.discard_pile_pos = (
-            self.screen_size[0] * 3 / 8 + self.card_size[0],
-            self.screen_size[1] * 1 / 3 - self.card_size[1] / 2,
+            self.screen_size[0] * 3 / 8 + self.card_size[0] + 1,
+            self.screen_size[1] * 1 / 3 - self.card_size[1] / 2 + 1,
         )
 
         # 버린 카드 객체 로드
@@ -107,15 +107,15 @@ class GameScene(Scene, metaclass=SingletonMeta):
         # 플레이어 카드 위치 정의
         self.user_card_pos = [
             (
-                (i + 1) * self.card_size[0] * 3 / 4,
+                (i + 1) * self.card_size[0],
                 self.screen_size[1] * (2 / 3) + self.card_size[1] / 2,
             )
-            if i <= 14
+            if i < 10
             else (
-                (i + 1) * self.card_size[0] * 3 / 4,
+                (i - 9) * self.card_size[0],
                 self.screen_size[1] * (2 / 3) + self.card_size[1] * 3 / 2,
             )
-            for i in range(40)
+            for i in range(30)
         ]
 
         # 처음 유저 카드 정의
@@ -134,7 +134,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 index=i,
             )
             temp.user = True
-            temp.position_update(self.game)
+            temp.position_update(self.game, i)
             self.user_cards_obj.append(temp)
 
         self.instantiate(self.deck_space)
@@ -167,7 +167,10 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 self.bot_spaces[i].turn = False
 
         # 카드 더미를 눌러서 카드 뽑기
-        if self.deck_card.draw_flag is True:
+        if self.deck_card.draw_flag is True or (
+            self.deck_card.draw_flag is False
+            and (self.user_cards_list != self.user.get_hand_cards())
+        ):
             self.user.draw_cards()
             drawing_cards = self.user.get_last_drawing_cards()
             self.user_cards_list = self.user.get_hand_cards()
@@ -187,17 +190,47 @@ class GameScene(Scene, metaclass=SingletonMeta):
                     code=code,
                     index=idx,
                 )
+                self.instantiate(temp)
                 temp.user = True
                 temp.draw_start = True
                 self.user_cards_obj.append(temp)
-                self.instantiate(temp)
             self.turn_update(self.user_cards_obj)
             self.deck_card.draw_flag = False
-        # 카드 더미를 누르지 않았는데 카드가 바뀌는 경우
-        # elif self.deck_card.draw_flag is False and (
-        #     self.user_cards_list != self.user.get_hand_cards()
-        # ):
-        #     pass
+
+        # last card가 셔플인 경우
+        if self.last_card.code == 15 and (
+            self.user_cards_list != self.user.get_hand_cards()
+        ):
+            self.user_cards_list = self.user.get_hand_cards()
+            print(self.user_cards_list)
+            for obj in self.user_cards_obj:
+                obj._visible = False
+                obj._enabled = False
+                self.destroy(obj)
+            self.user_cards_obj = []
+            drawing_cards = self.user.get_last_drawing_cards()
+            print(drawing_cards)
+
+            # 뽑은 카드 생성 후 유저 공간으로 이동
+            for i, tuple in enumerate(drawing_cards):
+                idx = tuple[0]
+                code = tuple[1]
+                temp = Card(
+                    surface=self.cards_cls.get_card_image(code),
+                    name=f"{code}",
+                    width=self.card_size[0],
+                    height=self.card_size[1],
+                    left=self.draw_pile_pos[0],
+                    top=self.draw_pile_pos[1],
+                    target_pos=self.user_card_pos[idx],
+                    code=code,
+                    index=idx,
+                )
+                self.instantiate(temp)
+                temp.user = True
+                temp.draw_start = True
+                self.user_cards_obj.append(temp)
+            self.turn_update(self.user_cards_obj)
 
         # 카드 내기
         for i, card in enumerate(self.user_cards_obj):
@@ -206,21 +239,20 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 self.user_cards_list = self.user.get_hand_cards()
 
         # 애니메이션 종료후 카드 위치 재정의
-        for i, card in enumerate(self.user_cards_obj, -1):
+        for i, card in enumerate(self.user_cards_obj):
             if card.discard_end is True:
                 self.user_cards_obj.remove(card)
                 self.destroy(card)
                 self.position_update(self.user_cards_obj)
                 print(self.user_cards_list)
-                break
             if card.draw_end is True:
                 self.position_update(self.user_cards_obj)
-                print(self.user_cards_list)
-                break
+                card.draw_end = False
 
-    def position_update(self, list):
-        for i in range(len(list)):
-            list[i].position_update(self.game)
+    def position_update(self, obj_list: list):
+        obj_list.sort(key=lambda x: x.code)
+        for idx, obj in enumerate(obj_list):
+            obj.position_update(self.game, idx)
 
     def turn_update(self, list):
         for i in range(len(list)):

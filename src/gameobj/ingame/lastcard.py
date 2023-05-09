@@ -9,8 +9,11 @@ from typing import Type, TYPE_CHECKING
 if TYPE_CHECKING:
     from abstrclass.subject import Subject
 
+from overrides import overrides
+
 
 class LastCard(GameObject):
+    @overrides
     def __init__(
         self,
         surface: pygame.Surface,
@@ -27,3 +30,4 @@ class LastCard(GameObject):
 
     def observer_update(self, subject: Type[Subject]):
         self.image = self.cards_cls.get_card_image(subject._discard_pile[0])
+        self.code = subject._discard_pile[0]
