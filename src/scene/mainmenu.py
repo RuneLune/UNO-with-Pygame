@@ -34,6 +34,11 @@ class MainMenu(Scene):
         self.stage_button = TextButtonObject(
             "Stage", menu_font, color.black, "MainMenu_StageButton"
         )
+
+        self.achive_button = TextButtonObject(
+            "Achivement", menu_font, color.black, "MainMenu_StageButton"
+        )
+
         self.settings_button = TextButtonObject(
             "Settings", menu_font, color.black, "MainMenu_SettingsButton"
         )
@@ -43,13 +48,17 @@ class MainMenu(Scene):
 
         self.title_text.rect.center = (
             screen_rect.centerx,
-            screen_rect.height * 3 // 10,
+            screen_rect.height * 2 // 10,
         )
         self.play_button.rect.center = (
             screen_rect.centerx,
-            screen_rect.height * 6 // 10,
+            screen_rect.height * 5 // 10,
         )
         self.stage_button.rect.center = (
+            screen_rect.centerx,
+            screen_rect.height * 6 // 10,
+        )
+        self.achive_button.rect.center = (
             screen_rect.centerx,
             screen_rect.height * 7 // 10,
         )
@@ -81,5 +90,6 @@ class MainMenu(Scene):
         self.instantiate(self.stage_button)
         self.instantiate(self.settings_button)
         self.instantiate(self.quit_button)
+        self.instantiate(self.achive_button)
 
         return None

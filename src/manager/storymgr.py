@@ -1,6 +1,8 @@
 import copy
 import json
 import os
+import pygame
+import event.events as events
 
 from util.appdata_manager import stage_access_path
 
@@ -52,6 +54,30 @@ class StoryManager:
 
     def get_stage_states(self):
         return copy.deepcopy(self.__stage_states)
+    
+    def handle(self, event: pygame.event.Event):
+        if event.type == events.GAME_END:
+            if (
+                hasattr(event, "args")
+                and "stage" in event.args
+                and "status" in event.args
+            ):
+                if event.args.get("status") == "win":
+                    if event.args.get("stage") == "stage_a":
+                        self.__stage_states["touchable"][1] = True
+                        self.save_stage_states()
+                        pass
+                    elif event.args.get("stage") == "stage_b":
+                        self.__stage_states["touchable"][2] = True
+                        self.save_stage_states()
+                        pass
+                    elif event.args.get("stage") == "stage_c":
+                        self.__stage_states["touchable"][3] = True
+                        self.save_stage_states()
+                        pass
+                    pass
+                pass
+
 
         return None
     
