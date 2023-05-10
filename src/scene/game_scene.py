@@ -15,18 +15,19 @@ from gameobj.ingame.space import Space
 from gameobj.ingame.deck import Deck
 from gameobj.ingame.lastcard import LastCard
 from gameobj.ingame.bot_card import BotCard
+from gameobj.ingame.color_display import ColorDisplay
 
 from metaclass.singleton import SingletonMeta
 
 
-# -봇 처음 카드 생성
-# -봇 카드수 업데이트
+# -봇 처음 카드 생성 o
+# -봇 카드수 업데이트 o
 #   -봇 카드 뽑기 및 내기 애니메이션
 # -턴 스킵 표시
 # -턴 남은 시간 표시
+# -현재 색깔 표시 o
 # -유저 턴 표시 이미지
 # -뽑을 카드 없을 시 드로우 권장 표시
-# 카드 오브젝트에 인덱스 변수 추가?
 class GameScene(Scene, metaclass=SingletonMeta):
     @overrides
     def start(self) -> None:
@@ -160,6 +161,17 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 )
                 self.bot_cards[i].append(temp)
 
+        # 색깔 표시 오브젝트 생성
+        self.color_display = ColorDisplay(
+            surface=pygame.surface,
+            name="color_display",
+            width=self.screen_size[1] / 2,
+            height=self.screen_size[1] / 2,
+            left=self.deck_space.centerx - self.screen_size[1] / 2,
+            top=self.deck_space.centery - self.screen_size[1] / 2,
+        )
+
+        # 오브젝트 등록
         self.instantiate(self.deck_space)
         self.instantiate(self.user_space)
         for i in range(len(self.bots)):
@@ -172,12 +184,14 @@ class GameScene(Scene, metaclass=SingletonMeta):
 
         self.instantiate(self.last_card)
         self.instantiate(self.deck_card)
+        self.instantiate(self.color_display)
 
     @overrides
     def update(self):
         self.game.tick()
         self.deck_card.observer_update(self.game)
         self.last_card.observer_update(self.game)
+        self.color_display.observer_update(self.game)
         self.turn_update(self.user_cards_obj)
 
         # 현재 턴 플레이어 표시
