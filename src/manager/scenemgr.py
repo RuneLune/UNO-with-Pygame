@@ -1,31 +1,32 @@
 from __future__ import annotations
 
-from typing import Type, Dict, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import pygame
+from typing import TYPE_CHECKING
 
 from metaclass.singleton import SingletonMeta
-from scene.scene import Scene
-from scene.scene1 import Scene1
-from scene.scene2 import Scene2
+from scene.test import TestScene
 from scene.mainmenu import MainMenu
 from scene.cfgmenu import ConfigMenu
 from scene.game_scene import GameScene
 from scene.story_scene import StoryScene
 from scene.gamelobby import GameLobby
+from scene.quit import QuitScene
+
+if TYPE_CHECKING:
+    from typing import Type, Dict
+    import pygame
+    from scene.scene import Scene
 
 
 class SceneManager(metaclass=SingletonMeta):
     def __init__(self):
         self.scenes: Dict[str, Type[Scene]] = {
-            "scene1": Scene1,
-            "scene2": Scene2,
+            "test": TestScene,
             "main_menu": MainMenu,
             "config_menu": ConfigMenu,
             "game_scene": GameScene,
             "story_scene": StoryScene,
             "gamelobby": GameLobby,
+            "quit": QuitScene,
         }
         self.current_scene_name = "main_menu"
         self.current_scene = self.scenes[self.current_scene_name](self)

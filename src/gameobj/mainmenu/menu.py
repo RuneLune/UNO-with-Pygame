@@ -36,8 +36,13 @@ class Menu(TextButtonObject):
         )
         self._target_scene: Optional[str] = None
 
-    def attach_mgr(self, scene_manager: SceneManager) -> Menu:
+    def attach_mgr(
+        self, scene_manager: SceneManager, target_scene: Optional[str] = None
+    ) -> Menu:
         self.scene_manager = scene_manager
+        if target_scene is not None:
+            self.target_scene = target_scene
+            pass
         return self
 
     @overrides
