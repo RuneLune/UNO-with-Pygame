@@ -28,6 +28,7 @@ class ColorDisplay(GameObject, Observer):
     ) -> None:
         super().__init__(surface, name, width, height, left, top, z_index, key_index)
         self.color = colors.white
+        self.p1 = (self.rect.centerx, self.rect.centery - self.height / 2)
 
     def observer_update(self, subject: Type[Subject]):
         discard_card = subject.get_discard_info().get("discarded_card")
