@@ -24,24 +24,25 @@ class SoundManager(metaclass=SingletonMeta):
             "timeout": self.timeout_effect_sound,
             "click": self.click_effect_sound,
         }
+        self.update_all_volume()
 
         self.is_background_playing = False
 
-        self.refresh()
+        # self.refresh()
 
         return None
 
-    def refresh(self, key: str) -> None:
-        def getconfig() -> dict:
-            return Config().config.get(key)
+    # def refresh(self, key: str) -> None:
+    #     def getconfig() -> dict:
+    #         return Config().config.get(key)
 
-        self.background_sound_volume = getconfig("background_sound_volume", 0.5)
-        self.effect_sound_volume = getconfig("effect_sound_volume", 0.5)
-        self.all_sound_volume = getconfig("all_sound_volume", 0.5)
-        self.set_background_sound_volume()
-        self.set_effect_sound_volume()
+    #     self.background_sound_volume = getconfig("background_sound_volume", 0.5)
+    #     self.effect_sound_volume = getconfig("effect_sound_volume", 0.5)
+    #     self.all_sound_volume = getconfig("all_sound_volume", 0.5)
+    #     self.set_background_sound_volume()
+    #     self.set_effect_sound_volume()
 
-        return None
+    #     return None
 
     def play_background_sound(self):
         if not self.is_background_playing:  # 배경음악이 재생중이 아니면
@@ -52,17 +53,26 @@ class SoundManager(metaclass=SingletonMeta):
         self.background_sound.stop()  # 배경음악 정지
         self.is_background_playing = False  # 배경음악 재생중이 아니라고 표시
 
-    def set_background_sound_volume(self):
+    def update_background_volume(self):
         self.background_sound.set_volume(
-            self.background_sound_volume * self.all_sound_volume
+            Config().get_config("background_sound_volume")
+            * Config().get_config("all_sound_volume")
+            / 10000
         )  # 배경음악 음량 조절 0~1 사이값, 0은 음소거 1은 최대 볼륨
+
+    def update_effect_volume(self):
+        for effect_sound in self.effect.values():
+            effect_sound.set_volume(
+                Config().get_config("effect_sound_volume")
+                * Config().get_config("all_sound_volume")
+                / 10000
+            )  # 효과음 음량 조절 0~1 사이값, 0은 음소거 1은 최대 볼륨
+
+    def update_all_volume(self) -> None:
+        self.update_background_volume()
+        self.update_effect_volume()
+        return None
 
     def play_effect(self, name):
         if name in self.effect:
             self.effect[name].play()  # 효과음 재생
-
-    def set_effect_sound_volume(self):
-        for effect_sound in self.effect.values():
-            effect_sound.set_volume(
-                self.effect_sound_volume * self.all_sound_volume
-            )  # 효과음 음량 조절 0~1 사이값, 0은 음소거 1은 최대 볼륨

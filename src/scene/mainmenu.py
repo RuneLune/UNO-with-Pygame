@@ -13,11 +13,15 @@ class MainMenu(Scene):
     def start(self) -> None:
         self.instantiate(BackgroundObject(color.white))
         self.instantiate(TitleText("UNO"))
+
+        Menu.destroy_all()
         self.instantiate(Menu("Play").attach_mgr(self.scene_manager, "gamelobby"))
         self.instantiate(Menu("Stage").attach_mgr(self.scene_manager, "story_scene"))
         self.instantiate(Menu("Achievements").attach_mgr(self.scene_manager, "test"))
         self.instantiate(Menu("Settings").attach_mgr(self.scene_manager, "config_menu"))
         self.instantiate(Menu("Quit").attach_mgr(self.scene_manager, "quit"))
+
+        KeyBind.destroy_all()
         self.instantiate(KeyBind("Left"))
         self.instantiate(KeyBind("Right"))
         self.instantiate(KeyBind("Up"))

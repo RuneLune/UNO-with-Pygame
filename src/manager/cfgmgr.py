@@ -40,6 +40,14 @@ class Config(metaclass=SingletonMeta):
 
         return super().__init__()
 
+    def get_config(self, config_key: str):
+        return self.config.get(config_key, None)
+
+    def set_config(self, config_key: str, config_value) -> None:
+        self.__config.update({config_key: config_value})
+        self.save()
+        return None
+
     # Config load method
     def load(self):
         # load saved config from file
