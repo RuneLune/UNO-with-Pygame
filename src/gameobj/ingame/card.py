@@ -74,7 +74,7 @@ class Card(GameObject, Observer):
 
         self.vec_target = pygame.Vector2(self.target_pos)
         self.vec_rect = pygame.Vector2((self.rect.x, self.rect.y))
-        self.move_rate = (self.vec_target - self.vec_rect).normalize() * 10
+        self.move_rate = (self.vec_target - self.vec_rect).normalize() * 40
 
     @overrides
     def on_mouse_enter(self) -> None:
@@ -114,13 +114,7 @@ class Card(GameObject, Observer):
     def update(self) -> None:
         # 카드 내기 애니메이션
         if self.discard_start is True:
-            if (
-                self.vec_rect[0] < self.target_pos[0]
-                and self.vec_rect[1] > self.target_pos[1]
-            ) or (
-                self.vec_rect[0] > self.target_pos[0]
-                and self.vec_rect[1] > self.target_pos[1]
-            ):
+            if self.vec_rect[1] > self.target_pos[1]:
                 self.vec_rect += self.move_rate
                 self.rect.x = self.vec_rect[0]
                 self.rect.y = self.vec_rect[1]
@@ -132,19 +126,14 @@ class Card(GameObject, Observer):
 
         # 카드 뽑기 애니메이션
         if self.draw_start is True:
-            if (
-                self.vec_rect.x > self.target_pos[0]
-                and self.vec_rect.y > self.target_pos[1]
-            ) or (
-                self.vec_rect.x < self.target_pos[0]
-                and self.vec_rect.y > self.target_pos[1]
-            ):
+            if self.vec_rect.y > self.target_pos[1]:
                 self.rect.x = self.target_pos[0]
                 self.rect.y = self.target_pos[1]
                 self.draw_start = False
                 self.draw_end = True
-                self.target_pos = self.draw_pile_pos
-                self.move_rate = (self.vec_target - self.vec_rect).normalize() * 20
+                self.target_pos = self.discard_pile_pos
+                self.vec_target = pygame.Vector2(self.target_pos)
+                self.move_rate = (self.vec_target - self.vec_rect).normalize() * 40
             else:
                 self.vec_rect += self.move_rate
                 self.rect.x = self.vec_rect[0]

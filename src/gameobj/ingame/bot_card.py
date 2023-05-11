@@ -54,7 +54,7 @@ class BotCard(GameObject, Observer):
         )
         self.vec_target = pygame.Vector2(self.target_pos)
         self.vec_rect = pygame.Vector2((self.rect.x, self.rect.y))
-        self.move_rate = (self.vec_target - self.vec_rect).normalize() * 20
+        self.move_rate = (self.vec_target - self.vec_rect).normalize() * 40
 
     def observer_update(self, subject: Type[Subject]):
         self.image = self.card_cls.get_card_image(subject._discard_pile[0])
@@ -67,6 +67,7 @@ class BotCard(GameObject, Observer):
                 self.rect.y = self.target_pos[1]
                 self.discard_start = False
                 self.discard_end = True
+                self._visible = False
             else:
                 self.vec_rect += self.move_rate
                 self.rect.x = self.vec_rect[0]
@@ -80,7 +81,7 @@ class BotCard(GameObject, Observer):
                 self.draw_start = False
                 self.draw_end = True
                 self.target_pos = self.discard_pile_pos
-                self.move_rate = (self.vec_target - self.vec_rect).normalize() * 20
+                self.move_rate = (self.vec_target - self.vec_rect).normalize() * 40
             else:
                 self.vec_rect += self.move_rate
                 self.rect.x = self.vec_rect[0]
