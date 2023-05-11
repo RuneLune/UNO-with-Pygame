@@ -2,7 +2,7 @@ from overrides import overrides
 import pygame
 
 from util.resource_manager import font_resource
-import util.colors as color
+import util.colors as colors
 from .scene import Scene
 
 from game.game import Game
@@ -15,18 +15,17 @@ from gameobj.ingame.space import Space
 from gameobj.ingame.deck import Deck
 from gameobj.ingame.lastcard import LastCard
 from gameobj.ingame.bot_card import BotCard
+from gameobj.ingame.color_set import ColorSet
 
 from metaclass.singleton import SingletonMeta
 
 
 # -봇 처음 카드 생성 o
 # -봇 카드수 업데이트 o
-#   -봇 카드 뽑기 및 내기 애니메이션
+#   -봇 카드 뽑기 및 내기 애니메이션 o
 # -턴 스킵 표시
 # -턴 남은 시간 표시
 # -현재 색깔 표시 o
-# -유저 턴 표시 이미지
-# -뽑을 카드 없을 시 드로우 권장 표시
 class GameScene(Scene, metaclass=SingletonMeta):
     @overrides
     def start(self) -> None:
@@ -42,7 +41,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
         self.user = self.game.get_user()
         self.bots = self.game.get_bots()
 
-        self.iter = 0
+        color_dict = [colors.red, colors.green, colors.blue, colors.yellow]
 
         # space 정의
         self.user_space = Space(
@@ -161,6 +160,21 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 )
                 self.bot_cards[i].append(temp)
 
+        # 색 선택 오브젝트 생성
+        self.color_set = []
+        for i, color in enumerate(color_dict):
+            temp = ColorSet(
+                surface=pygame.Surface((0, 0)),
+                name="choice_rect",
+                width=self.card_size[0] / 2,
+                height=self.card_size[0] / 2,
+                left=self.discard_pile_pos[0] + self.card_size[0] * 2,
+                top=self.discard_pile_pos[1] + (i - 1) * self.card_size[0] / 2,
+                color=color,
+            )
+            self.color_set.append(temp)
+            temp.user_update(self.game)
+
         # 오브젝트 등록
         self.instantiate(self.deck_space)
         self.instantiate(self.user_space)
@@ -174,6 +188,9 @@ class GameScene(Scene, metaclass=SingletonMeta):
 
         self.instantiate(self.last_card)
         self.instantiate(self.deck_card)
+        for i in range(4):
+            self.instantiate(self.color_set[i])
+            self.color_set[i].user_update(self.game)
 
     @overrides
     def update(self):
@@ -182,6 +199,8 @@ class GameScene(Scene, metaclass=SingletonMeta):
         self.last_card.observer_update(self.game)
         self.deck_space.observer_update(self.game)
         self.turn_update(self.user_cards_obj)
+        for i in range(4):
+            self.color_set[i].observer_update(self.game)
 
         # 현재 턴 플레이어 표시
         if self.user.is_turn() is True:
