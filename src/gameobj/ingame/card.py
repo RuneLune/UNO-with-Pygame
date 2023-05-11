@@ -55,6 +55,10 @@ class Card(GameObject, Observer):
             screen_size[0] * 3 / 8 + card_size[0],
             screen_size[1] * 1 / 3 - card_size[1] / 2,
         )
+        self.draw_pile_pos = (
+            screen_size[0] * (3 / 8) - card_size[0] + 1,
+            screen_size[1] * (1 / 3) - card_size[1] / 2 + 1,
+        )
         self.user_card_pos = [
             (
                 (i + 1) * card_size[0],
@@ -109,7 +113,6 @@ class Card(GameObject, Observer):
     @overrides
     def update(self) -> None:
         # 카드 내기 애니메이션
-        # 벡터로 변환
         if self.discard_start is True:
             if (
                 self.vec_rect[0] < self.target_pos[0]
@@ -129,7 +132,6 @@ class Card(GameObject, Observer):
 
         # 카드 뽑기 애니메이션
         if self.draw_start is True:
-            # 멈출 조건
             if (
                 self.vec_rect.x > self.target_pos[0]
                 and self.vec_rect.y > self.target_pos[1]
@@ -141,7 +143,7 @@ class Card(GameObject, Observer):
                 self.rect.y = self.target_pos[1]
                 self.draw_start = False
                 self.draw_end = True
-                self.target_pos = self.discard_pile_pos
+                self.target_pos = self.draw_pile_pos
                 self.move_rate = (self.vec_target - self.vec_rect).normalize() * 20
             else:
                 self.vec_rect += self.move_rate

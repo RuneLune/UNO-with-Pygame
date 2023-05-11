@@ -32,6 +32,8 @@ class BotCard(GameObject, Observer):
         target_pos: tuple = (0, 0),
     ) -> None:
         super().__init__(surface, name, width, height, left, top, z_index)
+        screen_size = Config().get_screen_resolution()
+        card_size = self.rect.size
 
         self.draw_start = False
         self.draw_end = False
@@ -39,5 +41,41 @@ class BotCard(GameObject, Observer):
         self.discard_start = False
         self.discard_end = False
 
+        self.target_pos = target_pos
+        self.draw_pile_pos = (
+            screen_size[0] * (3 / 8) - card_size[0] + 1,
+            screen_size[1] * (1 / 3) - card_size[1] / 2 + 1,
+        )
+        self.vec_target = pygame.Vector2(self.target_pos)
+        self.vec_rect = pygame.Vector2((self.rect.x, self.rect.y))
+        self.move_rate = (self.vec_target - self.vec_rect).normalize() * 10
+
     def observer_update(self, subject: Type[Subject]):
         pass
+
+    @overrides
+    def update(self):
+        if self.discard_start is True:
+            if self.vec_rect[0] < self.target_pos[0]:
+                self.rect.x = self.target_pos[0]
+                self.rect.y = self.target_pos[1]
+                self.discard_start = False
+                self.discard_end = True
+            else:
+                self.vec_rect += self.move_rate
+                self.rect.x = self.vec_rect[0]
+                self.rect.y = self.vec_rect[1]
+
+        # 카드 뽑기 애니메이션
+        if self.draw_start is True:
+            if self.vec_rect.x > self.target_pos[0]:
+                self.rect.x = self.target_pos[0]
+                self.rect.y = self.target_pos[1]
+                self.draw_start = False
+                self.draw_end = True
+                self.target_pos = self.draw_pile_pos
+                self.move_rate = (self.vec_target - self.vec_rect).normalize() * 20
+            else:
+                self.vec_rect += self.move_rate
+                self.rect.x = self.vec_rect[0]
+                self.rect.y = self.vec_rect[1]
