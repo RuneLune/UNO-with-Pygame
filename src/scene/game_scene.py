@@ -15,7 +15,6 @@ from gameobj.ingame.space import Space
 from gameobj.ingame.deck import Deck
 from gameobj.ingame.lastcard import LastCard
 from gameobj.ingame.bot_card import BotCard
-from gameobj.ingame.color_display import ColorDisplay
 
 from metaclass.singleton import SingletonMeta
 
