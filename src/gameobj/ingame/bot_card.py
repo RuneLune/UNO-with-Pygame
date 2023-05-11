@@ -6,6 +6,7 @@ from abstrclass.subject import Subject
 
 from gameobj.gameobj import GameObject
 from manager.cfgmgr import Config
+from card.cards import Cards
 
 from abstrclass.observer import Observer
 from typing import Type, TYPE_CHECKING
@@ -34,6 +35,7 @@ class BotCard(GameObject, Observer):
         super().__init__(surface, name, width, height, left, top, z_index)
         screen_size = Config().get_screen_resolution()
         card_size = self.rect.size
+        self.card_cls = Cards()
 
         self.draw_start = False
         self.draw_end = False
@@ -46,12 +48,16 @@ class BotCard(GameObject, Observer):
             screen_size[0] * (3 / 8) - card_size[0] + 1,
             screen_size[1] * (1 / 3) - card_size[1] / 2 + 1,
         )
+        self.discard_pile_pos = (
+            screen_size[0] * 3 / 8 + card_size[0],
+            screen_size[1] * 1 / 3 - card_size[1] / 2,
+        )
         self.vec_target = pygame.Vector2(self.target_pos)
         self.vec_rect = pygame.Vector2((self.rect.x, self.rect.y))
-        self.move_rate = (self.vec_target - self.vec_rect).normalize() * 10
+        self.move_rate = (self.vec_target - self.vec_rect).normalize() * 20
 
     def observer_update(self, subject: Type[Subject]):
-        pass
+        self.image = self.card_cls.get_card_image(subject._discard_pile[0])
 
     @overrides
     def update(self):
@@ -73,7 +79,7 @@ class BotCard(GameObject, Observer):
                 self.rect.y = self.target_pos[1]
                 self.draw_start = False
                 self.draw_end = True
-                self.target_pos = self.draw_pile_pos
+                self.target_pos = self.discard_pile_pos
                 self.move_rate = (self.vec_target - self.vec_rect).normalize() * 20
             else:
                 self.vec_rect += self.move_rate

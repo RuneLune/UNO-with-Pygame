@@ -139,12 +139,13 @@ class GameScene(Scene, metaclass=SingletonMeta):
             self.user_cards_obj.append(temp)
 
         # 봇 카드 위치 정의
-        self.bot_card_pos = [
-            (
-                self.bot_spaces[i].left,
-                self.bot_spaces[i].top + self.bot_spaces[i].height / 5,
-            )
-            for i, bot in enumerate(self.bots)
+        self.bot_card_pos_x = [
+            (self.bot_spaces[0].left + i * self.card_size[0] * 1 / 3)
+            for i in range(0, 7)
+        ]
+        self.bot_card_pos_y = [
+            (self.bot_spaces[i].top + self.bot_spaces[i].height / 5)
+            for i in range(len(self.bots))
         ]
 
         # 봇 처음 카드 생성
@@ -154,8 +155,8 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 temp = BotCard(
                     surface=self.card_back_image,
                     name=f"bot{i} card",
-                    left=self.bot_card_pos[i][0] + j * self.card_size[0] * 1 / 3,
-                    top=self.bot_card_pos[i][1],
+                    left=self.bot_card_pos_x[j],
+                    top=self.bot_card_pos_y[i],
                     target_pos=self.discard_pile_pos,
                 )
                 self.bot_cards[i].append(temp)
@@ -264,8 +265,10 @@ class GameScene(Scene, metaclass=SingletonMeta):
 
         # 봇 카드 개수 업데이트
         diff_list = self.bot_card_difference(self.bots)
-        print(diff_list)
         for i, diff in enumerate(diff_list):
+            last_index = len(self.bots[i].get_hand_cards()) - 1
+            if last_index >= 6:
+                last_index = 6
             if diff == 0:
                 continue
             elif diff > 0:
@@ -276,7 +279,10 @@ class GameScene(Scene, metaclass=SingletonMeta):
                         name=f"bot{i} card",
                         left=self.draw_pile_pos[0],
                         top=self.draw_pile_pos[1],
-                        target_pos=self.bot_card_pos[i],
+                        target_pos=(
+                            self.bot_card_pos_x[last_index],
+                            self.bot_card_pos_y[i],
+                        ),
                     )
                     self.instantiate(temp)
                     temp.draw_start = True
@@ -290,6 +296,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 ):
                     card = self.bot_cards[i][j]
                     card.discard_start = True
+                    card.observer_update(self.game)
                     self.bot_cards[i].remove(card)
 
         # 카드 내기
