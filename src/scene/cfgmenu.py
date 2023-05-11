@@ -12,6 +12,7 @@ from gameobj.cfgmenu.rightbtn import RightButton
 from gameobj.cfgmenu.keymenuval import KeyMenuValue
 from gameobj.cfgmenu.keyinput import KeyInput
 from gameobj.cfgmenu.keybindarea import KeyBindArea
+from gameobj.cfgmenu.volbar import VolumeBar
 import util.colors as color
 
 
@@ -70,5 +71,10 @@ class ConfigMenu(Scene):
         self.instantiate(KeyBindArea("down"))
         self.instantiate(KeyBindArea("select"))
         self.instantiate(KeyBindArea("cancel"))
+
+        VolumeBar.destroy_all()
+        self.instantiate(VolumeBar().set_target("all"))
+        self.instantiate(VolumeBar().set_target("bgm"))
+        self.instantiate(VolumeBar().set_target("sfx"))
 
         return None

@@ -20,10 +20,12 @@ initial_config: Dict[str, str | bool | Dict[str, int] | float] = {
         "select": pygame.K_RETURN,
         "cancel": pygame.K_ESCAPE,
     },
+    "volume": {
+        "all": 100,
+        "bgm": 50,
+        "sfx": 50,
+    },
     "colorblind_mode": False,
-    "background_sound_volume": 1,
-    "effect_sound_volume": 0.5,
-    "all_sound_volume": 1,
 }
 
 
@@ -40,11 +42,11 @@ class Config(metaclass=SingletonMeta):
 
         return super().__init__()
 
-    def get_config(self, config_key: str):
-        return self.config.get(config_key, None)
+    def get_volume(self, target_volume: str):
+        return self.config.get("volume").get(target_volume, 50)
 
-    def set_config(self, config_key: str, config_value) -> None:
-        self.__config.update({config_key: config_value})
+    def set_volume(self, target_volume: str, value: int) -> None:
+        self.__config.get("volume").update({target_volume: value})
         self.save()
         return None
 

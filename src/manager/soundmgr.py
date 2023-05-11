@@ -55,16 +55,16 @@ class SoundManager(metaclass=SingletonMeta):
 
     def update_background_volume(self):
         self.background_sound.set_volume(
-            Config().get_config("background_sound_volume")
-            * Config().get_config("all_sound_volume")
+            Config().get_volume("bgm")
+            * Config().get_volume("all")
             / 10000
         )  # 배경음악 음량 조절 0~1 사이값, 0은 음소거 1은 최대 볼륨
 
     def update_effect_volume(self):
         for effect_sound in self.effect.values():
             effect_sound.set_volume(
-                Config().get_config("effect_sound_volume")
-                * Config().get_config("all_sound_volume")
+                Config().get_volume("sfx")
+                * Config().get_volume("all")
                 / 10000
             )  # 효과음 음량 조절 0~1 사이값, 0은 음소거 1은 최대 볼륨
 

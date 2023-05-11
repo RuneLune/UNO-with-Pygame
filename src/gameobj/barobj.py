@@ -75,6 +75,7 @@ class BarObject(GameObject):
         pass
 
     def _draw_bar(self) -> None:
+        print(self.image.get_size())
         self.image.fill(self._background_color)
         if self._vertical:
             bar_surface = pygame.Surface(
@@ -85,6 +86,7 @@ class BarObject(GameObject):
                     / (self._max_value - self._min_value),
                 )
             )
+            bar_surface.fill(self._cover_color)
             self.image.blit(
                 bar_surface, (0, self.image.get_height() - bar_surface.get_height())
             )
@@ -96,6 +98,7 @@ class BarObject(GameObject):
                 / (self._max_value - self._min_value),
                 self._height,
             )
+            bar_surface.fill(self._cover_color)
             self.image.blit(bar_surface, (0, 0))
             pass
         return None
