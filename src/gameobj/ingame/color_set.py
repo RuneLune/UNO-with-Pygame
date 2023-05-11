@@ -29,8 +29,10 @@ class ColorSet(GameObject, Observer):
         super().__init__(surface, name, width, height, left, top, z_index, key_index)
 
     def observer_update(self, subject: Type[Subject]):
+        # 유저가 와일드 카드를 내서 색을 선택해야 하는 상황 감지
         pass
 
     @overrides
     def update(self):
+        # 모서리 곡률 추가
         pass

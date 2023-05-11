@@ -161,16 +161,6 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 )
                 self.bot_cards[i].append(temp)
 
-        # 색깔 표시 오브젝트 생성
-        self.color_display = ColorDisplay(
-            surface=pygame.surface,
-            name="color_display",
-            width=self.screen_size[1] / 2,
-            height=self.screen_size[1] / 2,
-            left=self.deck_space.centerx - self.screen_size[1] / 2,
-            top=self.deck_space.centery - self.screen_size[1] / 2,
-        )
-
         # 오브젝트 등록
         self.instantiate(self.deck_space)
         self.instantiate(self.user_space)
@@ -184,14 +174,13 @@ class GameScene(Scene, metaclass=SingletonMeta):
 
         self.instantiate(self.last_card)
         self.instantiate(self.deck_card)
-        self.instantiate(self.color_display)
 
     @overrides
     def update(self):
         self.game.tick()
         self.deck_card.observer_update(self.game)
         self.last_card.observer_update(self.game)
-        self.color_display.observer_update(self.game)
+        self.deck_space.observer_update(self.game)
         self.turn_update(self.user_cards_obj)
 
         # 현재 턴 플레이어 표시
@@ -238,8 +227,10 @@ class GameScene(Scene, metaclass=SingletonMeta):
 
         # last card가 셔플인 경우
         # 수정필요
-        if self.last_card.code == 15 and (
-            self.user_cards_list != self.user.get_hand_cards()
+        if (
+            self.last_card.code == 15
+            and (self.user_cards_list != self.user.get_hand_cards())
+            and False
         ):
             self.user_cards_list = self.user.get_hand_cards()
             print(self.user_cards_list)
@@ -273,30 +264,31 @@ class GameScene(Scene, metaclass=SingletonMeta):
         # 마지막 카드가 턴 스킵 카드인 경우
 
         # 봇 카드 개수 업데이트
-        diff_list = self.bot_card_difference(self.bots)
-        for i, diff in enumerate(diff_list):
-            if diff == 0:
-                pass
-            elif diff > 0:
-                for j in range(diff):
-                    # 카드 생성
-                    temp = BotCard(
-                        surface=self.card_back_image,
-                        name=f"bot{i} card",
-                        left=self.draw_pile_pos[0],
-                        top=self.draw_pile_pos[1],
-                        target_pos=self.bot_card_pos[i],
-                    )
-                    self.instantiate(temp)
-                    temp.draw_start = True
-                    self.bot_cards[i].append(temp)
-            elif diff < 0:
-                for j in range(abs(diff)):
-                    card = self.bot_cards[i][-j - 1]
-                    self.bot_cards[i].remove(card)
-                    card.discard_start = True
-                    # 카드 삭제
+        if False:
+            diff_list = self.bot_card_difference(self.bots)
+            for i, diff in enumerate(diff_list):
+                if diff == 0:
                     pass
+                elif diff > 0:
+                    for j in range(diff):
+                        # 카드 생성
+                        temp = BotCard(
+                            surface=self.card_back_image,
+                            name=f"bot{i} card",
+                            left=self.draw_pile_pos[0],
+                            top=self.draw_pile_pos[1],
+                            target_pos=self.bot_card_pos[i],
+                        )
+                        self.instantiate(temp)
+                        temp.draw_start = True
+                        self.bot_cards[i].append(temp)
+                elif diff < 0:
+                    for j in range(abs(diff)):
+                        card = self.bot_cards[i][-j - 1]
+                        self.bot_cards[i].remove(card)
+                        card.discard_start = True
+                        # 카드 삭제
+                        pass
 
         # 카드 내기
         for i, card in enumerate(self.user_cards_obj):
@@ -310,7 +302,6 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 self.user_cards_obj.remove(card)
                 self.destroy(card)
                 self.position_update(self.user_cards_obj)
-                print(self.user_cards_list)
             if card.draw_end is True:
                 self.position_update(self.user_cards_obj)
                 card.draw_end = False

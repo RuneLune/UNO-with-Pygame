@@ -3,14 +3,16 @@ from __future__ import annotations
 from gameobj.gameobj import GameObject
 import util.colors as colors
 
-# from typing import Type
 import pygame
 from overrides import overrides
+from abstrclass.observer import Observer
+from typing import Type, TYPE_CHECKING
 
-# from abstrclass.observer import Observer
+if TYPE_CHECKING:
+    from abstrclass.subject import Subject
 
 
-class Space(GameObject):
+class Space(GameObject, Observer):
     @overrides
     def __init__(
         self,
@@ -27,6 +29,7 @@ class Space(GameObject):
         self.color = color
         self.turn_color = colors.red
         self.deck = False
+        self.current_color = colors.white
         super().__init__(surface, name, width, height, left, top, z_index)
 
     @overrides
@@ -44,6 +47,21 @@ class Space(GameObject):
         if self.deck is True:
             self.image.fill(self.color)
 
+    def observer_update(self, subject: Type[Subject]):
+        discard_card = subject.get_discard_info().get("discarded_card")
+        current_color = discard_card.get("color")
+
+        if current_color == "wild":
+            self.current_color = colors.black
+        elif current_color == "red":
+            self.current_color = colors.red
+        elif current_color == "blue":
+            self.current_color = colors.blue
+        elif current_color == "green":
+            self.current_color = colors.green
+        elif current_color == "yellow":
+            self.current_color = colors.yellow
+
     @overrides
     def update(self):
         # 턴 시작하면 테두리 색 변화
@@ -58,3 +76,10 @@ class Space(GameObject):
 
         if self.deck is True:
             self.image.fill(self.color)
+            pygame.draw.circle(
+                self.image,
+                color=self.current_color,
+                center=self.rect.center,
+                radius=self.height / 2,
+                width=25,
+            )
