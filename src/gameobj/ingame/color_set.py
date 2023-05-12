@@ -58,6 +58,8 @@ class ColorSet(GameObject, Observer):
         # 유저가 와일드 카드를 내서 색을 선택해야 하는 상황 감지
         if self.user.is_turn() is True and self.user._discarded_wild is True:
             self._visible = True
+        else:
+            self._visible = False
 
     @overrides
     def update(self):
