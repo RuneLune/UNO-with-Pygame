@@ -12,6 +12,7 @@ from card.cards import Cards
 from gameobj.gameobj import GameObject
 from gameobj.ingame.card import Card
 from gameobj.ingame.space import Space
+from gameobj.ingame.deck_space import DeckSpace
 from gameobj.ingame.deck import Deck
 from gameobj.ingame.lastcard import LastCard
 from gameobj.ingame.bot_card import BotCard
@@ -51,6 +52,8 @@ class GameScene(Scene, metaclass=SingletonMeta):
             height=self.screen_size[1] * (1 / 3),
             left=0,
             top=self.screen_size[1] * (2 / 3),
+            player=self.user,
+            game=self.game,
         )
 
         self.bot_spaces = [
@@ -61,11 +64,13 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 height=self.screen_size[1] * (1 / 5),
                 left=self.screen_size[0] * (3 / 4),
                 top=self.screen_size[1] * (1 / 5) * i,
+                player=bot,
+                game=self.game,
             )
-            for i in range(len(self.bots))
+            for i, bot in enumerate(self.bots)
         ]
 
-        self.deck_space = Space(
+        self.deck_space = DeckSpace(
             surface=pygame.Surface((0, 0)),
             name="deck_space",
             width=self.screen_size[0] * (3 / 4),

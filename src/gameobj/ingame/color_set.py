@@ -45,6 +45,7 @@ class ColorSet(GameObject, Observer):
     @overrides
     def start(self):
         self._visible = False
+        self.image.fill((0, 150, 100))
 
     @overrides
     def on_mouse_down(self):
