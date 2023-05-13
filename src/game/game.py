@@ -475,8 +475,8 @@ class Game(Subject):
             pass
         return None
 
-    def remain_turn_time(self) -> int:
-        remain_time = self._turn_seconds - self._turn_timer.get().seconds
+    def remain_turn_time(self) -> float:
+        remain_time = self._turn_seconds - self._turn_timer.get().total_seconds()
         if remain_time < 0:
             remain_time = 0
             pass
