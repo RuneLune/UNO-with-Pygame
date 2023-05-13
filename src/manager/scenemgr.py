@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pygame
 from typing import TYPE_CHECKING
 
 from metaclass.singleton import SingletonMeta
@@ -13,7 +14,6 @@ from scene.quit import QuitScene
 
 if TYPE_CHECKING:
     from typing import Type, Dict
-    import pygame
     from scene.scene import Scene
 
 
