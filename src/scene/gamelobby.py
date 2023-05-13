@@ -266,8 +266,10 @@ class GameLobby(Scene):
         if self.lobby_manager.get_game_settings()["active_bots"]["bot1"] and not self.lobby_manager.get_game_settings()["active_bots"]["bot3"]:
             if not self.lobby_manager.get_game_settings()["active_bots"]["bot2"]:
                 self.bot2_button.image = self.bot2_surface
+                self.lobby_manager.set_player_count(3)
             else:
                 self.bot2_button.image = self.empty_surface
+                self.lobby_manager.set_player_count(2)
             self.lobby_manager.bot2_toggle()
         else:
             pass
@@ -277,8 +279,10 @@ class GameLobby(Scene):
         if self.lobby_manager.get_game_settings()["active_bots"]["bot2"] and not self.lobby_manager.get_game_settings()["active_bots"]["bot4"]:
             if not self.lobby_manager.get_game_settings()["active_bots"]["bot3"]:
                 self.bot3_button.image = self.bot3_surface
+                self.lobby_manager.set_player_count(4)
             else:
                 self.bot3_button.image = self.empty_surface
+                self.lobby_manager.set_player_count(3)
             self.lobby_manager.bot3_toggle()
         else:
             pass
@@ -288,8 +292,10 @@ class GameLobby(Scene):
         if self.lobby_manager.get_game_settings()["active_bots"]["bot3"] and not self.lobby_manager.get_game_settings()["active_bots"]["bot5"]:
             if not self.lobby_manager.get_game_settings()["active_bots"]["bot4"]:
                 self.bot4_button.image = self.bot4_surface
+                self.lobby_manager.set_player_count(5)
             else:
                 self.bot4_button.image = self.empty_surface
+                self.lobby_manager.set_player_count(4)
             self.lobby_manager.bot4_toggle()
         else:
             pass
@@ -299,8 +305,10 @@ class GameLobby(Scene):
         if self.lobby_manager.get_game_settings()["active_bots"]["bot4"]:
             if not self.lobby_manager.get_game_settings()["active_bots"]["bot5"]:
                 self.bot5_button.image = self.bot5_surface
+                self.lobby_manager.set_player_count(6)
             else:
                 self.bot5_button.image = self.empty_surface
+                self.lobby_manager.set_player_count(5)
             self.lobby_manager.bot5_toggle()
         else:
             pass

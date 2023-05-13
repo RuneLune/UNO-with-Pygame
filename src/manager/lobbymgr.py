@@ -95,3 +95,7 @@ class LobbyManager(metaclass=SingletonMeta):
             "active_bots"
         ]["bot5"]
         self.save_game_settings()
+
+    def set_player_count(self, value: int):
+        self.__game_settings["player_count"] = value
+        self.save_game_settings()
