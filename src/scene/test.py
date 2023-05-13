@@ -8,6 +8,15 @@ from gameobj.txtbtnobj import TextButtonObject
 from util.resource_manager import font_resource
 import util.colors as color
 
+from gameobj.achieve.iconA import IconA
+from gameobj.achieve.iconB import IconB
+from gameobj.achieve.iconC import IconC
+from gameobj.achieve.iconD import IconD
+from gameobj.achieve.iconE import IconE
+from gameobj.achieve.iconF import IconF
+from gameobj.achieve.iconG import IconG
+from gameobj.achieve.iconH import IconH
+
 
 class TestScene(Scene):
     @overrides
@@ -16,32 +25,54 @@ class TestScene(Scene):
         background_surface = pygame.Surface(screen_rect.size)
         background_surface.fill(color.black)
         title_font = pygame.font.Font(
-            font_resource("MainFont.ttf"), screen_rect.height // 5
+            font_resource("MainFont.ttf"), screen_rect.height // 9
         )
         menu_font = pygame.font.Font(
-            font_resource("MainFont.ttf"), screen_rect.height // 12
+            font_resource("MainFont.ttf"), screen_rect.height // 15
         )
 
         self.background = GameObject(
             background_surface, "TestScene_Background", z_index=-999
         )
         self.title_text = TextObject(
-            "Test Scene", title_font, color.gray, "TestScene_TitleText", z_index=-900
+            "Achievement", title_font, color.white, "AchievementScene_TitleText", z_index=-900
         )
         self.back_button = TextButtonObject(
-            "Back to Previous Scene",
-            menu_font,
-            color.white,
-            "TestScene_BackButton",
-            z_index=999,
-        )
+            "◀ Back", menu_font, color.white, "AchievementScene_BackButton", z_index=997)
 
-        self.title_text.rect.center = screen_rect.center
-        self.back_button.rect.topleft = (
-            screen_rect.width // 20,
-            screen_rect.height // 20,
-        )
-        self.back_button.change_highlighting_color(color.light_gray)
+        self.iconA = IconA()
+        self.iconB = IconB()
+        self.iconC = IconC()
+        self.iconD = IconD()
+        self.iconE = IconE()
+        self.iconF = IconF()
+        self.iconG = IconG()
+        self.iconH = IconH()
+
+
+        self.title_text.rect.center = (
+            screen_rect.centerx, screen_rect.centery / 4)
+        self.back_button.rect.center = (
+            screen_rect.centerx / 5, screen_rect.centery / 5)
+        
+        self.iconA.rect.center = (
+            screen_rect.centerx / 5, screen_rect.centery / 2)
+        self.iconB.rect.center = (
+            screen_rect.right / 1.8, screen_rect.centery / 2)
+        self.iconC.rect.center = (
+            screen_rect.centerx / 5, screen_rect.centery / 1.2)
+        self.iconD.rect.center = (
+            screen_rect.right / 1.8, screen_rect.centery / 1.2)
+        self.iconE.rect.center = (
+            screen_rect.centerx / 5, screen_rect.bottom / 1.6)
+        self.iconF.rect.center = (
+            screen_rect.right / 1.8, screen_rect.bottom / 1.6)
+        self.iconG.rect.center = (
+            screen_rect.centerx / 5, screen_rect.bottom / 1.2)
+        self.iconH.rect.center = (
+            screen_rect.right / 1.8, screen_rect.bottom / 1.2)
+    
+
 
         self.back_button.on_mouse_up_as_button = (
             lambda: self.scene_manager.load_previous_scene()
@@ -51,5 +82,13 @@ class TestScene(Scene):
         self.instantiate(self.background)
         self.instantiate(self.title_text)
         self.instantiate(self.back_button)
+        self.instantiate(self.iconA)
+        self.instantiate(self.iconB)
+        self.instantiate(self.iconC)
+        self.instantiate(self.iconD)
+        self.instantiate(self.iconE)
+        self.instantiate(self.iconF)
+        self.instantiate(self.iconG)
+        self.instantiate(self.iconH)
 
         return None
