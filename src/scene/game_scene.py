@@ -7,6 +7,7 @@ from .scene import Scene
 
 from game.game import Game
 from manager.cfgmgr import Config
+from manager.lobbymgr import LobbyManager
 from card.cards import Cards
 
 from gameobj.gameobj import GameObject
@@ -23,12 +24,12 @@ from metaclass.singleton import SingletonMeta
 
 
 # - 턴 스킵 표시
-# - 우노 버튼 및 표시 추가
+# - 우노 버튼 및 표시 추가 o
 # - 게임 종료 문구 추가
 class GameScene(Scene, metaclass=SingletonMeta):
     @overrides
     def start(self) -> None:
-        self.game = Game(3)
+        self.game = Game(LobbyManager().get_game_settings().get("player_count"))
         self.settings = Config()
         self.cards_cls = Cards()
 
