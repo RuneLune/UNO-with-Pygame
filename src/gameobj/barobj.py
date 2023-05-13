@@ -75,7 +75,6 @@ class BarObject(GameObject):
         pass
 
     def _draw_bar(self) -> None:
-        print(self.image.get_size())
         self.image.fill(self._background_color)
         if self._vertical:
             bar_surface = pygame.Surface(
