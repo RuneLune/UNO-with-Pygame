@@ -24,9 +24,9 @@ class DateB(TextObject):
         self.image = self.font.render(self.text, True, self.color)
         self.rect = self.image.get_rect()
         if self.achieved[1] == True:
-            self._visible == True
+            self.visible()
         else: 
-            self._visible == False
+            self.invisible()
         self.z_index = 997
         return None
 

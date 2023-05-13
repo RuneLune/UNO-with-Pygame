@@ -23,10 +23,11 @@ class DateA(TextObject):
         self.color = color.white
         self.image = self.font.render(self.text, True, self.color)
         self.rect = self.image.get_rect()
+        self._visible = False
         if self.achieved[0] == True:
-            self._visible == True
+            self.visible()
         else: 
-            self._visible == False
+            self.invisible()
         self.z_index = 997
         return None
 

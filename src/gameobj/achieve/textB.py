@@ -7,17 +7,22 @@ from gameobj.txtobj import TextObject
 from util.resource_manager import font_resource
 from metaclass.singleton import SingletonMeta
 import util.colors as color
+from manager.acvmgr import AchieveManager
 
 
 class TextB(TextObject):
     @overrides
     def start(self) -> None:
+        self.achieved = AchieveManager().get_stage_states().get("achieved")
         self.text = "B: 스토리 모드 클리어"
         screen_rect = pygame.display.get_surface().get_rect()
         self.font = pygame.font.Font(
             font_resource("MainFont.ttf"), screen_rect.height // 30
         )
-        self.color = color.white
+        if self.achieved[1] == True:
+            self.color = color.white
+        else:
+            self.color = color.gray
         self.image = self.font.render(self.text, True, self.color)
         self.rect = self.image.get_rect()
         self.z_index = 997
