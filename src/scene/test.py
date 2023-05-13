@@ -17,6 +17,15 @@ from gameobj.achieve.iconF import IconF
 from gameobj.achieve.iconG import IconG
 from gameobj.achieve.iconH import IconH
 
+from gameobj.achieve.textA import TextA
+from gameobj.achieve.textB import TextB
+from gameobj.achieve.textC import TextC
+from gameobj.achieve.textD import TextD
+from gameobj.achieve.textE import TextE
+from gameobj.achieve.textF import TextF
+from gameobj.achieve.textG import TextG
+from gameobj.achieve.textH import TextH
+
 
 class TestScene(Scene):
     @overrides
@@ -49,6 +58,15 @@ class TestScene(Scene):
         self.iconG = IconG()
         self.iconH = IconH()
 
+        self.textA = TextA()
+        self.textB = TextB()
+        self.textC = TextC()
+        self.textD = TextD()
+        self.textE = TextE()
+        self.textF = TextF()
+        self.textG = TextG()
+        self.textH = TextH()
+
 
         self.title_text.rect.center = (
             screen_rect.centerx, screen_rect.centery / 4)
@@ -71,6 +89,23 @@ class TestScene(Scene):
             screen_rect.centerx / 5, screen_rect.bottom / 1.2)
         self.iconH.rect.center = (
             screen_rect.right / 1.8, screen_rect.bottom / 1.2)
+        
+        self.textA.rect.center = (
+            screen_rect.centerx / 1.5, screen_rect.centery / 2.2)
+        self.textB.rect.center = (
+            screen_rect.right / 1.3, screen_rect.centery / 2.2)
+        self.textC.rect.center = (
+            screen_rect.centerx / 1.5, screen_rect.centery / 1.3)
+        self.textD.rect.center = (
+            screen_rect.right / 1.3, screen_rect.centery / 1.3)
+        self.textE.rect.center = (
+            screen_rect.centerx / 1.5, screen_rect.bottom / 1.7)
+        self.textF.rect.center = (
+            screen_rect.right / 1.3, screen_rect.bottom / 1.7)
+        self.textG.rect.center = (
+            screen_rect.centerx / 1.5, screen_rect.bottom / 1.3)
+        self.textH.rect.center = (
+            screen_rect.right / 1.3, screen_rect.bottom / 1.3)
     
 
 
@@ -90,5 +125,13 @@ class TestScene(Scene):
         self.instantiate(self.iconF)
         self.instantiate(self.iconG)
         self.instantiate(self.iconH)
+        self.instantiate(self.textA)
+        self.instantiate(self.textB)
+        self.instantiate(self.textC)
+        self.instantiate(self.textD)
+        self.instantiate(self.textE)
+        self.instantiate(self.textF)
+        self.instantiate(self.textG)
+        self.instantiate(self.textH)
 
         return None
