@@ -33,6 +33,7 @@ class Config(metaclass=SingletonMeta):
     def __init__(self) -> None:
         global initial_config
         self.__config = initial_config
+        self.resolution_changed = True
         # Create config.json if not exist
         if not os.path.isfile(config_path):
             self.reset()
@@ -60,7 +61,10 @@ class Config(metaclass=SingletonMeta):
             except BaseException:
                 # Error occurred while loading config from file
                 pass
-        self.set_screen_resolution()
+            pass
+        if self.resolution_changed:
+            self.set_screen_resolution()
+            self.resolution_changed = False
 
     # Config reset method
     def reset(self):
@@ -115,18 +119,23 @@ class Config(metaclass=SingletonMeta):
         return self.__screen_resolution
 
     def decrease_screen_size(self):
+        self.resolution_changed = True
         if self.__config.get("screen_size", None) == "SVGA":
             self.__config.update(screen_size="FHD")
             self.__FHD()
+            pass
         elif self.__config.get("screen_size", None) == "HD":
             self.__config.update(screen_size="SVGA")
             self.__SVGA()
+            pass
         elif self.__config.get("screen_size", None) == "FHD":
             self.__config.update(screen_size="HD")
             self.__HD()
+            pass
         self.save()
 
     def increase_screen_size(self):
+        self.resolution_changed = True
         if self.__config.get("screen_size", None) == "SVGA":
             self.__config.update(screen_size="HD")
             self.__HD()
@@ -193,6 +202,7 @@ class Config(metaclass=SingletonMeta):
         self.save()
 
     def toggle_fullscreen(self):
+        self.resolution_changed = True
         if self.__config.get("fullscreen", False) is False:
             self.__config.update(fullscreen=True)
         else:

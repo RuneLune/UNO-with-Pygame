@@ -8,7 +8,7 @@ from metaclass.singleton import SingletonMeta
 
 initial_settings: Dict[str, int | Dict[str, bool] | str] = {
     "player_count": 2,
-    "pressed_bots": {
+    "active_bots": {
         "bot1": True,
         "bot2": False,
         "bot3": False,
@@ -67,32 +67,31 @@ class LobbyManager(metaclass=SingletonMeta):
         return copy.deepcopy(self.__game_settings)
 
     def bot1_toggle(self):
-        self.__game_settings["pressed_bots"]["bot1"] = not self.__game_settings[
-            "pressed_bots"
+        self.__game_settings["active_bots"]["bot1"] = not self.__game_settings[
+            "active_bots"
         ]["bot1"]
         self.save_game_settings()
 
     def bot2_toggle(self):
-        self.__game_settings["pressed_bots"]["bot2"] = not self.__game_settings[
-            "pressed_bots"
+        self.__game_settings["active_bots"]["bot2"] = not self.__game_settings[
+            "active_bots"
         ]["bot2"]
         self.save_game_settings()
 
-
     def bot3_toggle(self):
-        self.__game_settings["pressed_bots"]["bot3"] = not self.__game_settings[
-            "pressed_bots"
+        self.__game_settings["active_bots"]["bot3"] = not self.__game_settings[
+            "active_bots"
         ]["bot3"]
         self.save_game_settings()
 
     def bot4_toggle(self):
-        self.__game_settings["pressed_bots"]["bot4"] = not self.__game_settings[
-            "pressed_bots"
+        self.__game_settings["active_bots"]["bot4"] = not self.__game_settings[
+            "active_bots"
         ]["bot4"]
         self.save_game_settings()
 
     def bot5_toggle(self):
-        self.__game_settings["pressed_bots"]["bot5"] = not self.__game_settings[
-            "pressed_bots"
+        self.__game_settings["active_bots"]["bot5"] = not self.__game_settings[
+            "active_bots"
         ]["bot5"]
         self.save_game_settings()

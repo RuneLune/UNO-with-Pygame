@@ -130,11 +130,14 @@ class GameLobby(Scene):
         self.empty_text.rect.center = self.empty_surface.get_rect().center
         self.empty_surface.blit(self.empty_text.image, self.empty_text.rect)
 
-        self.bot1_real_surface = self.empty_surface if not self.lobby_manager.get_game_settings()["pressed_bots"]["bot1"] else self.bot1_surface
-        self.bot2_real_surface = self.empty_surface if not self.lobby_manager.get_game_settings()["pressed_bots"]["bot2"] else self.bot2_surface
-        self.bot3_real_surface = self.empty_surface if not self.lobby_manager.get_game_settings()["pressed_bots"]["bot3"] else self.bot3_surface
-        self.bot4_real_surface = self.empty_surface if not self.lobby_manager.get_game_settings()["pressed_bots"]["bot4"] else self.bot4_surface
-        self.bot5_real_surface = self.empty_surface if not self.lobby_manager.get_game_settings()["pressed_bots"]["bot5"] else self.bot5_surface
+        self.bot1_real_surface = self.empty_surface if not self.lobby_manager.get_game_settings()["active_bots"]["bot1"] else self.bot1_surface
+        self.bot2_real_surface = self.empty_surface if not self.lobby_manager.get_game_settings()["active_bots"]["bot2"] else self.bot2_surface
+        self.bot3_real_surface = self.empty_surface if not self.lobby_manager.get_game_settings()["active_bots"]["bot3"] else self.bot3_surface
+        self.bot4_real_surface = self.empty_surface if not self.lobby_manager.get_game_settings()["active_bots"]["bot4"] else self.bot4_surface
+        self.bot5_real_surface = self.empty_surface if not self.lobby_manager.get_game_settings()["active_bots"]["bot5"] else self.bot5_surface
+
+        # Is the user editing their name?
+        self.user_name_editing = False
 
         # Create the objects
         self.background = GameObject(
@@ -152,7 +155,11 @@ class GameLobby(Scene):
             z_index=1000,
         )
         self.name_text = TextObject(
-            # lobby_function 구현에 따른 수정 필요
+            self.lobby_manager.get_game_settings()["user_name"],
+            middle_font,
+            color.white,
+            "GameLobby_NameText",
+            z_index=1000,
         )
         self.user_space = GameObject(user_surface, "GameLobby_User", z_index=999)
         self.start_button = GameObject(
@@ -216,11 +223,12 @@ class GameLobby(Scene):
         )
 
         self.back_button.on_click = lambda: self.scene_manager.load_previous_scene()
+        self.name_text.on_click = lambda: self.editName()
         self.start_button.on_mouse_up_as_button = lambda: self.scene_manager.load_scene(
             "game_scene"
         )
         self.start_text.on_click = lambda: self.scene_manager.load_scene("game_scene")
-        self.bot1_button.on_mouse_up_as_button = lambda: self.bot1Clicked()
+        #self.bot1_button.on_mouse_up_as_button = lambda: self.bot1Clicked()
         self.bot2_button.on_mouse_up_as_button = lambda: self.bot2Clicked()
         self.bot3_button.on_mouse_up_as_button = lambda: self.bot3Clicked()
         self.bot4_button.on_mouse_up_as_button = lambda: self.bot4Clicked()
@@ -241,43 +249,59 @@ class GameLobby(Scene):
         self.instantiate(self.bot5_button)
 
         return None
+    
+    def editName(self):
+        # 구현 필요
+        pass
 
-    def bot1Clicked(self):
-        self.lobby_manager.bot1_toggle()
-        if self.lobby_manager.get_game_settings()["pressed_bots"]["bot1"]:
-            self.bot1_button.image = self.bot1_surface
-        else:
-            self.bot1_button.image = self.empty_surface
-        return None
+    # def bot1Clicked(self):
+    #     self.lobby_manager.bot1_toggle()
+    #     if self.lobby_manager.get_game_settings()["active_bots"]["bot1"]:
+    #         self.bot1_button.image = self.bot1_surface
+    #     else:
+    #         self.bot1_button.image = self.empty_surface
+    #     return None
 
     def bot2Clicked(self):
-        self.lobby_manager.bot2_toggle()
-        if self.lobby_manager.get_game_settings()["pressed_bots"]["bot2"]:
-            self.bot2_button.image = self.bot2_surface
+        if self.lobby_manager.get_game_settings()["active_bots"]["bot1"] and not self.lobby_manager.get_game_settings()["active_bots"]["bot3"]:
+            if not self.lobby_manager.get_game_settings()["active_bots"]["bot2"]:
+                self.bot2_button.image = self.bot2_surface
+            else:
+                self.bot2_button.image = self.empty_surface
+            self.lobby_manager.bot2_toggle()
         else:
-            self.bot2_button.image = self.empty_surface
+            pass
         return None
 
     def bot3Clicked(self):
-        self.lobby_manager.bot3_toggle()
-        if self.lobby_manager.get_game_settings()["pressed_bots"]["bot3"]:
-            self.bot3_button.image = self.bot3_surface
+        if self.lobby_manager.get_game_settings()["active_bots"]["bot2"] and not self.lobby_manager.get_game_settings()["active_bots"]["bot4"]:
+            if not self.lobby_manager.get_game_settings()["active_bots"]["bot3"]:
+                self.bot3_button.image = self.bot3_surface
+            else:
+                self.bot3_button.image = self.empty_surface
+            self.lobby_manager.bot3_toggle()
         else:
-            self.bot3_button.image = self.empty_surface
+            pass
         return None
 
     def bot4Clicked(self):
-        self.lobby_manager.bot4_toggle()
-        if self.lobby_manager.get_game_settings()["pressed_bots"]["bot4"]:
-            self.bot4_button.image = self.bot4_surface
+        if self.lobby_manager.get_game_settings()["active_bots"]["bot3"] and not self.lobby_manager.get_game_settings()["active_bots"]["bot5"]:
+            if not self.lobby_manager.get_game_settings()["active_bots"]["bot4"]:
+                self.bot4_button.image = self.bot4_surface
+            else:
+                self.bot4_button.image = self.empty_surface
+            self.lobby_manager.bot4_toggle()
         else:
-            self.bot4_button.image = self.empty_surface
+            pass
         return None
 
     def bot5Clicked(self):
-        self.lobby_manager.bot5_toggle()
-        if self.lobby_manager.get_game_settings()["pressed_bots"]["bot5"]:
-            self.bot5_button.image = self.bot5_surface
+        if self.lobby_manager.get_game_settings()["active_bots"]["bot4"]:
+            if not self.lobby_manager.get_game_settings()["active_bots"]["bot5"]:
+                self.bot5_button.image = self.bot5_surface
+            else:
+                self.bot5_button.image = self.empty_surface
+            self.lobby_manager.bot5_toggle()
         else:
-            self.bot5_button.image = self.empty_surface
+            pass
         return None
