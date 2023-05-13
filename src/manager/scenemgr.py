@@ -37,12 +37,14 @@ class SceneManager(metaclass=SingletonMeta):
         self.current_scene_name = scene_name
         self.current_scene.exit()
         del self.current_scene
+        pygame.display.get_surface().fill((0, 0, 0))
         self.current_scene = self.scenes[self.current_scene_name](self)
         return None
 
     def reload_scene(self) -> None:
         self.current_scene.exit()
         del self.current_scene
+        pygame.display.get_surface().fill((0, 0, 0))
         self.current_scene = self.scenes[self.current_scene_name](self)
         return None
 
