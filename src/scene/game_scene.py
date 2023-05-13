@@ -17,20 +17,18 @@ from gameobj.ingame.deck import Deck
 from gameobj.ingame.lastcard import LastCard
 from gameobj.ingame.bot_card import BotCard
 from gameobj.ingame.color_set import ColorSet
+from gameobj.ingame.uno_btn import UnoBtn
 
 from metaclass.singleton import SingletonMeta
 
 
-# -봇 처음 카드 생성 o
-# -봇 카드수 업데이트 o
-#   -봇 카드 뽑기 및 내기 애니메이션 o
-# -턴 스킵 표시
-# -턴 남은 시간 표시
-# -현재 색깔 표시 o
+# - 턴 스킵 표시
+# - 우노 버튼 및 표시 추가
+# - 게임 종료 문구 추가
 class GameScene(Scene, metaclass=SingletonMeta):
     @overrides
     def start(self) -> None:
-        self.game = Game(6)
+        self.game = Game(3)
         self.settings = Config()
         self.cards_cls = Cards()
 
@@ -40,6 +38,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
 
         self.screen_size = self.settings.get_screen_resolution()
         self.user = self.game.get_user()
+        self.user.set_cards([15, 14])
         self.bots = self.game.get_bots()
 
         color_dict = [colors.red, colors.green, colors.blue, colors.yellow]
@@ -171,14 +170,26 @@ class GameScene(Scene, metaclass=SingletonMeta):
             temp = ColorSet(
                 surface=pygame.Surface((0, 0)),
                 name="choice_rect",
-                width=self.card_size[0] / 2,
-                height=self.card_size[0] / 2,
-                left=self.discard_pile_pos[0] + self.card_size[0] * 2,
-                top=self.discard_pile_pos[1] + (i - 1) * self.card_size[0] / 2,
+                width=self.card_size[0] * 2 / 3,
+                height=self.card_size[0] * 2 / 3,
+                left=self.discard_pile_pos[0] + self.card_size[0] * 2.5,
+                top=self.discard_pile_pos[1]
+                + (i - 1) * 1.5 * self.card_size[0] * 3 / 4,
                 color=color,
             )
             self.color_set.append(temp)
             temp.user_update(self.game)
+        # 우노 버튼 오브젝트 생성
+        self.uno_btn = UnoBtn(
+            surface=pygame.Surface((0, 0)),
+            width=self.deck_space.width / 5,
+            height=self.deck_space.width / 5 * 3 / 4,
+        )
+        self.uno_btn.left, self.uno_btn.top = (
+            self.user_space.topright[0] - self.uno_btn.width,
+            self.user_space.topright[1] - self.uno_btn.height,
+        )
+        self.uno_btn.observer_update(self.user)
 
         # 오브젝트 등록
         self.instantiate(self.deck_space)
@@ -196,6 +207,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
         for i in range(4):
             self.instantiate(self.color_set[i])
             self.color_set[i].user_update(self.game)
+        self.instantiate(self.uno_btn)
 
     @overrides
     def update(self):
@@ -218,10 +230,11 @@ class GameScene(Scene, metaclass=SingletonMeta):
             else:
                 self.bot_spaces[i].turn = False
 
-        # 카드 더미를 눌러서 카드 뽑기
+        # 카드 뽑기
         if self.deck_card.draw_flag is True or (
             self.deck_card.draw_flag is False
             and (self.user_cards_list != self.user.get_hand_cards())
+            and self.last_card.code != 15
         ):
             self.user.draw_cards()
             drawing_cards = self.user.get_last_drawing_cards()
@@ -248,13 +261,8 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 self.user_cards_obj.append(temp)
             self.turn_update(self.user_cards_obj)
             self.deck_card.draw_flag = False
-
-        # last card가 셔플인 경우
-        # 수정필요
-        if (
-            self.last_card.code == 15
-            and (self.user_cards_list != self.user.get_hand_cards())
-            and False
+        elif self.last_card.code == 15 and (
+            self.user_cards_list != self.user.get_hand_cards()
         ):
             self.user_cards_list = self.user.get_hand_cards()
             print(self.user_cards_list)
@@ -296,7 +304,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
             if diff == 0:
                 continue
             elif diff > 0:
-                for j in range(diff):
+                for j in range(diff, 0, -1):
                     # 카드 생성
                     temp = BotCard(
                         surface=self.card_back_image,
@@ -304,7 +312,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
                         left=self.draw_pile_pos[0],
                         top=self.draw_pile_pos[1],
                         target_pos=(
-                            self.bot_card_pos_x[last_index],
+                            self.bot_card_pos_x[last_index - j + 1],
                             self.bot_card_pos_y[i],
                         ),
                     )
@@ -336,17 +344,21 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 self.user_cards_obj.remove(card)
                 self.destroy(card)
                 self.position_update(self.user_cards_obj)
+                break
             if card.draw_end is True:
                 self.position_update(self.user_cards_obj)
                 card.draw_end = False
+                break
         # bot card
         for i, cards in enumerate(self.bot_cards):
             for j, card in enumerate(cards):
                 if card.discard_end is True:
                     self.bot_cards[i].remove(card)
                     self.destroy(card)
+                    break
                 if card.draw_end is True:
                     card.draw_end = False
+                    break
 
     def position_update(self, obj_list: list):
         obj_list.sort(key=lambda x: x.code)
