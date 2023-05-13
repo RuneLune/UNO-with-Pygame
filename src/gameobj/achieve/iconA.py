@@ -10,19 +10,20 @@ import numpy
 from gameobj.gameobj import GameObject
 from util.resource_manager import font_resource
 from util.resource_manager import image_resource
-from gameobj.story.storyAtxt import StoryAText
-from manager.storymgr import StoryManager
-from gameobj.story.handlewindow import HandleWindow
-from gameobj.story.yesbtn import YesButton
+from manager.acvmgr import AchieveManager
 
 
 class IconA(GameObject):
     @overrides
     def start(self) -> None:
+        self.achieved = AchieveManager().get_stage_states().get("achieved")
         image = pygame.image.load(image_resource(
                 join("achieve", "a1.png")))
         image2 = self.create_neon(image)
-        self.image = image2
+        if self.achieved[0] == True:
+            self.image = image
+        else:
+            self.image = image2
         self.rect = self.image.get_rect()
         self.z_index = 997
         

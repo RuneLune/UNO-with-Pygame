@@ -26,6 +26,17 @@ from gameobj.achieve.textF import TextF
 from gameobj.achieve.textG import TextG
 from gameobj.achieve.textH import TextH
 
+from gameobj.achieve.dateA import DateA
+from gameobj.achieve.dateB import DateB
+from gameobj.achieve.dateC import DateC
+from gameobj.achieve.dateD import DateD
+from gameobj.achieve.dateE import DateE
+from gameobj.achieve.dateF import DateF
+from gameobj.achieve.dateG import DateG
+from gameobj.achieve.dateH import DateH
+
+
+
 
 class TestScene(Scene):
     @overrides
@@ -67,6 +78,16 @@ class TestScene(Scene):
         self.textG = TextG()
         self.textH = TextH()
 
+        self.dateA = DateA()
+        self.dateB = DateB()
+        self.dateC = DateC()
+        self.dateD = DateD()
+        self.dateE = DateE()
+        self.dateF = DateF()
+        self.dateG = DateG()
+        self.dateH = DateH()
+
+
 
         self.title_text.rect.center = (
             screen_rect.centerx, screen_rect.centery / 4)
@@ -106,7 +127,23 @@ class TestScene(Scene):
             screen_rect.centerx / 1.5, screen_rect.bottom / 1.3)
         self.textH.rect.center = (
             screen_rect.right / 1.3, screen_rect.bottom / 1.3)
-    
+        
+        self.dateA.rect.center = (
+            screen_rect.centerx / 1.5, screen_rect.centery / 1.8)
+        self.dateB.rect.center = (
+            screen_rect.right / 1.3, screen_rect.centery / 1.8)
+        self.dateC.rect.center = (
+            screen_rect.centerx / 1.5, screen_rect.centery / 1.1)
+        self.dateD.rect.center = (
+            screen_rect.right / 1.3, screen_rect.centery / 1.1)
+        self.dateE.rect.center = (
+            screen_rect.centerx / 1.5, screen_rect.bottom / 1.5)
+        self.dateF.rect.center = (
+            screen_rect.right / 1.3, screen_rect.bottom / 1.5)
+        self.dateG.rect.center = (
+            screen_rect.centerx / 1.5, screen_rect.bottom / 1.2)
+        self.dateH.rect.center = (
+            screen_rect.right / 1.3, screen_rect.bottom / 1.2)
 
 
         self.back_button.on_mouse_up_as_button = (
@@ -133,5 +170,13 @@ class TestScene(Scene):
         self.instantiate(self.textF)
         self.instantiate(self.textG)
         self.instantiate(self.textH)
+        self.instantiate(self.dateA)
+        self.instantiate(self.dateB)
+        self.instantiate(self.dateC)
+        self.instantiate(self.dateD)
+        self.instantiate(self.dateE)
+        self.instantiate(self.dateF)
+        self.instantiate(self.dateG)
+        self.instantiate(self.dateH)
 
         return None

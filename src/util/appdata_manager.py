@@ -40,3 +40,4 @@ def game_data_path(file_name: str) -> str:
 config_path: str = appdata_path("config.json")
 stage_access_path: str = game_data_path("access.json")
 game_config_path: str = game_data_path("config.json")
+achieve_path: str = game_data_path("achieve.json")
