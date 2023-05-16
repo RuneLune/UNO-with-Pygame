@@ -22,7 +22,6 @@ class AchieveManager:
             self.save()
         else:
             self.load()
-        self.get_current_time(1)
 
         
     # Settings load method
@@ -62,6 +61,7 @@ class AchieveManager:
         now = datetime.now()
         date_only = now.date()
         formatted_date = date_only.strftime("%Y.%m.%d")
+        self.__achieve_states["achieved"][idx] = True
         self.__achieve_states["date"][idx] = formatted_date
         self.save()
         pass
