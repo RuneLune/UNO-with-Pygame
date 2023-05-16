@@ -19,6 +19,8 @@ from gameobj.ingame.lastcard import LastCard
 from gameobj.ingame.bot_card import BotCard
 from gameobj.ingame.color_set import ColorSet
 from gameobj.ingame.uno_btn import UnoBtn
+from gameobj.ingame.key_input import KeyInput
+from gameobj.ingame.selector import Selector
 
 from metaclass.singleton import SingletonMeta
 
@@ -26,6 +28,10 @@ from metaclass.singleton import SingletonMeta
 # - 턴 스킵 표시
 # - 우노 버튼 및 표시 추가 o
 # - 게임 종료 문구 추가
+# - 키보드 조작
+# - 엔딩 텍스트
+# - 일시정지 화면
+# - 효과음 추가
 class GameScene(Scene, metaclass=SingletonMeta):
     @overrides
     def start(self) -> None:
@@ -191,6 +197,14 @@ class GameScene(Scene, metaclass=SingletonMeta):
             self.user_space.topright[1] - self.uno_btn.height,
         )
         self.uno_btn.observer_update(self.user)
+
+        self.selector = Selector()
+        self.instantiate(self.selector)
+
+        self.key_input = KeyInput().attach_selector(self.selector)
+        self.instantiate(self.key_input)
+
+        self.key_input.attach_card(self.user_cards_obj, self.deck_card)
 
         # 오브젝트 등록
         self.instantiate(self.deck_space)
@@ -360,6 +374,8 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 if card.draw_end is True:
                     card.draw_end = False
                     break
+
+        self.key_input.attach_card(self.user_cards_obj, self.deck_card)
 
     def position_update(self, obj_list: list):
         obj_list.sort(key=lambda x: x.code)
