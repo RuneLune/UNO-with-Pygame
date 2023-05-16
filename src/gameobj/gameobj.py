@@ -424,10 +424,21 @@ class GameObject(pygame.sprite.Sprite):
 
     def visible(self) -> None:
         self._visible = True
+        self.on_became_visible()
         return None
 
     def invisible(self):
         self._visible = False
+        self.on_became_invisible()
+        return None
+
+    def enable(self):
+        self._active = True
+        self.on_enabled()
+        return None
+
+    def disable(self):
+        self._active = False
         return None
 
     # @property
