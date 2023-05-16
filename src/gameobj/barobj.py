@@ -25,6 +25,7 @@ class BarObject(GameObject):
         top: int = 0,
         z_index: int = -1,
         key_index: int = -1,
+        screen: pygame.Surface = None,
     ) -> None:
         self._min_value = min_value
         self._max_value = max_value
@@ -36,7 +37,7 @@ class BarObject(GameObject):
         self._height = height if height >= 0 else 256 if vertical else 16
         surface = pygame.Surface((self._width, self._height))
         return super().__init__(
-            surface, name, width, height, left, top, z_index, key_index
+            surface, name, width, height, left, top, z_index, key_index, screen
         )
 
     @overrides

@@ -20,11 +20,12 @@ class TextObject(GameObject):
         left: int = 0,
         top: int = 0,
         z_index: int = -1,
+        screen: pygame.Surface = None,
     ) -> None:
         self.text = text
         self.font = font
         self.color = color
         rendered_text = font.render(text, True, color)
         return super(TextObject, self).__init__(
-            rendered_text, name, width, height, left, top, z_index
+            rendered_text, name, width, height, left, top, z_index, -1, screen
         )
