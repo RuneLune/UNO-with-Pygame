@@ -19,9 +19,15 @@ class GameObject(pygame.sprite.Sprite):
         top: int = 0,
         z_index: int = -1,
         key_index: int = -1.0,
+        screen: pygame.Surface = None,
     ) -> None:
         pygame.sprite.Sprite.__init__(self)
-        self._screen: pygame.Surface = pygame.display.get_surface()
+        if screen is None:
+            self._screen: pygame.Surface = pygame.display.get_surface()
+            pass
+        else:
+            self._screen: pygame.Surface = screen
+            pass
         self._area: pygame.Rect = self._screen.get_rect()
         self._enabled: bool = True
         self._active: bool = True

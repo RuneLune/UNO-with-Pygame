@@ -10,6 +10,7 @@ from scene.cfgmenu import ConfigMenu
 from scene.game_scene import GameScene
 from scene.story_scene import StoryScene
 from scene.gamelobby import GameLobby
+from scene.multilobby import MultiLobby
 from scene.quit import QuitScene
 
 if TYPE_CHECKING:
@@ -26,6 +27,7 @@ class SceneManager(metaclass=SingletonMeta):
             "game_scene": GameScene,
             "story_scene": StoryScene,
             "gamelobby": GameLobby,
+            "multilobby": MultiLobby,
             "quit": QuitScene,
         }
         self.current_scene_name = "main_menu"

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from overrides import overrides
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, List
 import pygame
 
 from ..txtbtnobj import TextButtonObject
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 class Menu(TextButtonObject):
     Inst_created: int = 0
-    Insts: list[Menu] = []
+    Insts: List[Menu] = []
 
     def __new__(cls, *args, **kwargs):
         cls.Inst_created += 1
@@ -26,14 +26,14 @@ class Menu(TextButtonObject):
         Menu.Insts.append(self)
         screen_rect = pygame.display.get_surface().get_rect()
         self.font = pygame.font.Font(
-            font_resource("MainFont.ttf"), screen_rect.height // 12
+            font_resource("MainFont.ttf"), screen_rect.height // 13
         )
         self.color = color.black
         self.image = self.font.render(self.text, True, self.color)
         self.rect = self.image.get_rect()
         self.center = (
             screen_rect.centerx,
-            screen_rect.height * (6 + self.Inst_created) // 12,
+            screen_rect.height * (6 + self.Inst_created) // 13,
         )
         self._target_scene: Optional[str] = None
 
@@ -74,7 +74,7 @@ class Menu(TextButtonObject):
             pass
         Menu.Inst_created = 0
         return None
-    
+
     @overrides
     def on_mouse_enter(self) -> None:
         KeyInput().menu_index = Menu.Insts.index(self)
