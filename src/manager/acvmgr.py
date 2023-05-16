@@ -1,6 +1,7 @@
 import copy
 import json
 import os
+from datetime import datetime
 import pygame
 import event.events as events
 
@@ -17,14 +18,15 @@ class AchieveManager:
 
         # Create settings.json if not exist
         if not os.path.isfile(achieve_path):
-            self.reset_stage_stages()
-            self.save_stage_states()
+            self.reset()
+            self.save()
         else:
-            self.load_stage_states()
+            self.load()
+        self.get_current_time(1)
 
         
     # Settings load method
-    def load_stage_states(self):
+    def load(self):
         # load saved settings from file
         if os.path.isfile(achieve_path):
             try:
@@ -35,12 +37,12 @@ class AchieveManager:
                 pass
 
     # Settings reset method
-    def reset_stage_stages(self):
+    def reset(self):
         global initial_settings
         self.__achieve_states = copy.deepcopy(initial_settings)
 
     # Settings save method
-    def save_stage_states(self):
+    def save(self):
         try:
             # Save settings to file
             with open(achieve_path, "w") as f:
@@ -49,14 +51,20 @@ class AchieveManager:
             # Return -1 if an error occurred
             return -1
 
-        self.load_stage_states()
+        self.load()
         # Return 0 if save was successful
         return 0
 
     def get_stage_states(self):
         return copy.deepcopy(self.__achieve_states)
     
-    
+    def get_current_time(self, idx):
+        now = datetime.now()
+        date_only = now.date()
+        formatted_date = date_only.strftime("%Y.%m.%d")
+        self.__achieve_states["date"][idx] = formatted_date
+        self.save()
+        pass
 
         return None
     
