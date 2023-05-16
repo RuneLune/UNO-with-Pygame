@@ -5,6 +5,7 @@ from typing import Optional, TYPE_CHECKING
 import pygame
 
 from ..txtbtnobj import TextButtonObject
+from .keyinput import KeyInput
 from util.resource_manager import font_resource
 import util.colors as color
 
@@ -73,5 +74,10 @@ class Menu(TextButtonObject):
             pass
         Menu.Inst_created = 0
         return None
+    
+    @overrides
+    def on_mouse_enter(self) -> None:
+        KeyInput().menu_index = Menu.Insts.index(self)
+        return super().on_mouse_enter()
 
     pass
