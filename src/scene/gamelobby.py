@@ -136,6 +136,11 @@ class GameLobby(Scene):
         self.bot4_real_surface = self.empty_surface if not self.lobby_manager.get_game_settings()["active_bots"]["bot4"] else self.bot4_surface
         self.bot5_real_surface = self.empty_surface if not self.lobby_manager.get_game_settings()["active_bots"]["bot5"] else self.bot5_surface
 
+        self.invisible_surface = pygame.Surface(
+            (screen_rect.width, screen_rect.height)
+        )
+        self.invisible_surface.set_alpha(0)
+
         # Is the user editing their name?
         self.user_name_editing = False
 
@@ -145,7 +150,7 @@ class GameLobby(Scene):
         )
         self.deck_space = GameObject(deck_surface, "GameLobby_Deck", z_index=999)
         self.back_button = TextButtonObject(
-            "Back", small_font, color.white, "GameLobby_BackButton", z_index=1000
+            "◀ Back", small_font, color.white, "GameLobby_BackButton", z_index=1000
         )
         self.edit_text = TextObject(
             "Press Enter to edit the name",
@@ -183,6 +188,11 @@ class GameLobby(Scene):
         self.bot5_button = GameObject(
             self.bot5_real_surface, "GameLobby_Bot5Button", z_index=1000
         )
+
+        self.invisible_background = GameObject(
+            self.invisible_surface, "GameLobby_UnvisibleBackground", z_index=2000
+        )
+        self.invisible_background.disable()
 
         # Position of the objects
         self.deck_space.rect.topleft = (0, 0)
@@ -222,17 +232,22 @@ class GameLobby(Scene):
             screen_rect.height * (4 / 5),
         )
 
+        self.invisible_background.rect.topleft = (0, 0)
+
         self.back_button.on_click = lambda: self.scene_manager.load_previous_scene()
-        self.name_text.on_click = lambda: self.editName()
+        self.name_text.on_mouse_up_as_button = lambda: self.editName()
         self.start_button.on_mouse_up_as_button = lambda: self.scene_manager.load_scene(
             "game_scene"
         )
         self.start_text.on_click = lambda: self.scene_manager.load_scene("game_scene")
-        #self.bot1_button.on_mouse_up_as_button = lambda: self.bot1Clicked()
+        # self.bot1_button.on_mouse_up_as_button = lambda: self.bot1Clicked()
         self.bot2_button.on_mouse_up_as_button = lambda: self.bot2Clicked()
         self.bot3_button.on_mouse_up_as_button = lambda: self.bot3Clicked()
         self.bot4_button.on_mouse_up_as_button = lambda: self.bot4Clicked()
         self.bot5_button.on_mouse_up_as_button = lambda: self.bot5Clicked()
+
+        self.invisible_background.on_mouse_up_as_button = lambda: self.editName()
+        self.invisible_background.on_key_down = lambda: self.editName()
 
         self.instantiate(self.background)
         self.instantiate(self.deck_space)
@@ -247,12 +262,23 @@ class GameLobby(Scene):
         self.instantiate(self.bot3_button)
         self.instantiate(self.bot4_button)
         self.instantiate(self.bot5_button)
+        self.instantiate(self.invisible_background)
 
         return None
-    
+
     def editName(self):
-        # 구현 필요
-        pass
+        rect = pygame.Rect(self.name_text.rect)
+        rect.topleft = (0, 0)
+        if not self.user_name_editing:
+            self.user_name_editing = True
+            pygame.draw.rect(self.name_text.image, color.white, rect, 2)
+            self.invisible_background.enable()
+            self.lobby_manager.user_name_change()
+        else:
+            self.user_name_editing = False
+            pygame.draw.rect(self.name_text.image, (50, 100, 80), rect, 2)
+            self.invisible_background.disable()
+        return None
 
     # def bot1Clicked(self):
     #     self.lobby_manager.bot1_toggle()

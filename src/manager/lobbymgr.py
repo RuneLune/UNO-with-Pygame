@@ -1,6 +1,7 @@
 import copy
 import json
 import os
+import pygame
 from typing import Dict
 
 from util.appdata_manager import game_config_path
@@ -99,3 +100,18 @@ class LobbyManager(metaclass=SingletonMeta):
     def set_player_count(self, value: int):
         self.__game_settings["player_count"] = value
         self.save_game_settings()
+
+    def user_name_change(self):
+        while True:
+            event = pygame.event.wait()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE and len(self.__game_settings["user_name"]) > 1:
+                    self.__game_settings.update({"user_name": self.__game_settings["user_name"][:-1]})
+                elif event.unicode.isprintable() and len(self.__game_settings["user_name"]) < 20:
+                    self.__game_settings.update({"user_name": self.__game_settings["user_name"] + event.unicode})
+                elif event.key == pygame.K_RETURN:
+                    break
+                else:
+                    pass
+                self.save_game_settings()
+        return None
