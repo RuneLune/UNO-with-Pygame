@@ -198,6 +198,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
         )
         self.uno_btn.observer_update(self.user)
 
+        # 키보드 입력 오브젝트 생성
         self.selector = Selector()
         self.instantiate(self.selector)
 
@@ -375,6 +376,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
                     card.draw_end = False
                     break
 
+        # 키 입력 받는 오브젝트 업데이트
         self.key_input.attach_card(self.user_cards_obj, self.deck_card)
 
     def position_update(self, obj_list: list):

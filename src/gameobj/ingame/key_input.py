@@ -46,7 +46,11 @@ class KeyInput(GameObject, Observer):
             pass
         elif key == keyconfig_value.get("select"):
             if self.space_index == 0:
-                self.object_list[self.card_index].on_mouse_down()
+                if self.card_index == 0:
+                    self.object_list[self.card_index].on_mouse_down()
+                else:
+                    self.object_list[self.card_index].on_mouse_down()
+                    self.card_index = (self.card_index - 1) % len(self.object_list)
             elif self.space_index == 1:
                 self.card_index = (self.card_index - 1) % len(self.object_list)
                 self._selector.center = self.object_list[self.card_index].center
