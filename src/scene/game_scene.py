@@ -28,7 +28,7 @@ from metaclass.singleton import SingletonMeta
 # - 턴 스킵 표시
 # - 우노 버튼 및 표시 추가 o
 # - 게임 종료 문구 추가
-# - 키보드 조작
+# - 키보드 조작 o
 # - 엔딩 텍스트
 # - 일시정지 화면
 # - 효과음 추가
@@ -205,7 +205,10 @@ class GameScene(Scene, metaclass=SingletonMeta):
         self.key_input = KeyInput().attach_selector(self.selector)
         self.instantiate(self.key_input)
 
-        self.key_input.attach_card(self.user_cards_obj, self.deck_card)
+        self.key_input.attach_card(
+            self.user_cards_obj, self.deck_card, self.uno_btn, self.color_set
+        )
+        self.key_input.observer_update(self.game)
 
         # 오브젝트 등록
         self.instantiate(self.deck_space)
@@ -232,6 +235,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
         self.last_card.observer_update(self.game)
         self.deck_space.observer_update(self.game)
         self.turn_update(self.user_cards_obj)
+        self.key_input.state_update()
         for i in range(4):
             self.color_set[i].observer_update(self.game)
 
@@ -377,7 +381,9 @@ class GameScene(Scene, metaclass=SingletonMeta):
                     break
 
         # 키 입력 받는 오브젝트 업데이트
-        self.key_input.attach_card(self.user_cards_obj, self.deck_card)
+        self.key_input.attach_card(
+            self.user_cards_obj, self.deck_card, self.uno_btn, self.color_set
+        )
 
     def position_update(self, obj_list: list):
         obj_list.sort(key=lambda x: x.code)
