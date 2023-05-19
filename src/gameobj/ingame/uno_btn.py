@@ -58,4 +58,6 @@ class UnoBtn(GameObject, Observer):
 
     @overrides
     def update(self) -> None:
-        pass
+        if self.uno is True and len(self.player.get_hand_cards()) >= 3:
+            self.uno = False
+            self.image = self.uno_gray_img
