@@ -22,6 +22,7 @@ class KeyInput(GameObject, Observer):
         self.vertical_index = 0
         self.color_choice = False
         self.color_index = 0
+        self.pause = False
 
     def observer_update(self, subject: Type[Subject]) -> None:
         self.user = subject.get_user()
@@ -77,7 +78,7 @@ class KeyInput(GameObject, Observer):
                     self.deck_card.on_mouse_down()
                 pass
             elif key == keyconfig_value.get("cancel"):
-                pass
+                self.pause = True
         else:
             if key == keyconfig_value.get("up"):
                 self.color_rect[self.color_index].on_mouse_exit()

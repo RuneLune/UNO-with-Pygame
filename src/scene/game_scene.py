@@ -32,12 +32,9 @@ from metaclass.singleton import SingletonMeta
 
 
 # - 턴 스킵 표시
-# - 우노 버튼 및 표시 추가 o
-# - 게임 종료 문구 추가
-# - 키보드 조작 o
-# - 엔딩 텍스트
 # - 일시정지 화면
 # - 효과음 추가
+# - 셔플 카드 오류 수정
 class GameScene(Scene, metaclass=SingletonMeta):
     @overrides
     def start(self) -> None:
@@ -51,8 +48,8 @@ class GameScene(Scene, metaclass=SingletonMeta):
 
         self.screen_size = self.settings.get_screen_resolution()
         self.user = self.game.get_user()
-        self.user.set_cards([])
-        self.user._yelled_uno = True
+        # self.user.set_cards([])
+        # self.user._yelled_uno = True
         self.bots = self.game.get_bots()
 
         color_dict = [colors.red, colors.green, colors.blue, colors.yellow]
@@ -243,7 +240,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
             width=self.screen_size[0],
             height=self.screen_size[1] * 2 / 5,
             top=self.winner_text.height,
-            color=colors.royal_blue,
+            color=colors.light_salmon,
         )
         self.firework1._visible = False
         self.firework2._visible = False
@@ -285,6 +282,15 @@ class GameScene(Scene, metaclass=SingletonMeta):
 
     @overrides
     def update(self):
+        if self.key_input.pause is True:
+            self.key_input.pause = False
+            self.game.pause_timer()
+            self.scene_manager.load_scene("config_menu")
+        else:
+            self.game.resume_timer()
+            self._update()
+
+    def _update(self):
         self.game.tick()
         self.deck_card.observer_update(self.game)
         self.last_card.observer_update(self.game)
