@@ -65,7 +65,7 @@ class Scene:
         mouse_overed = False
         if self.game_objects:
             if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
-                game_objects = sorted(self.game_objects, key=lambda x: x.key_index)
+                game_objects = reversed(sorted(self.game_objects, key=lambda x: x.key_index))
                 pass
             else:
                 game_objects = reversed(self.game_objects)
