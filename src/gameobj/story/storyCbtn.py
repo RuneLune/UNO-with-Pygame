@@ -13,6 +13,8 @@ from gameobj.story.storyCtxt import StoryCText
 from manager.storymgr import StoryManager
 from gameobj.story.handlewindow import HandleWindow
 from gameobj.story.yesbtn import YesButton
+from gameobj.story.keyinput import KeyInput
+
 
 class StoryCButton(GameObject):
     @overrides
@@ -48,6 +50,7 @@ class StoryCButton(GameObject):
     @overrides
     def on_mouse_up_as_button(self) -> None:
         if self.touchable[2]:
+            KeyInput().update_flag_true()
             HandleWindow().visible_window()
             YesButton().target = "storyC"
         return super().on_mouse_up_as_button()

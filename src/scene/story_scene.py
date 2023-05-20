@@ -21,6 +21,9 @@ from gameobj.story.yesbtn import YesButton
 from gameobj.story.windowbg import WindowBackground
 from gameobj.story.windowtxt import WindowText
 from gameobj.story.handlewindow import HandleWindow
+from gameobj.story.keyinput import KeyInput
+from gameobj.story.backbtn import BackButton
+from manager.storymgr import StoryManager
 
 
 
@@ -28,6 +31,7 @@ from gameobj.story.handlewindow import HandleWindow
 class StoryScene(Scene):
     @overrides
     def start(self) -> None:
+        self.touchable = StoryManager().get_stage_states().get("touchable")
         screen_rect = pygame.display.get_surface().get_rect()
         background_surface = pygame.Surface(screen_rect.size)
         background_surface.fill(color.black)
@@ -42,8 +46,8 @@ class StoryScene(Scene):
             background_surface, "StoryScene_Background", z_index=-999)
         self.title_text = TextObject(
             "Story", title_font, color.white, "StoryScene_TitleText", z_index=997)
-        self.back_button = TextButtonObject(
-            "◀ Back", menu_font, color.white, "StoryScene_BackButton", z_index=997)
+        self.back_button = BackButton(
+            "◀ Back", menu_font, color.white, "StoryScene_BackButton", z_index=997).attach_mgr(self.scene_manager)
 
         self.story_a_button = StoryAButton()
         self.story_b_button = StoryBButton()
@@ -95,11 +99,31 @@ class StoryScene(Scene):
             screen_rect.centerx * 0.5, screen_rect.centery * 1.7)
         self.window_text.rect.center = (
             screen_rect.centerx, screen_rect.centery * 1.35)
-
-
         
-        self.back_button.on_mouse_up_as_button = lambda: self.scene_manager.load_scene(
-            "main_menu")
+    
+
+        key_input = KeyInput()
+        self.instantiate(key_input)
+
+        self.temp_list = []
+        self.temp_list.append(self.story_a_button)
+        self.temp_list.append(self.story_b_button)
+        self.temp_list.append(self.story_c_button)
+        self.temp_list.append(self.story_d_button)
+        self.stage_list = []
+        for i in range(len(self.touchable)):
+            if self.touchable[i]:
+                self.stage_list.append(self.temp_list[i])
+            else:
+                break
+        self.window_list = []
+        self.window_list.append(self.yes_button)
+        self.window_list.append(self.no_button)
+        key_input.attach_stage(
+            self.stage_list,
+            self.window_list,
+            self.back_button
+        )
         
 
         self.instantiate(self.background)

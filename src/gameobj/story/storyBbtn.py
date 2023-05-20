@@ -12,6 +12,8 @@ from util.resource_manager import image_resource
 from manager.storymgr import StoryManager
 from gameobj.story.handlewindow import HandleWindow
 from gameobj.story.yesbtn import YesButton
+from gameobj.story.keyinput import KeyInput
+
 
 
 class StoryBButton(GameObject):
@@ -49,6 +51,7 @@ class StoryBButton(GameObject):
     @overrides
     def on_mouse_up_as_button(self) -> None:
         if self.touchable[1]:
+            KeyInput().update_flag_true()
             HandleWindow().visible_window()
             YesButton().target = "storyB"
         return super().on_mouse_up_as_button()

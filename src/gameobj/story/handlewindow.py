@@ -2,6 +2,7 @@ from gameobj.story.nobtn import NoButton
 from gameobj.story.yesbtn import YesButton
 from gameobj.story.windowbg import WindowBackground
 from gameobj.story.windowtxt import WindowText
+from gameobj.story.keyinput import KeyInput
 
 class HandleWindow:
     def __init__(self) -> None:
@@ -23,5 +24,6 @@ class HandleWindow:
         self.yes_button.invisible()
         self.window_background.invisible()
         self.window_text.invisible()
+        KeyInput().update_flag_false()
 
         return None

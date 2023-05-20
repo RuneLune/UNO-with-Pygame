@@ -13,6 +13,7 @@ from gameobj.story.storyAtxt import StoryAText
 from manager.storymgr import StoryManager
 from gameobj.story.handlewindow import HandleWindow
 from gameobj.story.yesbtn import YesButton
+from gameobj.story.keyinput import KeyInput
 
 
 class StoryAButton(GameObject):
@@ -51,6 +52,7 @@ class StoryAButton(GameObject):
         if self.touchable[0]:
             HandleWindow().visible_window()
             YesButton().target = "storyA"
+            KeyInput().update_flag_true()
         return super().on_mouse_up_as_button()
 
 

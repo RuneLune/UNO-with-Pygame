@@ -15,6 +15,7 @@ import util.colors as color
 from manager.storymgr import StoryManager
 from gameobj.story.handlewindow import HandleWindow
 from gameobj.story.yesbtn import YesButton
+from gameobj.story.keyinput import KeyInput
 
 class StoryDButton(GameObject):
     @overrides
@@ -50,6 +51,7 @@ class StoryDButton(GameObject):
     @overrides
     def on_mouse_up_as_button(self) -> None:
         if self.touchable[3]:
+            KeyInput().update_flag_true()
             HandleWindow().visible_window()
             YesButton().target = "storyD"
         return super().on_mouse_up_as_button()
