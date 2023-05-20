@@ -11,7 +11,13 @@ PORT = None
 
 
 class SocketServer(metaclass=SingletonMeta):
-    def __init__(self):
+    # def __init__(self):
+    #     return None
+
+    def initialize(self) -> None:
+        if self._thread:
+            if self._thread.is_alive():
+                self._thread.stop
         global HOST, PORT
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -22,6 +28,7 @@ class SocketServer(metaclass=SingletonMeta):
         self._thread_list: List[threading.Thread] = []
         self._player_name_list: Dict[socket.socket, str] = []
         self._owner: Optional[socket.socket] = None
+        self._thread = threading.Thread(target=self._start)
         return None
 
     def _start(self):

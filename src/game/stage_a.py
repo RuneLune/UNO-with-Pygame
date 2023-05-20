@@ -8,17 +8,17 @@ from player.player import Player
 from player.combo_bot import Combo_Bot
 
 
-class Stage_A(Game):
-    # Stage_A 클래스 생성자
+class StageA(Game):
+    # StageA 클래스 생성자
     @overrides
     def __new__(cls, *args, **kwargs):
-        return super(Stage_A, cls).__new__(cls)
+        return super(StageA, cls).__new__(cls)
 
-    # Stage_A 객체 초기화 메서드
+    # StageA 객체 초기화 메서드
     @overrides
-    def __init__(self, username: str = "Player") -> None:
+    def __init__(self, players_count: int = 2, username: str = "User") -> None:
         self._init_variables(10, 0, 1, 0)
-        self._add_players()
+        self._add_players(username, players_count)
         self._make_draw_pile()
         self._deal_hands()
         self._flip_top()
@@ -32,7 +32,7 @@ class Stage_A(Game):
         return None
 
     @overrides
-    def _add_players(self, username: str = "Player", players_count: int = 4) -> None:
+    def _add_players(self, username: str = "User", players_count: int = 4) -> None:
         self._user: Player = Player(self, username)
         self._computer: Combo_Bot = Combo_Bot(self, "CPU 1")
         self._players.append(self._user)

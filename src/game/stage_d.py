@@ -5,10 +5,10 @@ from typing import Type
 from player.player import Player
 
 
-class Stage_D(Game):
+class StageD(Game):
     @overrides
-    def __init__(self) -> None:
-        super(Stage_D, self).__init__(2)
+    def __init__(self, players_count: int = 2, username: str = "User") -> None:
+        super(StageD, self).__init__(2)
         self._name = "stage_d"
         return None
 
