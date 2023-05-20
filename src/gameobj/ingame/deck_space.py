@@ -25,8 +25,9 @@ class DeckSpace(GameObject, Observer):
         z_index: int = -1,
         color: tuple = colors.white,
     ) -> None:
-        self.color = color
-        self.current_color = colors.white
+        self.bgrcolor = color
+        self.circle_color = colors.white
+        self.current_color = "white"
         self.reverse_turn = False
         super().__init__(surface, name, width, height, left, top, z_index)
         self.pt1 = (self.rect.centerx + self.height * 2 / 5 + 20, self.rect.centery)
@@ -43,23 +44,18 @@ class DeckSpace(GameObject, Observer):
 
     @overrides
     def start(self):
-        self.image.fill(self.color)
+        self.image.fill(self.bgrcolor)
+
+    def player_attach(self, subject: Type[Subject]):
+        self.user = subject
+        pass
 
     def observer_update(self, subject: Type[Subject]):
         # 컬러 업데이트
-        discard_card = subject.get_discard_info().get("discarded_card")
-        current_color = discard_card.get("color")
-
-        if current_color == "wild":
-            self.current_color = colors.black
-        elif current_color == "red":
-            self.current_color = colors.red
-        elif current_color == "blue":
-            self.current_color = colors.blue
-        elif current_color == "green":
-            self.current_color = colors.green
-        elif current_color == "yellow":
-            self.current_color = colors.yellow
+        updated_color = subject.get_discard_info().get("discarded_card").get("color")
+        if updated_color != self.current_color:
+            self.current_color = updated_color
+            self.color_update(updated_color)
 
         # 턴방향 업데이트
         reverse_turn = subject._reverse_direction
@@ -68,32 +64,47 @@ class DeckSpace(GameObject, Observer):
         else:
             self.pt3 = self.down_pt3
 
+    def color_update(self, updated_color):
+        if updated_color == "wild":
+            self.circle_color = colors.black
+        elif updated_color == "red":
+            self.circle_color = colors.red
+        elif updated_color == "blue":
+            self.circle_color = colors.blue
+        elif updated_color == "green":
+            self.circle_color = colors.green
+        elif updated_color == "yellow":
+            self.circle_color = colors.yellow
+
     @overrides
     def update(self):
-        self.image.fill(self.color)
+        self.image.fill(self.bgrcolor)
         pygame.draw.circle(
             self.image,
-            color=self.current_color,
+            color=self.circle_color,
             center=self.rect.center,
             radius=self.height * 2 / 5,
             width=30,
         )
         pygame.draw.polygon(
             surface=self.image,
-            color=self.current_color,
+            color=self.circle_color,
             points=[self.pt1, self.pt2, self.pt3],
         )
         pygame.draw.line(
             surface=self.image,
-            color=self.color,
+            color=self.bgrcolor,
             start_pos=self.pt1,
             end_pos=self.pt3,
             width=4,
         )
         pygame.draw.line(
             surface=self.image,
-            color=self.color,
+            color=self.bgrcolor,
             start_pos=self.pt2,
             end_pos=self.pt3,
             width=4,
         )
+
+        # 유저 낼 카드 없을 시 드로우 권장 이미지 출력
+        # 유저 턴이면 턴 표시 이미지 출력
