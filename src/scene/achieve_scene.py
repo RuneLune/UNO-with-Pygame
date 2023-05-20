@@ -35,6 +35,8 @@ from gameobj.achieve.dateF import DateF
 from gameobj.achieve.dateG import DateG
 from gameobj.achieve.dateH import DateH
 
+from gameobj.achieve.backbtn import BackButton
+
 
 
 
@@ -57,8 +59,8 @@ class AchieveScene(Scene):
         self.title_text = TextObject(
             "Achievement", title_font, color.white, "AchievementScene_TitleText", z_index=-900
         )
-        self.back_button = TextButtonObject(
-            "◀ Back", menu_font, color.white, "AchievementScene_BackButton", z_index=997)
+        self.back_button = BackButton(
+            "◀ Back", menu_font, color.white, "AchievementScene_BackButton", z_index=997).attach_mgr(self.scene_manager)
 
         self.iconA = IconA()
         self.iconB = IconB()
