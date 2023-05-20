@@ -14,7 +14,7 @@ class TextG(TextObject):
     @overrides
     def start(self) -> None:
         self.achieved = AchieveManager().get_stage_states().get("achieved")
-        self.text = "G: 미정"
+        self.text = "G: 연속 3번 같은 숫자 내기"
         screen_rect = pygame.display.get_surface().get_rect()
         self.font = pygame.font.Font(
             font_resource("MainFont.ttf"), screen_rect.height // 30
