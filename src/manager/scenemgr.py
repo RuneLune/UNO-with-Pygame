@@ -44,6 +44,9 @@ class SceneManager(metaclass=SingletonMeta):
         del self.current_scene
         pygame.display.get_surface().fill((0, 0, 0))
         self.current_scene = self.scenes[self.current_scene_name](self)
+        if self.current_scene_name == "game_scene":
+            self.current_scene.start()
+            pass
         return None
 
     def reload_scene(self) -> None:
