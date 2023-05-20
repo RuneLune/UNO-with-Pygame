@@ -8,6 +8,8 @@ from gameobj.gameobj import GameObject
 from gameobj.txtobj import TextObject
 from gameobj.txtbtnobj import TextButtonObject
 from manager.lobbymgr import LobbyManager
+from gameobj.gamelobby.keyinput import KeyInput
+from gameobj.gamelobby.nametext import NameText
 
 
 class GameLobby(Scene):
@@ -130,15 +132,33 @@ class GameLobby(Scene):
         self.empty_text.rect.center = self.empty_surface.get_rect().center
         self.empty_surface.blit(self.empty_text.image, self.empty_text.rect)
 
-        self.bot1_real_surface = self.empty_surface if not self.lobby_manager.get_game_settings()["active_bots"]["bot1"] else self.bot1_surface
-        self.bot2_real_surface = self.empty_surface if not self.lobby_manager.get_game_settings()["active_bots"]["bot2"] else self.bot2_surface
-        self.bot3_real_surface = self.empty_surface if not self.lobby_manager.get_game_settings()["active_bots"]["bot3"] else self.bot3_surface
-        self.bot4_real_surface = self.empty_surface if not self.lobby_manager.get_game_settings()["active_bots"]["bot4"] else self.bot4_surface
-        self.bot5_real_surface = self.empty_surface if not self.lobby_manager.get_game_settings()["active_bots"]["bot5"] else self.bot5_surface
-
-        self.invisible_surface = pygame.Surface(
-            (screen_rect.width, screen_rect.height)
+        self.bot1_real_surface = (
+            self.empty_surface
+            if not self.lobby_manager.get_game_settings()["active_bots"]["bot1"]
+            else self.bot1_surface
         )
+        self.bot2_real_surface = (
+            self.empty_surface
+            if not self.lobby_manager.get_game_settings()["active_bots"]["bot2"]
+            else self.bot2_surface
+        )
+        self.bot3_real_surface = (
+            self.empty_surface
+            if not self.lobby_manager.get_game_settings()["active_bots"]["bot3"]
+            else self.bot3_surface
+        )
+        self.bot4_real_surface = (
+            self.empty_surface
+            if not self.lobby_manager.get_game_settings()["active_bots"]["bot4"]
+            else self.bot4_surface
+        )
+        self.bot5_real_surface = (
+            self.empty_surface
+            if not self.lobby_manager.get_game_settings()["active_bots"]["bot5"]
+            else self.bot5_surface
+        )
+
+        self.invisible_surface = pygame.Surface((screen_rect.width, screen_rect.height))
         self.invisible_surface.set_alpha(0)
 
         # Is the user editing their name?
@@ -159,13 +179,14 @@ class GameLobby(Scene):
             "GameLobby_EditText",
             z_index=1000,
         )
-        self.name_text = TextObject(
-            self.lobby_manager.get_game_settings()["user_name"],
-            middle_font,
-            color.white,
-            "GameLobby_NameText",
-            z_index=1000,
-        )
+        self.name_text = NameText()
+        # self.name_text = TextObject(
+        #     self.lobby_manager.get_game_settings()["user_name"],
+        #     middle_font,
+        #     color.white,
+        #     "GameLobby_NameText",
+        #     z_index=1000,
+        # )
         self.user_space = GameObject(user_surface, "GameLobby_User", z_index=999)
         self.start_button = GameObject(
             start_surface, "GameLobby_StartButton", z_index=1000
@@ -190,7 +211,7 @@ class GameLobby(Scene):
         )
 
         self.invisible_background = GameObject(
-            self.invisible_surface, "GameLobby_UnvisibleBackground", z_index=2000
+            self.invisible_surface, "GameLobby_UnvisibleBackground", z_index=-2000
         )
         self.invisible_background.disable()
 
@@ -234,6 +255,15 @@ class GameLobby(Scene):
 
         self.invisible_background.rect.topleft = (0, 0)
 
+        def key_down(key):
+            if key == pygame.K_RETURN:
+                self.editName()
+            elif key == pygame.K_ESCAPE:
+                self.scene_manager.load_previous_scene()
+            else:
+                return False
+
+        self.background.on_key_down = lambda key: key_down(key)
         self.back_button.on_click = lambda: self.scene_manager.load_previous_scene()
         self.name_text.on_mouse_up_as_button = lambda: self.editName()
         self.start_button.on_mouse_up_as_button = lambda: self.scene_manager.load_scene(
@@ -246,8 +276,8 @@ class GameLobby(Scene):
         self.bot4_button.on_mouse_up_as_button = lambda: self.bot4Clicked()
         self.bot5_button.on_mouse_up_as_button = lambda: self.bot5Clicked()
 
-        self.invisible_background.on_mouse_up_as_button = lambda: self.editName()
-        self.invisible_background.on_key_down = lambda: self.editName()
+        # self.invisible_background.on_mouse_up_as_button = lambda: self.editName()
+        # self.invisible_background.on_key_down = lambda: self.editName()
 
         self.instantiate(self.background)
         self.instantiate(self.deck_space)
@@ -263,6 +293,9 @@ class GameLobby(Scene):
         self.instantiate(self.bot4_button)
         self.instantiate(self.bot5_button)
         self.instantiate(self.invisible_background)
+        self.key_input = KeyInput()
+        self.key_input.reset()
+        self.instantiate(self.key_input)
 
         return None
 
@@ -270,14 +303,13 @@ class GameLobby(Scene):
         rect = pygame.Rect(self.name_text.rect)
         rect.topleft = (0, 0)
         if not self.user_name_editing:
-            self.user_name_editing = True
             pygame.draw.rect(self.name_text.image, color.white, rect, 2)
-            self.invisible_background.enable()
-            self.lobby_manager.user_name_change()
+            self.key_input.changing_name = True
+            self.user_name_editing = True
         else:
-            self.user_name_editing = False
             pygame.draw.rect(self.name_text.image, (50, 100, 80), rect, 2)
-            self.invisible_background.disable()
+            self.key_input.changing_name = False
+            self.user_name_editing = False
         return None
 
     # def bot1Clicked(self):
@@ -289,7 +321,10 @@ class GameLobby(Scene):
     #     return None
 
     def bot2Clicked(self):
-        if self.lobby_manager.get_game_settings()["active_bots"]["bot1"] and not self.lobby_manager.get_game_settings()["active_bots"]["bot3"]:
+        if (
+            self.lobby_manager.get_game_settings()["active_bots"]["bot1"]
+            and not self.lobby_manager.get_game_settings()["active_bots"]["bot3"]
+        ):
             if not self.lobby_manager.get_game_settings()["active_bots"]["bot2"]:
                 self.bot2_button.image = self.bot2_surface
                 self.lobby_manager.set_player_count(3)
@@ -302,7 +337,10 @@ class GameLobby(Scene):
         return None
 
     def bot3Clicked(self):
-        if self.lobby_manager.get_game_settings()["active_bots"]["bot2"] and not self.lobby_manager.get_game_settings()["active_bots"]["bot4"]:
+        if (
+            self.lobby_manager.get_game_settings()["active_bots"]["bot2"]
+            and not self.lobby_manager.get_game_settings()["active_bots"]["bot4"]
+        ):
             if not self.lobby_manager.get_game_settings()["active_bots"]["bot3"]:
                 self.bot3_button.image = self.bot3_surface
                 self.lobby_manager.set_player_count(4)
@@ -315,7 +353,10 @@ class GameLobby(Scene):
         return None
 
     def bot4Clicked(self):
-        if self.lobby_manager.get_game_settings()["active_bots"]["bot3"] and not self.lobby_manager.get_game_settings()["active_bots"]["bot5"]:
+        if (
+            self.lobby_manager.get_game_settings()["active_bots"]["bot3"]
+            and not self.lobby_manager.get_game_settings()["active_bots"]["bot5"]
+        ):
             if not self.lobby_manager.get_game_settings()["active_bots"]["bot4"]:
                 self.bot4_button.image = self.bot4_surface
                 self.lobby_manager.set_player_count(5)

@@ -1,0 +1,74 @@
+from __future__ import annotations
+
+from overrides import overrides
+import pygame
+
+from manager.cfgmgr import Config
+from gameobj.gameobj import GameObject
+from metaclass.singleton import SingletonMeta
+from manager.lobbymgr import LobbyManager
+
+
+class KeyInput(GameObject, metaclass=SingletonMeta):
+    _changing_name: bool = False
+    previous_name: str = ""
+
+    @overrides
+    def on_key_down(self, key: int) -> bool:
+        self.key_index = 999
+        keyconfig_value = Config().config.get("keybindings")
+        if self._changing_name:
+            if key == keyconfig_value.get("cancel"):
+                LobbyManager().user_name = self.previous_name
+                self._changing_name = False
+                pass
+            elif key == keyconfig_value.get("select"):
+                self._changing_name = False
+                pass
+            elif key == pygame.K_BACKSPACE:
+                if len(LobbyManager().user_name) > 1:
+                    LobbyManager().user_name = LobbyManager().user_name[:-1]
+                    pass
+                pass
+            elif key == pygame.K_SPACE:
+                if len(LobbyManager().user_name) < 20:
+                    LobbyManager().user_name = LobbyManager().user_name + " "
+                    pass
+                pass
+            elif len(pygame.key.name(key)) == 1:
+                if len(LobbyManager().user_name) < 20:
+                    LobbyManager().user_name = (
+                        LobbyManager().user_name + pygame.key.name(key).upper()
+                    )
+                    pass
+                pass
+            else:
+                return False
+            return True
+        else:
+            if key == keyconfig_value.get("cancel"):
+                self.scene_manager.load_previous_scene()
+                pass
+            elif key == keyconfig_value.get("select"):
+                pass
+            pass
+        return False
+
+    @property
+    def changing_name(self) -> bool:
+        return self._changing_name
+
+    @changing_name.setter
+    def changing_name(self, value: bool) -> None:
+        if value is True:
+            self.previous_name = LobbyManager().user_name
+            pass
+        self._changing_name = value
+        return None
+
+    def reset(self) -> None:
+        self._changing_name = False
+        self.previous_name = ""
+        return None
+
+    pass

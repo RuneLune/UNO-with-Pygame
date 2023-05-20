@@ -103,15 +103,38 @@ class LobbyManager(metaclass=SingletonMeta):
 
     def user_name_change(self):
         while True:
-            event = pygame.event.wait()
+            event = pygame.event
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_BACKSPACE and len(self.__game_settings["user_name"]) > 1:
-                    self.__game_settings.update({"user_name": self.__game_settings["user_name"][:-1]})
-                elif event.unicode.isprintable() and len(self.__game_settings["user_name"]) < 20:
-                    self.__game_settings.update({"user_name": self.__game_settings["user_name"] + event.unicode})
+                if (
+                    event.key == pygame.K_BACKSPACE
+                    and len(self.__game_settings["user_name"]) > 1
+                ):
+                    self.__game_settings.update(
+                        {"user_name": self.__game_settings["user_name"][:-1]}
+                    )
+                elif (
+                    event.unicode.isprintable()
+                    and len(self.__game_settings["user_name"]) < 20
+                ):
+                    self.__game_settings.update(
+                        {"user_name": self.__game_settings["user_name"] + event.unicode}
+                    )
                 elif event.key == pygame.K_RETURN:
                     break
                 else:
                     pass
                 self.save_game_settings()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                break
+            else:
+                pass
         return None
+
+    @property
+    def user_name(self):
+        return self.__game_settings["user_name"]
+
+    @user_name.setter
+    def user_name(self, value: str):
+        self.__game_settings["user_name"] = value
+        self.save_game_settings()
