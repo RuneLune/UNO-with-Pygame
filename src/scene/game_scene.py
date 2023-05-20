@@ -32,9 +32,11 @@ from metaclass.singleton import SingletonMeta
 
 
 # - 턴 스킵 표시
-# - 일시정지 화면
+# - 일시정지 화면 o
 # - 효과음 추가
 # - 셔플 카드 오류 수정
+# - 업적 달성 체크
+# - 업적 달성 메세지 표현
 class GameScene(Scene, metaclass=SingletonMeta):
     @overrides
     def start(self) -> None:
