@@ -289,7 +289,7 @@ class Game(Subject):
     def check_winner(self) -> None:
         if len(self._players[self._current_turn].get_hand_cards()) == 0:
             self._end_round()
-            pass
+            return self._players[self._current_turn]
         return None
 
     # 라운드 종료 후 점수를 계산하는 메서드
