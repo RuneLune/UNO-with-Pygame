@@ -1,5 +1,6 @@
 from overrides import overrides
 import pygame
+import time
 
 from util.resource_manager import font_resource
 import util.colors as colors
@@ -10,6 +11,7 @@ from manager.cfgmgr import Config
 from manager.lobbymgr import LobbyManager
 from card.cards import Cards
 
+from gameobj.bgobj import BackgroundObject
 from gameobj.gameobj import GameObject
 from gameobj.ingame.card import Card
 from gameobj.ingame.space import Space
@@ -23,6 +25,8 @@ from gameobj.ingame.key_input import KeyInput
 from gameobj.ingame.selector import Selector
 from gameobj.ingame.winner_txt import WinnerText
 from gameobj.ingame.back_txt import BackToMain
+
+from gameobj.txtobj import TextObject
 
 from metaclass.singleton import SingletonMeta
 
@@ -47,7 +51,8 @@ class GameScene(Scene, metaclass=SingletonMeta):
 
         self.screen_size = self.settings.get_screen_resolution()
         self.user = self.game.get_user()
-        self.user.set_cards([13])
+        self.user.set_cards([])
+        self.user._yelled_uno = True
         self.bots = self.game.get_bots()
 
         color_dict = [colors.red, colors.green, colors.blue, colors.yellow]
@@ -215,10 +220,33 @@ class GameScene(Scene, metaclass=SingletonMeta):
         # 텍스트 오브젝트 생성
         self.winner_text = WinnerText(
             text="winner!",
-            font=pygame.font.Font(font_resource("MainFont.ttf"), 200),
+            font=pygame.font.Font(font_resource("MainFont.ttf"), 100),
             color=colors.gold,
+            width=self.screen_size[0] * 3 / 4,
+            height=self.screen_size[1] * 1 / 5,
         )
         self.winner_text._visible = False
+
+        self.firework1 = TextObject(
+            text="(b˙◁˙ )b",
+            font=pygame.font.Font(font_resource("MainFont.ttf"), 100),
+            width=self.screen_size[0],
+            height=self.screen_size[1] * 2.5 / 5,
+            top=self.winner_text.height,
+            color=colors.light_salmon,
+            z_index=1,
+        )
+
+        self.firework2 = TextObject(
+            text="(o˙◁˙ )o",
+            font=pygame.font.Font(font_resource("MainFont.ttf"), 100),
+            width=self.screen_size[0],
+            height=self.screen_size[1] * 2 / 5,
+            top=self.winner_text.height,
+            color=colors.royal_blue,
+        )
+        self.firework1._visible = False
+        self.firework2._visible = False
 
         # 승리시 메인 화면 이동 텍스트 오브젝트 생성
         self.back_to_main = BackToMain(
@@ -226,13 +254,14 @@ class GameScene(Scene, metaclass=SingletonMeta):
             font=pygame.font.Font(font_resource("MainFont.ttf"), 100),
             color=colors.white,
             left=0,
-            top=self.winner_text.height * 2,
+            top=self.user_space.top,
         )
         self.back_to_main._visible = False
         self.back_to_main._enabled = False
         self.back_to_main.attach_mgr(self.scene_manager, "main_menu")
 
         # 오브젝트 등록
+        self.instantiate(BackgroundObject(colors.black))
         self.instantiate(self.deck_space)
         self.instantiate(self.user_space)
         for i in range(len(self.bots)):
@@ -251,6 +280,8 @@ class GameScene(Scene, metaclass=SingletonMeta):
         self.instantiate(self.uno_btn)
         self.instantiate(self.winner_text)
         self.instantiate(self.back_to_main)
+        self.instantiate(self.firework1)
+        self.instantiate(self.firework2)
 
     @overrides
     def update(self):
@@ -416,6 +447,13 @@ class GameScene(Scene, metaclass=SingletonMeta):
             self.winner_text._visible = True
             self.back_to_main._enabled = True
             self.back_to_main._visible = True
+            if self.firework1._visible is True:
+                self.firework1._visible = False
+                self.firework2._visible = True
+            else:
+                self.firework1._visible = True
+                self.firework2._visible = False
+            time.sleep(0.2)
 
     def position_update(self, obj_list: list):
         obj_list.sort(key=lambda x: x.code)
