@@ -11,6 +11,7 @@ from scene.game_scene import GameScene
 from scene.story_scene import StoryScene
 from scene.gamelobby import GameLobby
 from scene.multilobby import MultiLobby
+from scene.createserver import CreateServer
 from scene.quit import QuitScene
 
 if TYPE_CHECKING:
@@ -28,11 +29,13 @@ class SceneManager(metaclass=SingletonMeta):
             "story_scene": StoryScene,
             "gamelobby": GameLobby,
             "multilobby": MultiLobby,
+            "create_server": CreateServer,
             "quit": QuitScene,
         }
         self.current_scene_name = "main_menu"
         self.current_scene = self.scenes[self.current_scene_name](self)
-        self.previous_scene = None
+        self.previous_scene_name = "quit"
+        self.previous_scene = self.scenes[self.previous_scene_name](self)
 
     def load_scene(self, scene_name: str) -> None:
         self.previous_scene_name = self.current_scene_name

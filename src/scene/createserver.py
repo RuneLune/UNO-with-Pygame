@@ -6,8 +6,10 @@ from server.server import SocketServer
 
 class CreateServer(Scene):
     @overrides
-    def start(self) -> None:
-        server = SocketServer()
-        server.initialize()
-        
+    def update(self) -> None:
+        if not hasattr(self, "update_called"):
+            self.update_called = True
+            server = SocketServer()
+            server.initialize()
+            self.scene_manager.load_scene("multilobby")
         return None
