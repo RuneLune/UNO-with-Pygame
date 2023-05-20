@@ -21,6 +21,8 @@ from gameobj.ingame.color_set import ColorSet
 from gameobj.ingame.uno_btn import UnoBtn
 from gameobj.ingame.key_input import KeyInput
 from gameobj.ingame.selector import Selector
+from gameobj.ingame.winner_txt import WinnerText
+from gameobj.ingame.back_txt import BackToMain
 
 from metaclass.singleton import SingletonMeta
 
@@ -45,7 +47,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
 
         self.screen_size = self.settings.get_screen_resolution()
         self.user = self.game.get_user()
-        self.user.set_cards([15, 14])
+        self.user.set_cards([13])
         self.bots = self.game.get_bots()
 
         color_dict = [colors.red, colors.green, colors.blue, colors.yellow]
@@ -210,6 +212,26 @@ class GameScene(Scene, metaclass=SingletonMeta):
         )
         self.key_input.observer_update(self.game)
 
+        # 텍스트 오브젝트 생성
+        self.winner_text = WinnerText(
+            text="winner!",
+            font=pygame.font.Font(font_resource("MainFont.ttf"), 200),
+            color=colors.gold,
+        )
+        self.winner_text._visible = False
+
+        # 승리시 메인 화면 이동 텍스트 오브젝트 생성
+        self.back_to_main = BackToMain(
+            text="Back to Main",
+            font=pygame.font.Font(font_resource("MainFont.ttf"), 100),
+            color=colors.white,
+            left=0,
+            top=self.winner_text.height * 2,
+        )
+        self.back_to_main._visible = False
+        self.back_to_main._enabled = False
+        self.back_to_main.attach_mgr(self.scene_manager, "main_menu")
+
         # 오브젝트 등록
         self.instantiate(self.deck_space)
         self.instantiate(self.user_space)
@@ -227,6 +249,8 @@ class GameScene(Scene, metaclass=SingletonMeta):
             self.instantiate(self.color_set[i])
             self.color_set[i].user_update(self.game)
         self.instantiate(self.uno_btn)
+        self.instantiate(self.winner_text)
+        self.instantiate(self.back_to_main)
 
     @overrides
     def update(self):
@@ -384,6 +408,14 @@ class GameScene(Scene, metaclass=SingletonMeta):
         self.key_input.attach_card(
             self.user_cards_obj, self.deck_card, self.uno_btn, self.color_set
         )
+
+        # 승리조건 확인
+        winner = self.game.check_winner()
+        if winner is not None:
+            self.winner_text.render(f"{winner.get_name()} is winner!")
+            self.winner_text._visible = True
+            self.back_to_main._enabled = True
+            self.back_to_main._visible = True
 
     def position_update(self, obj_list: list):
         obj_list.sort(key=lambda x: x.code)
