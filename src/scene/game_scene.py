@@ -25,6 +25,7 @@ from gameobj.ingame.key_input import KeyInput
 from gameobj.ingame.selector import Selector
 from gameobj.ingame.winner_txt import WinnerText
 from gameobj.ingame.back_txt import BackToMain
+from gameobj.ingame.achive_rect import AchiveRect
 
 from gameobj.txtobj import TextObject
 
@@ -259,6 +260,17 @@ class GameScene(Scene, metaclass=SingletonMeta):
         self.back_to_main._enabled = False
         self.back_to_main.attach_mgr(self.scene_manager, "main_menu")
 
+        # 업적 달성 표시 오브젝트 생성
+        self.achive_rect = AchiveRect(
+            pygame.Surface((0, 0)),
+            width=self.screen_size[0] * 8 / 9,
+            height=self.screen_size[1] * 1 / 11,
+            left=self.screen_size[0] * 1 / 18,
+            top=-self.screen_size[1] * 1 / 8,
+            z_index=1,
+        )
+        self.achive_rect.move_fwd = True
+
         # 오브젝트 등록
         self.instantiate(BackgroundObject(colors.black))
         self.instantiate(self.deck_space)
@@ -281,6 +293,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
         self.instantiate(self.back_to_main)
         self.instantiate(self.firework1)
         self.instantiate(self.firework2)
+        self.instantiate(self.achive_rect)
 
     @overrides
     def update(self):
