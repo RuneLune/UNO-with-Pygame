@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 class SceneManager(metaclass=SingletonMeta):
     def __init__(self):
         self.scenes: Dict[str, Type[Scene]] = {
-            "test": AchieveScene,
+            "achievements": AchieveScene,
             "main_menu": MainMenu,
             "config_menu": ConfigMenu,
             "game_scene": GameScene,

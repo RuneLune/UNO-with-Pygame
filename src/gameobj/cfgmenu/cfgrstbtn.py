@@ -23,7 +23,7 @@ class ConfigResetButton(TextButtonObject):
         self.color = color.white
         self.image = self.font.render(self.text, True, self.color)
         self.rect = self.image.get_rect()
-        self.bottomright = (screen_rect.width * 9 // 20, screen_rect.height * 15 // 16)
+        self.midbottom = (screen_rect.width * 3 // 8, screen_rect.height * 15 // 16)
         return None
 
     def attach_mgr(self, scene_manager: SceneManager) -> ConfigResetButton:

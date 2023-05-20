@@ -5,6 +5,8 @@ from gameobj.bgobj import BackgroundObject
 from gameobj.cfgmenu.titletxt import TitleText
 from gameobj.cfgmenu.backbtn import BackButton
 from gameobj.cfgmenu.cfgrstbtn import ConfigResetButton
+from gameobj.cfgmenu.mainbtn import MainMenuButton
+from gameobj.cfgmenu.achvbtn import AcheivementsButton
 from gameobj.cfgmenu.menukey import MenuKey
 from gameobj.cfgmenu.menuval import MenuValue
 from gameobj.cfgmenu.leftbtn import LeftButton
@@ -24,11 +26,16 @@ class ConfigMenu(Scene):
 
         self.instantiate(BackgroundObject(color.black))
         self.instantiate(TitleText("Configurations"))
-        self.instantiate(BackButton("Save and Back").attach_mgr(self.scene_manager))
-        self.instantiate(
-            ConfigResetButton("Reset Configurations").attach_mgr(self.scene_manager)
-        )
+        self.instantiate(BackButton("Back").attach_mgr(self.scene_manager))
+        self.instantiate(ConfigResetButton("Reset").attach_mgr(self.scene_manager))
         self.instantiate(KeyInput().attach_mgr(self.scene_manager))
+
+        if self.scene_manager.previous_scene_name != "main_menu":
+            self.instantiate(MainMenuButton("Main Menu").attach_mgr(self.scene_manager))
+            self.instantiate(
+                AcheivementsButton("Achievements").attach_mgr(self.scene_manager)
+            )
+            pass
 
         MenuKey.destroy_all()
         self.instantiate(MenuKey("Screen Size"))

@@ -19,10 +19,10 @@ class MainMenu(Scene):
         Menu.destroy_all()
         play_menu = Menu("Play").attach_mgr(self.scene_manager, "gamelobby")
         multiplayer_menu = Menu("Multiplayer").attach_mgr(
-            self.scene_manager, "multilobby"
+            self.scene_manager, "create_server"
         )
         stage_menu = Menu("Stage").attach_mgr(self.scene_manager, "story_scene")
-        achievements_menu = Menu("Achievements").attach_mgr(self.scene_manager, "test")
+        achievements_menu = Menu("Achievements").attach_mgr(self.scene_manager, "achievements")
         config_menu = Menu("Settings").attach_mgr(self.scene_manager, "config_menu")
         quit_menu = Menu("Quit").attach_mgr(self.scene_manager, "quit")
         self.instantiate(play_menu)

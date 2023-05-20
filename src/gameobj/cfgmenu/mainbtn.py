@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from manager.scenemgr import SceneManager
 
 
-class BackButton(TextButtonObject):
+class MainMenuButton(TextButtonObject):
     @overrides
     def start(self) -> None:
         screen_rect = pygame.display.get_surface().get_rect()
@@ -22,16 +22,16 @@ class BackButton(TextButtonObject):
         self.color = color.white
         self.image = self.font.render(self.text, True, self.color)
         self.rect = self.image.get_rect()
-        self.midbottom = (screen_rect.width * 5 // 8, screen_rect.height * 15 // 16)
+        self.midbottom = (screen_rect.width * 1 // 8, screen_rect.height * 15 // 16)
         return None
 
-    def attach_mgr(self, scene_manager: SceneManager) -> BackButton:
+    def attach_mgr(self, scene_manager: SceneManager) -> MainMenuButton:
         self.scene_manager = scene_manager
         return self
 
     @overrides
     def on_click(self) -> None:
-        self.scene_manager.load_previous_scene()
+        self.scene_manager.load_scene("main_menu")
         return None
 
     pass
