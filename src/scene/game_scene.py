@@ -37,7 +37,7 @@ from metaclass.singleton import SingletonMeta
 # - 효과음 추가
 # - 셔플 카드 오류 수정
 # - 업적 달성 체크
-# - 업적 달성 메세지 표현
+# - 업적 달성 메세지 표현 o
 class GameScene(Scene, metaclass=SingletonMeta):
     @overrides
     def start(self) -> None:
@@ -51,7 +51,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
 
         self.screen_size = self.settings.get_screen_resolution()
         self.user = self.game.get_user()
-        # self.user.set_cards([])
+        self.user.set_cards([14, 15])
         # self.user._yelled_uno = True
         self.bots = self.game.get_bots()
 
@@ -327,11 +327,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 self.bot_spaces[i].turn = False
 
         # 카드 뽑기
-        if self.deck_card.draw_flag is True or (
-            self.deck_card.draw_flag is False
-            and (self.user_cards_list != self.user.get_hand_cards())
-            and self.last_card.code != 15
-        ):
+        if self.deck_card.draw_flag is True:
             self.user.draw_cards()
             drawing_cards = self.user.get_last_drawing_cards()
             self.user_cards_list = self.user.get_hand_cards()
@@ -357,21 +353,15 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 self.user_cards_obj.append(temp)
             self.turn_update(self.user_cards_obj)
             self.deck_card.draw_flag = False
-        elif self.last_card.code == 15 and (
-            self.user_cards_list != self.user.get_hand_cards()
-        ):
+        elif self.last_card.shuffle is True:
+            self.last_card.shuffle = False
             self.user_cards_list = self.user.get_hand_cards()
-            print(self.user_cards_list)
             for obj in self.user_cards_obj:
                 self.destroy(obj)
             self.user_cards_obj = []
-            drawing_cards = self.user.get_last_drawing_cards()
-            print(drawing_cards)
 
             # 뽑은 카드 생성 후 유저 공간으로 이동
-            for i, tuple in enumerate(drawing_cards):
-                idx = tuple[0]
-                code = tuple[1]
+            for i, code in enumerate(self.user_cards_list):
                 temp = Card(
                     surface=self.cards_cls.get_card_image(code),
                     name=f"{code}",
@@ -379,9 +369,9 @@ class GameScene(Scene, metaclass=SingletonMeta):
                     height=self.card_size[1],
                     left=self.draw_pile_pos[0],
                     top=self.draw_pile_pos[1],
-                    target_pos=self.user_card_pos[idx],
+                    target_pos=self.user_card_pos[i],
                     code=code,
-                    index=idx,
+                    index=i,
                 )
                 self.instantiate(temp)
                 temp.user = True

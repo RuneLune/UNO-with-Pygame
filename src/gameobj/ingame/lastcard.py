@@ -27,7 +27,13 @@ class LastCard(GameObject):
     ) -> None:
         super().__init__(surface, name, width, height, left, top, z_index, key_index)
         self.cards_cls = Cards()
+        self.code = 000
 
     def observer_update(self, subject: Type[Subject]):
-        self.image = self.cards_cls.get_card_image(subject._discard_pile[0])
-        self.code = subject._discard_pile[0]
+        if self.code != subject._discard_pile[0]:
+            self.image = self.cards_cls.get_card_image(subject._discard_pile[0])
+            self.code = subject._discard_pile[0]
+            if self.code == 15:
+                self.shuffle = True
+            else:
+                self.shuffle = False
