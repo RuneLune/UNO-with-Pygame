@@ -25,9 +25,6 @@ class GameLobby(Scene):
         small_font = pygame.font.Font(
             font_resource("MainFont.ttf"), screen_rect.height // 20
         )
-        middle_font = pygame.font.Font(
-            font_resource("MainFont.ttf"), screen_rect.height // 15
-        )
         edit_font = pygame.font.Font(
             font_resource("MainFont.ttf"), screen_rect.height // 14
         )
@@ -263,7 +260,7 @@ class GameLobby(Scene):
             else:
                 return False
 
-        self.background.on_key_down = lambda key: key_down(key)
+        # self.background.on_key_down = lambda key: key_down(key)
         self.back_button.on_click = lambda: self.scene_manager.load_previous_scene()
         self.name_text.on_mouse_up_as_button = lambda: self.editName()
         self.start_button.on_mouse_up_as_button = lambda: self.scene_manager.load_scene(
@@ -293,7 +290,7 @@ class GameLobby(Scene):
         self.instantiate(self.bot4_button)
         self.instantiate(self.bot5_button)
         self.instantiate(self.invisible_background)
-        self.key_input = KeyInput()
+        self.key_input = KeyInput().attach_mgr(self.scene_manager)
         self.key_input.reset()
         self.instantiate(self.key_input)
 
@@ -302,14 +299,14 @@ class GameLobby(Scene):
     def editName(self):
         rect = pygame.Rect(self.name_text.rect)
         rect.topleft = (0, 0)
-        if not self.user_name_editing:
+        if not self.key_input.changing_name:
             pygame.draw.rect(self.name_text.image, color.white, rect, 2)
             self.key_input.changing_name = True
-            self.user_name_editing = True
+            # self.user_name_editing = True
         else:
             pygame.draw.rect(self.name_text.image, (50, 100, 80), rect, 2)
             self.key_input.changing_name = False
-            self.user_name_editing = False
+            # self.user_name_editing = False
         return None
 
     # def bot1Clicked(self):
