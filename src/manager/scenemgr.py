@@ -4,7 +4,7 @@ import pygame
 from typing import TYPE_CHECKING
 
 from metaclass.singleton import SingletonMeta
-from scene.test import TestScene
+from scene.achieve_scene import AchieveScene
 from scene.mainmenu import MainMenu
 from scene.cfgmenu import ConfigMenu
 from scene.game_scene import GameScene
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 class SceneManager(metaclass=SingletonMeta):
     def __init__(self):
         self.scenes: Dict[str, Type[Scene]] = {
-            "test": TestScene,
+            "test": AchieveScene,
             "main_menu": MainMenu,
             "config_menu": ConfigMenu,
             "game_scene": GameScene,

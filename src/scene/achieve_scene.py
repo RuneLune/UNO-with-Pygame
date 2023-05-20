@@ -38,7 +38,7 @@ from gameobj.achieve.dateH import DateH
 
 
 
-class TestScene(Scene):
+class AchieveScene(Scene):
     @overrides
     def start(self) -> None:
         screen_rect = pygame.display.get_surface().get_rect()
