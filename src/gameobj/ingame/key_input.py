@@ -112,6 +112,8 @@ class KeyInput(GameObject, Observer):
 
     @overrides
     def update(self) -> None:
+        if len(self.object_list) == 0:
+            return None
         if self.color_choice is True:
             self._selector.center = self.color_rect[self.color_index].center
         else:
