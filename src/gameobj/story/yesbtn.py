@@ -19,8 +19,9 @@ if TYPE_CHECKING:
 class YesButton(GameObject, metaclass=SingletonMeta):
     @overrides
     def start(self) -> None:
-        self.image = pygame.image.load(image_resource(
+        self.image_t = pygame.image.load(image_resource(
             join("stage", "yes.png")))
+        self.image = self.create_neon(self.image_t)
         self.rect = self.image.get_rect()
         self.name = "Yes_Button"
         self.img_copy = self.image
@@ -51,7 +52,7 @@ class YesButton(GameObject, metaclass=SingletonMeta):
     
     @overrides
     def on_mouse_enter(self) -> None:
-        self.image = self.create_neon(self.image)
+        self.image = self.image_t
         return None
 
     @overrides
