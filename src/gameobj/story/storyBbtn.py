@@ -34,7 +34,7 @@ class StoryBButton(GameObject):
     @overrides
     def on_mouse_enter(self) -> None:
         if self.touchable[1]:
-            self.image = self.iamge_t
+            self.image = self.image_t
             self.story_b_text.visible()
         return None
 
