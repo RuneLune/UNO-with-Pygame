@@ -15,7 +15,7 @@ class BotSelectText(TextObject, metaclass=SingletonMeta):
         self.text = "What kind of bot do you want?"
         screen_rect = pygame.display.get_surface().get_rect()
         self.font = pygame.font.Font(
-            font_resource("MainFont.ttf"), screen_rect.height // 15
+            font_resource("MainFont.ttf"), screen_rect.height // 17
         )
         self.color = color.black
         self.image = self.font.render(self.text, True, self.color)

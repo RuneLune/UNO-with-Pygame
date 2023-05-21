@@ -12,7 +12,7 @@ import util.colors as color
 class BotBText(TextObject, metaclass=SingletonMeta):
     @overrides
     def start(self) -> None:
-        self.text = "B: 3명의 컴퓨터 플레이어와 대전 / 첫 분배 시 모든 카드를 같은 수로 분배 (첫 카드 제외)"
+        self.text = "B: 첫 분배 시 모든 카드를 같은 수로 분배 (첫 카드 제외)"
         screen_rect = pygame.display.get_surface().get_rect()
         self.font = pygame.font.Font(
             font_resource("MainFont.ttf"), screen_rect.height // 30
