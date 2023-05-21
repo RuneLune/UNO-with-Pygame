@@ -69,6 +69,10 @@ class Config(metaclass=SingletonMeta):
     # Config reset method
     def reset(self):
         global initial_config
+        if self.__config.get("fullscreen") != initial_config.get(
+            "fullscreen"
+        ) or self.__config.get("screen_size") != initial_config.get("screen_size"):
+            self.resolution_changed = True
         self.__config = copy.deepcopy(initial_config)
         self.save()
 
