@@ -26,6 +26,7 @@ from gameobj.ingame.selector import Selector
 from gameobj.ingame.winner_txt import WinnerText
 from gameobj.ingame.back_txt import BackToMain
 from gameobj.ingame.achive_rect import AchiveRect
+from gameobj.ingame.card_num_txt import CardNumber
 
 from gameobj.txtobj import TextObject
 
@@ -200,6 +201,23 @@ class GameScene(Scene):
                     target_pos=self.discard_pile_pos,
                 )
                 self.bot_cards[i].append(temp)
+
+        # 봇 카드 숫자 표시 오브젝트 생성
+        self.bot_card_num = []
+        for i, bot in enumerate(self.bots):
+            temp = CardNumber(
+                text=str(len(bot.get_hand_cards())),
+                font=pygame.font.Font(
+                    font_resource("MainFont.ttf"), round(self.bot_spaces[i].width / 5)
+                ),
+                color=colors.white,
+                left=self.bot_card_pos_x[6] + self.card_size[0],
+                top=self.bot_spaces[i].centery,
+                z_index=1,
+            )
+            temp.observer_update(bot)
+            self.bot_card_num.append(temp)
+            self.instantiate(self.bot_card_num[i])
 
         # 색 선택 오브젝트 생성
         self.color_set = []
