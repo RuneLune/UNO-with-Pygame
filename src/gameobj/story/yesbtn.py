@@ -11,6 +11,7 @@ from gameobj.gameobj import GameObject
 from util.resource_manager import font_resource
 from util.resource_manager import image_resource
 from metaclass.singleton import SingletonMeta
+from manager.gamemgr import GameManager
 
 if TYPE_CHECKING:
     from manager.scenemgr import SceneManager
@@ -29,14 +30,14 @@ class YesButton(GameObject, metaclass=SingletonMeta):
         
         return None
     
-    def attach(self, scene_manager: SceneManager) -> None:
+    def attach_mgr(self, scene_manager: SceneManager) -> YesButton:
         self.scene_manager = scene_manager
-        return None
+        return self
     
     @overrides
     def on_mouse_up_as_button(self) -> None:
-    
-        self.scene_manager.load_scene(self._target)
+        GameManager().create_stage(self._target)
+        self.scene_manager.load_scene("game_scene")
         return None
     
     @property

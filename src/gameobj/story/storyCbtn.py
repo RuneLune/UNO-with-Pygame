@@ -52,7 +52,7 @@ class StoryCButton(GameObject):
         if self.touchable[2]:
             KeyInput().update_flag_true()
             HandleWindow().visible_window()
-            YesButton().target = "storyC"
+            YesButton().target = "stage_c"
         return super().on_mouse_up_as_button()
 
     def create_neon(self, surf):

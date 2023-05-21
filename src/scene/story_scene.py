@@ -59,13 +59,14 @@ class StoryScene(Scene):
         self.story_c_text = StoryCText()
         self.story_d_text = StoryDText()
         
-        self.yes_button = YesButton()
+        self.yes_button = YesButton().attach_mgr(self.scene_manager)
         self.no_button = NoButton()
         self.window_text = WindowText()
 
         handle_window = HandleWindow()
 
         self.no_button.on_mouse_up_as_button = lambda: handle_window.invisible_window()
+        self.yes_button.on_mouse_up = lambda: handle_window.invisible_window()
     
 
         self.window_background = WindowBackground()

@@ -53,7 +53,7 @@ class StoryDButton(GameObject):
         if self.touchable[3]:
             KeyInput().update_flag_true()
             HandleWindow().visible_window()
-            YesButton().target = "storyD"
+            YesButton().target = "stage_d"
         return super().on_mouse_up_as_button()
 
 

@@ -51,7 +51,7 @@ class StoryAButton(GameObject):
     def on_mouse_up_as_button(self) -> None:
         if self.touchable[0]:
             HandleWindow().visible_window()
-            YesButton().target = "storyA"
+            YesButton().target = "stage_a"
             KeyInput().update_flag_true()
         return super().on_mouse_up_as_button()
 
