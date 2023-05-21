@@ -14,7 +14,7 @@ class TextB(TextObject):
     @overrides
     def start(self) -> None:
         self.achieved = AchieveManager().get_stage_states().get("achieved")
-        self.text = "B: 스토리 모드 클리어"
+        self.text = AchieveManager().get_achieve_text(1)
         screen_rect = pygame.display.get_surface().get_rect()
         self.font = pygame.font.Font(
             font_resource("MainFont.ttf"), screen_rect.height // 30

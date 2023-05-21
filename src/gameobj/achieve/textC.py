@@ -14,7 +14,7 @@ class TextC(TextObject):
     @overrides
     def start(self) -> None:
         self.achieved = AchieveManager().get_stage_states().get("achieved")
-        self.text = "C: 싱글 게임에서 10턴 안에 승리"
+        self.text = AchieveManager().get_achieve_text(2)
         screen_rect = pygame.display.get_surface().get_rect()
         self.font = pygame.font.Font(
             font_resource("MainFont.ttf"), screen_rect.height // 30

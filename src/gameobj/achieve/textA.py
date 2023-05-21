@@ -13,7 +13,7 @@ class TextA(TextObject):
     @overrides
     def start(self) -> None:
         self.achieved = AchieveManager().get_stage_states().get("achieved")
-        self.text = "A: 싱글 플레이어 대전에서 승리"
+        self.text = AchieveManager().get_achieve_text(0)
         screen_rect = pygame.display.get_surface().get_rect()
         self.font = pygame.font.Font(
             font_resource("MainFont.ttf"), screen_rect.height // 30

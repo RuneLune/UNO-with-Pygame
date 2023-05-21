@@ -14,7 +14,7 @@ class TextH(TextObject):
     @overrides
     def start(self) -> None:
         self.achieved = AchieveManager().get_stage_states().get("achieved")
-        self.text = "H: 패에 빨간색 카드 모두 모으기"
+        self.text = AchieveManager().get_achieve_text(7)
         screen_rect = pygame.display.get_surface().get_rect()
         self.font = pygame.font.Font(
             font_resource("MainFont.ttf"), screen_rect.height // 30
