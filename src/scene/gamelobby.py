@@ -10,6 +10,7 @@ from gameobj.txtbtnobj import TextButtonObject
 from manager.lobbymgr import LobbyManager
 from gameobj.gamelobby.keyinput import KeyInput
 from gameobj.gamelobby.nametext import NameText
+from manager.gamemgr import GameManager
 
 
 class GameLobby(Scene):
@@ -242,9 +243,7 @@ class GameLobby(Scene):
 
         self.back_button.on_click = lambda: self.scene_manager.load_previous_scene()
         self.name_text.on_mouse_up_as_button = lambda: self.editName()
-        self.start_button.on_mouse_up_as_button = lambda: self.scene_manager.load_scene(
-            "game_scene"
-        )
+        self.start_button.on_mouse_up_as_button = lambda: self.gameStart()
         self.start_text.on_click = lambda: self.scene_manager.load_scene("game_scene")
         # self.bot1_button.on_mouse_up_as_button = lambda: self.bot1Clicked()
         self.bot2_button.on_mouse_up_as_button = lambda: self.bot2Clicked()
@@ -349,4 +348,11 @@ class GameLobby(Scene):
             self.lobby_manager.bot5_toggle()
         else:
             pass
+        return None
+
+    def gameStart(self):
+        GameManager().game_type = "default"
+        GameManager().players = self.lobby_manager.get_game_settings()["player_count"]
+        GameManager().create_game()
+        self.scene_manager.load_scene("game_scene")
         return None
