@@ -25,6 +25,7 @@ from gameobj.story.keyinput import KeyInput
 from gameobj.story.backbtn import BackButton
 from manager.storymgr import StoryManager
 
+from gameobj.story.lock import Locker
 
 
 
@@ -54,6 +55,10 @@ class StoryScene(Scene):
         self.story_c_button = StoryCButton()
         self.story_d_button = StoryDButton()
 
+        self.locker_b = Locker(name="b")
+        self.locker_c = Locker(name="c")
+        self.locker_d = Locker(name="d")
+
         self.story_a_text = StoryAText()
         self.story_b_text = StoryBText()
         self.story_c_text = StoryCText()
@@ -79,6 +84,14 @@ class StoryScene(Scene):
             screen_rect.right / 1.6, screen_rect.centery)
         self.story_d_button.rect.center = (
             screen_rect.right / 1.14, screen_rect.centery)
+        
+        self.locker_b.rect.center = (
+            screen_rect.right / 2.6, screen_rect.centery)
+        self.locker_c.rect.center = (
+            screen_rect.right / 1.6, screen_rect.centery)
+        self.locker_d.rect.center = (
+            screen_rect.right / 1.14, screen_rect.centery)
+        
 
         self.title_text.rect.center = (
             screen_rect.centerx, screen_rect.centery / 2)
@@ -142,5 +155,8 @@ class StoryScene(Scene):
         self.instantiate(self.no_button)
         self.instantiate(self.window_background)
         self.instantiate(self.window_text)
+        self.instantiate(self.locker_b)
+        self.instantiate(self.locker_c)
+        self.instantiate(self.locker_d)
 
         return None
