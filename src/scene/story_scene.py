@@ -45,8 +45,8 @@ class StoryScene(Scene):
             font_resource("MainFont.ttf"), self.screen_rect.height // 12
         )
         
-        self.background = StoryBack(
-            background_surface, "StoryScene_Background", width=self.screen_rect.width, height=self.screen_rect.height, z_index=-999)
+        self.background = GameObject(
+            background_surface, "StoryScene_Background", z_index=-999)
         self.title_text = TextObject(
             "Story", title_font, color.white, "StoryScene_TitleText", z_index=997)
         self.back_button = BackButton(
