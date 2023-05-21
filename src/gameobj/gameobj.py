@@ -338,6 +338,7 @@ class GameObject(pygame.sprite.Sprite):
         """!DO NOT OVERRIDE! method for checking status"""
         if not self._active:
             return False
+        self.last_event = event
         if event.type == pygame.KEYDOWN:
             return self.on_key_down(event.key)
         if not self._visible:

@@ -39,10 +39,10 @@ class KeyInput(GameObject, metaclass=SingletonMeta):
                     LobbyManager().user_name = LobbyManager().user_name + " "
                     pass
                 pass
-            elif len(pygame.key.name(key)) == 1:
+            elif self.last_event.unicode is not None:
                 if len(LobbyManager().user_name) < 20:
                     LobbyManager().user_name = (
-                        LobbyManager().user_name + pygame.key.name(key).upper()
+                        LobbyManager().user_name + self.last_event.unicode
                     )
                     pass
                 pass
