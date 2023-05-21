@@ -17,7 +17,7 @@ class SocketServer(metaclass=SingletonMeta):
     # def __init__(self):
     #     return None
 
-    def initialize(self) -> None:
+    def initialize(self) -> bool:
         self.run_thread: bool = False
         if hasattr(self, "_thread") and self._thread:
             self._thread.join()
@@ -28,7 +28,13 @@ class SocketServer(metaclass=SingletonMeta):
         self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self._host = HOST if HOST else socket.gethostbyname(socket.gethostname())
         self._port = PORT if PORT else 23009
-        self._socket.bind((self._host, self._port))
+        try:
+            self._socket.bind((self._host, self._port))
+            print("[Server] Server started")
+            pass
+        except BaseException:
+            print("[Server] Cannot start server")
+            return False
         self._client_list: List[socket.socket] = []
         self._thread_list: List[threading.Thread] = []
         self._player_name_dict: Dict[socket.socket, str] = {}
@@ -36,6 +42,14 @@ class SocketServer(metaclass=SingletonMeta):
         self._thread: threading.Thread = threading.Thread(target=self._start)
         self.run_thread: bool = True
         self._thread.start()
+        return True
+
+    def close(self) -> None:
+        self.run_thread = False
+        if hasattr(self, "_thread") and self._thread:
+            self._thread.join()
+            del self._thread
+            pass
         return None
 
     def _start(self) -> None:
