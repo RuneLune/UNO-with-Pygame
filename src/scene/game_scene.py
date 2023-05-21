@@ -31,6 +31,7 @@ from gameobj.txtobj import TextObject
 
 from metaclass.singleton import SingletonMeta
 from manager.gamemgr import GameManager
+from manager.acvmgr import AchieveManager
 
 
 # - 턴 스킵 표시
@@ -39,6 +40,7 @@ from manager.gamemgr import GameManager
 # - 셔플 카드 오류 수정 o
 # - 업적 달성 체크
 # - 업적 달성 메세지 표현 o
+# - 턴 종료시 자동 드로우 체크
 class GameScene(Scene):
     @overrides
     def start(self) -> None:
@@ -52,11 +54,19 @@ class GameScene(Scene):
 
         self.screen_size = self.settings.get_screen_resolution()
         self.user = self.game.get_user()
-        self.user.set_cards([14, 15])
-        # self.user._yelled_uno = True
+        self.user.set_cards([14, 14, 14])
         self.bots = self.game.get_bots()
 
         color_dict = [colors.red, colors.green, colors.blue, colors.yellow]
+
+        # 업적 체크용 flag
+        self.turn_count = 0
+        self.no_tech = True
+        self.speed_game = True
+        self.same_card_count = 0
+        self.same_card_code = 0
+        self.same_card3 = False
+        self.all_red = False
 
         # space 정의
         self.user_space = Space(
@@ -170,6 +180,8 @@ class GameScene(Scene):
         self.bot_cards = [[] for i in range(len(self.bots))]
         for i, bot in enumerate(self.bots):
             for j in range(len(bot.get_hand_cards())):
+                if j >= 7:
+                    break
                 temp = BotCard(
                     surface=self.card_back_image,
                     name=f"bot{i} card",
@@ -233,7 +245,7 @@ class GameScene(Scene):
             text="(b˙◁˙ )b",
             font=pygame.font.Font(font_resource("MainFont.ttf"), 100),
             width=self.screen_size[0],
-            height=self.screen_size[1] * 2.5 / 5,
+            height=self.screen_size[1] * 2 / 5,
             top=self.winner_text.height,
             color=colors.light_salmon,
             z_index=1,
@@ -273,7 +285,6 @@ class GameScene(Scene):
             top=-self.screen_size[1] * 1 / 8,
             z_index=1,
         )
-        self.achive_rect.move_fwd = True
 
         # 오브젝트 등록
         self.instantiate(BackgroundObject(colors.black))
@@ -319,9 +330,27 @@ class GameScene(Scene):
         for i in range(4):
             self.color_set[i].observer_update(self.game)
 
+        if self.user_space.time_left <= 5:
+            self.speed_game = False
+
         # 승리조건 확인
         winner = self.game.check_winner()
         if winner is not None:
+            if winner == self.user:
+                self.achive_check(0)
+                if self.game._name == "stage_D":
+                    self.achive_check(1)
+                if self.no_tech is True:
+                    self.achive_check(3)
+                if self.speed_game is True:
+                    self.achive_check(5)
+                for bot in self.bots:
+                    if bot.is_uno() is True:
+                        self.achive_check(4)
+                        break
+            elif winner == self.user and self.turn_count < 10:
+                self.achive_check(2)
+
             self.winner_text.render(f"{winner.get_name()} is winner!")
             self.winner_text._visible = True
             self.back_to_main._enabled = True
@@ -332,12 +361,13 @@ class GameScene(Scene):
             else:
                 self.firework1._visible = True
                 self.firework2._visible = False
-            time.sleep(0.2)
+            # time.sleep(0.2)
             return None
 
         # 현재 턴 플레이어 표시
         if self.user.is_turn() is True:
             self.user_space.turn = True
+            self.turn_count += 1
         else:
             self.user_space.turn = False
         for i, bot in enumerate(self.bots):
@@ -373,12 +403,14 @@ class GameScene(Scene):
                 self.user_cards_obj.append(temp)
             self.turn_update(self.user_cards_obj)
             self.deck_card.draw_flag = False
+
         elif self.last_card.shuffle is True:
             self.last_card.shuffle = False
             self.user_cards_list = self.user.get_hand_cards()
             for obj in self.user_cards_obj:
+                print(obj)
+                self.user_cards_obj.remove(obj)
                 self.destroy(obj)
-            self.user_cards_obj = []
 
             # 뽑은 카드 생성 후 유저 공간으로 이동
             for i, code in enumerate(self.user_cards_list):
@@ -447,6 +479,20 @@ class GameScene(Scene):
         # user card
         for i, card in enumerate(self.user_cards_obj):
             if card.discard_end is True:
+                # 업적 체크 G: 연속 3번 같은 숫자 내기
+                if self.same_card3 is False:
+                    if self.same_card_code == card.code:
+                        self.same_card_count += 1
+                        if self.same_card_code >= 3:
+                            self.same_card3 = True
+                            self.achive_check(6)
+                    else:
+                        self.same_card_code = card.code
+                        self.same_card_count = 0
+
+                if self.no_tech is True and card.code % 100 >= 10:
+                    self.no_tech = False
+
                 self.user_cards_obj.remove(card)
                 self.destroy(card)
                 self.position_update(self.user_cards_obj)
@@ -465,6 +511,19 @@ class GameScene(Scene):
                 if card.draw_end is True:
                     card.draw_end = False
                     break
+
+        # 업적체크 H: 패에 한가지 색상 카드 모두 모으기
+        if self.all_red is False:
+            count = 0
+            for i, card in enumerate(self.user_cards_obj):
+                if i > 0:
+                    if self.user_cards_obj[i - 1].code // 100 != card.code // 100:
+                        count = 0
+                    else:
+                        count += 1
+                if count == 9:
+                    self.all_red = True
+                    self.achive_check(7)
 
         self.key_input.attach_card(
             self.user_cards_obj, self.deck_card, self.uno_btn, self.color_set
@@ -495,3 +554,8 @@ class GameScene(Scene):
             elif before < 7 and after < 7:
                 diff.append(after - before)
         return diff
+
+    def achive_check(self, idx):
+        AchieveManager().update_achieve_state(idx)
+        self.achive_rect.achive_text_update(idx)
+        self.achive_rect.move_fwd = True

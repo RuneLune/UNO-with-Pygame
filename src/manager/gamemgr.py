@@ -58,4 +58,13 @@ class GameManager(metaclass=SingletonMeta):
         self.__players_count = players
         return None
 
+    @property
+    def username(self) -> str:
+        return self.__username
+
+    @username.setter
+    def username(self, username: str) -> None:
+        self.__username = username
+        return None
+
     pass

@@ -11,6 +11,7 @@ import event.events as events
 from player.player import Player
 from util.timer import Timer
 from abstrclass.subject import Subject
+from manager.storymgr import StoryManager
 
 if TYPE_CHECKING:
     from abstrclass.observer import Observer
@@ -305,6 +306,7 @@ class Game(Subject):
                     },
                 )
             )
+            StoryManager().update_stage_state(self._name, True)
             pass
         else:
             pygame.event.post(
@@ -317,6 +319,7 @@ class Game(Subject):
                     },
                 )
             )
+            StoryManager().update_stage_state(self._name, False)
             pass
         self._game_status = False
         points: int = 0

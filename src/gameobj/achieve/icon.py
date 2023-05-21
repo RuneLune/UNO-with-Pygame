@@ -13,14 +13,45 @@ from util.resource_manager import image_resource
 from manager.acvmgr import AchieveManager
 
 
-class IconG(GameObject):
+class Icon(GameObject):
     @overrides
     def start(self) -> None:
         self.achieved = AchieveManager().get_stage_states().get("achieved")
-        image = pygame.image.load(image_resource(
+        if int(self.name) == 0:
+            image = pygame.image.load(image_resource(
+                join("achieve", "a1.png")))
+            self.idx = 0
+        elif int(self.name) == 1:
+            image = pygame.image.load(image_resource(
+                join("achieve", "a2.png")))
+            self.idx = 1
+        elif int(self.name) == 2:
+            image = pygame.image.load(image_resource(
+                join("achieve", "a3.png")))
+            self.idx = 2
+        elif int(self.name) == 3:
+            image = pygame.image.load(image_resource(
+                join("achieve", "a4.png")))
+            self.idx = 3
+        elif int(self.name) == 4:
+            image = pygame.image.load(image_resource(
+                join("achieve", "a5.png")))
+            self.idx = 4
+        elif int(self.name) == 5:
+            image = pygame.image.load(image_resource(
+                join("achieve", "a6.png")))
+            self.idx = 5
+        elif int(self.name) == 6:
+            image = pygame.image.load(image_resource(
                 join("achieve", "a7.png")))
+            self.idx = 6
+        elif int(self.name) == 7:
+            image = pygame.image.load(image_resource(
+                join("achieve", "a8.png")))
+            self.idx = 7
+        
         image2 = self.create_neon(image)
-        if self.achieved[6] == True:
+        if self.achieved[self.idx] == True:
             self.image = image
         else:
             self.image = image2

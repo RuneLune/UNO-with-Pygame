@@ -21,12 +21,9 @@ class StoryBButton(GameObject):
     def start(self) -> None:
         self.story_b_text = StoryBText()
         self.touchable = StoryManager().get_stage_states().get("touchable")
-        if self.touchable[1]:
-            self.image = pygame.image.load(image_resource(
-                join("stage", "story_2.png")))
-        else:
-            self.image = pygame.image.load(image_resource(
-                join("stage", "story_0.png")))
+        self.image_t = pygame.image.load(image_resource(
+            join("stage", "story_2.png")))
+        self.image = self.create_neon(self.image_t)
         self.rect = self.image.get_rect()
         self.img_copy = self.image
         self.z_index = 997
@@ -37,7 +34,7 @@ class StoryBButton(GameObject):
     @overrides
     def on_mouse_enter(self) -> None:
         if self.touchable[1]:
-            self.image = self.create_neon(self.image)
+            self.image = self.image_t
             self.story_b_text.visible()
         return None
 

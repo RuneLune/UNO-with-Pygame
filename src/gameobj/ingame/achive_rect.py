@@ -6,6 +6,8 @@ from player.player import Player
 from game.game import Game
 import util.colors as colors
 from manager.cfgmgr import Config
+from util.resource_manager import font_resource
+from manager.acvmgr import AchieveManager
 
 import pygame
 from overrides import overrides
@@ -55,10 +57,26 @@ class AchiveRect(GameObject):
             rect=self.rect_copy,
             border_radius=self.height // 2,
         )
+        self.font = pygame.font.Font(
+            font_resource("MainFont.ttf"), round(self.height / 2)
+        )
+        self.achive_text = self.font.render(" ", True, colors.white)
+
+    def achive_text_update(self, idx):
+        self.start()
+        self.achive_text = self.font.render(
+            f"{AchieveManager().get_achieve_text(idx)} 달성!", True, colors.white
+        )
+        self.icon = pygame.image.load(f"res/img/achieve/a{idx+1}.png")
+        self.icon = pygame.transform.scale(self.icon, size=(self.height, self.height))
+        self.image.blit(self.icon, (self.width / self.height * 2, self.height / 6))
 
     @overrides
     def update(self) -> None:
         if self.move_fwd is True:
+            self.image.blit(
+                self.achive_text, (self.width / self.height * 7, self.height / 6)
+            )
             if self.top < 10:
                 self.top += 1
             else:
@@ -76,3 +94,4 @@ class AchiveRect(GameObject):
                 self.top = -self.height
                 self.move_bwd = False
                 self.time_count = self.fps * 2
+                self.start()

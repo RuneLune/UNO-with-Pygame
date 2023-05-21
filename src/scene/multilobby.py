@@ -7,11 +7,16 @@ from gameobj.multilobby.tablearea import TableArea
 from gameobj.multilobby.handarea import HandArea
 from gameobj.multilobby.playerarea import PlayerArea
 from gameobj.multilobby.backbtn import BackButton
+from client.client import SocketClient
+from manager.gamemgr import GameManager
 
 
 class MultiLobby(Scene):
     @overrides
     def start(self) -> None:
+        self.socket_client: SocketClient = SocketClient()
+        self.game_manager: GameManager = GameManager()
+
         table_area = TableArea()
         hand_area = HandArea()
 
@@ -28,5 +33,8 @@ class MultiLobby(Scene):
             continue
 
         self.instantiate(BackButton("<Back").attach_mgr(self.scene_manager))
+
+        self.socket_client.initialize()
+        self.socket_client.send_data(self.game_manager.username, "JOIN")
 
         return None

@@ -24,7 +24,7 @@ class StageA(Game):
         self._flip_top()
         self.start_timer()
 
-        self._user.set_cards([cards.wild_normal] * 3)
+        # self._user.set_cards([cards.wild_normal] * 3)
         # self._computer.set_cards([cards.blue_draw2, cards.red_draw2, cards.yellow_draw2, cards.green_draw2, cards.blue_0, cards.yellow_0])
         self._players[self._current_turn].turn_start()
         self._name = "stage_a"

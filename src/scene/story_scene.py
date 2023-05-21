@@ -25,6 +25,9 @@ from gameobj.story.keyinput import KeyInput
 from gameobj.story.backbtn import BackButton
 from manager.storymgr import StoryManager
 
+from gameobj.story.background import StoryBack
+
+from gameobj.story.lock import Locker
 
 
 
@@ -32,14 +35,14 @@ class StoryScene(Scene):
     @overrides
     def start(self) -> None:
         self.touchable = StoryManager().get_stage_states().get("touchable")
-        screen_rect = pygame.display.get_surface().get_rect()
-        background_surface = pygame.Surface(screen_rect.size)
+        self.screen_rect = pygame.display.get_surface().get_rect()
+        background_surface = pygame.Surface(self.screen_rect.size)
         background_surface.fill(color.black)
         title_font = pygame.font.Font(
-            font_resource("MainFont.ttf"), screen_rect.height // 5
+            font_resource("MainFont.ttf"), self.screen_rect.height // 5
         )
         menu_font = pygame.font.Font(
-            font_resource("MainFont.ttf"), screen_rect.height // 12
+            font_resource("MainFont.ttf"), self.screen_rect.height // 12
         )
         
         self.background = GameObject(
@@ -53,6 +56,10 @@ class StoryScene(Scene):
         self.story_b_button = StoryBButton()
         self.story_c_button = StoryCButton()
         self.story_d_button = StoryDButton()
+
+        self.locker_b = Locker(name="b")
+        self.locker_c = Locker(name="c")
+        self.locker_d = Locker(name="d")
 
         self.story_a_text = StoryAText()
         self.story_b_text = StoryBText()
@@ -72,34 +79,42 @@ class StoryScene(Scene):
         self.window_background = WindowBackground()
         
         self.story_a_button.rect.center = (
-            screen_rect.right / 8.8, screen_rect.centery)
+            self.screen_rect.right / 8.8, self.screen_rect.centery)
         self.story_b_button.rect.center = (
-            screen_rect.right / 2.6, screen_rect.centery)
+            self.screen_rect.right / 2.6, self.screen_rect.centery)
         self.story_c_button.rect.center = (
-            screen_rect.right / 1.6, screen_rect.centery)
+            self.screen_rect.right / 1.6, self.screen_rect.centery)
         self.story_d_button.rect.center = (
-            screen_rect.right / 1.14, screen_rect.centery)
+            self.screen_rect.right / 1.14, self.screen_rect.centery)
+        
+        self.locker_b.rect.center = (
+            self.screen_rect.right / 2.6, self.screen_rect.centery)
+        self.locker_c.rect.center = (
+            self.screen_rect.right / 1.6, self.screen_rect.centery)
+        self.locker_d.rect.center = (
+            self.screen_rect.right / 1.14, self.screen_rect.centery)
+        
 
         self.title_text.rect.center = (
-            screen_rect.centerx, screen_rect.centery / 2)
+            self.screen_rect.centerx, self.screen_rect.centery / 2)
         self.back_button.rect.center = (
-            screen_rect.centerx / 3, screen_rect.centery / 5)
+            self.screen_rect.centerx / 3, self.screen_rect.centery / 5)
 
         self.story_a_text.rect.center = (
-            screen_rect.centerx, screen_rect.centery * 1.35)
+            self.screen_rect.centerx, self.screen_rect.centery * 1.35)
         self.story_b_text.rect.center = (
-            screen_rect.centerx, screen_rect.centery * 1.35)
+            self.screen_rect.centerx, self.screen_rect.centery * 1.35)
         self.story_c_text.rect.center = (
-            screen_rect.centerx, screen_rect.centery * 1.35)
+            self.screen_rect.centerx, self.screen_rect.centery * 1.35)
         self.story_d_text.rect.center = (
-            screen_rect.centerx, screen_rect.centery * 1.35)
+            self.screen_rect.centerx, self.screen_rect.centery * 1.35)
         
         self.no_button.rect.center = (
-            screen_rect.centerx * 1.5, screen_rect.centery * 1.7)
+            self.screen_rect.centerx * 1.5, self.screen_rect.centery * 1.7)
         self.yes_button.rect.center = (
-            screen_rect.centerx * 0.5, screen_rect.centery * 1.7)
+            self.screen_rect.centerx * 0.5, self.screen_rect.centery * 1.7)
         self.window_text.rect.center = (
-            screen_rect.centerx, screen_rect.centery * 1.35)
+            self.screen_rect.centerx, self.screen_rect.centery * 1.35)
         
     
 
@@ -142,5 +157,8 @@ class StoryScene(Scene):
         self.instantiate(self.no_button)
         self.instantiate(self.window_background)
         self.instantiate(self.window_text)
+        self.instantiate(self.locker_b)
+        self.instantiate(self.locker_c)
+        self.instantiate(self.locker_d)
 
         return None
