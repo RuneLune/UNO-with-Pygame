@@ -61,14 +61,14 @@ class AchieveScene(Scene):
         self.textG = Text(name="6")
         self.textH = Text(name="7")
 
-        self.dateA = Date("date_a")
-        self.dateB = Date("date_b")
-        self.dateC = Date("date_c")
-        self.dateD = Date("date_d")
-        self.dateE = Date("date_e")
-        self.dateF = Date("date_f")
-        self.dateG = Date("date_g")
-        self.dateH = Date("date_h")
+        self.dateA = Date(name="date_a")
+        self.dateB = Date(name="date_b")
+        self.dateC = Date(name="date_c")
+        self.dateD = Date(name="date_d")
+        self.dateE = Date(name="date_e")
+        self.dateF = Date(name="date_f")
+        self.dateG = Date(name="date_g")
+        self.dateH = Date(name="date_h")
 
 
 

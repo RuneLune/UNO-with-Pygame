@@ -17,20 +17,29 @@ class Date(TextObject):
         self.date = AchieveManager().get_stage_states().get("date")
         if self.name == "date_a":
             self.text = self.date[0]
+            self.idx = 0
         elif self.name == "date_b":
             self.text = self.date[1]
+            self.idx = 1
         elif self.name == "date_c":
             self.text = self.date[2]
+            self.idx = 2
         elif self.name == "date_d":
             self.text = self.date[3]
+            self.idx = 3
         elif self.name == "date_e":
             self.text = self.date[4]
+            self.idx = 4
         elif self.name == "date_f":
             self.text = self.date[5]
+            self.idx = 5
         elif self.name == "date_g":
             self.text = self.date[6]
+            self.idx = 6
         elif self.name == "date_h":
             self.text = self.date[7]
+            self.idx = 7
+        self.set_text(self.text)
         screen_rect = pygame.display.get_surface().get_rect()
         self.font = pygame.font.Font(
             font_resource("MainFont.ttf"), screen_rect.height // 30
@@ -39,7 +48,7 @@ class Date(TextObject):
         self.image = self.font.render(self.text, True, self.color)
         self.rect = self.image.get_rect()
         self._visible = False
-        if self.achieved[0] == True:
+        if self.achieved[self.idx] == True:
             self.visible()
         else: 
             self.invisible()
