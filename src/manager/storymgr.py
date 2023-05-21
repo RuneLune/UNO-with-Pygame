@@ -9,9 +9,9 @@ from util.appdata_manager import stage_access_path
 
 initial_settings = {"touchable": [True, False, False, False]}
 
-class StoryManager(metaclass = SingletonMeta):
+
+class StoryManager(metaclass=SingletonMeta):
     def __init__(self) -> None:
-        
         global initial_settings
         self.__stage_states = initial_settings
 
@@ -22,7 +22,6 @@ class StoryManager(metaclass = SingletonMeta):
         else:
             self.load_stage_states()
 
-        
     # Settings load method
     def load_stage_states(self):
         # load saved settings from file
@@ -55,7 +54,7 @@ class StoryManager(metaclass = SingletonMeta):
 
     def get_stage_states(self):
         return copy.deepcopy(self.__stage_states)
-    
+
     def handle(self, event: pygame.event.Event):
         if event.type == events.GAME_END:
             if (
@@ -78,23 +77,21 @@ class StoryManager(metaclass = SingletonMeta):
                         pass
                     pass
                 pass
-        
-        def update_stage_state(self, stage_name: str, status: bool):
-            if status:
-                if stage_name == "stage_a":
-                    self.__stage_states["touchable"][1] = 1
-                    self.save_stage_states()
-                    pass
-                elif stage_name == "stage_b":
-                    self.__stage_states["touchable"][2] = 1
-                    self.save_stage_states()
-                    pass
-                elif stage_name == "stage_c":
-                    self.__stage_states["touchable"][3] = 1
-                    self.save_stage_states()
-                    pass
-            pass
 
+    def update_stage_state(self, stage_name: str, status: bool):
+        if status:
+            if stage_name == "stage_a":
+                self.__stage_states["touchable"][1] = 1
+                self.save_stage_states()
+                pass
+            elif stage_name == "stage_b":
+                self.__stage_states["touchable"][2] = 1
+                self.save_stage_states()
+                pass
+            elif stage_name == "stage_c":
+                self.__stage_states["touchable"][3] = 1
+                self.save_stage_states()
+                pass
+        pass
 
         return None
-    
