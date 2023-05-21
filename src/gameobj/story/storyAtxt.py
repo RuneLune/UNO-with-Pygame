@@ -17,7 +17,7 @@ class StoryAText(TextObject, metaclass=SingletonMeta):
         self.font = pygame.font.Font(
             font_resource("MainFont.ttf"), screen_rect.height // 30
         )
-        self.color = color.white
+        self.color = color.black
         self.image = self.font.render(self.text, True, self.color)
         self.rect = self.image.get_rect()
         self.z_index = 997
