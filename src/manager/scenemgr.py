@@ -38,14 +38,14 @@ class SceneManager(metaclass=SingletonMeta):
 
     def load_scene(self, scene_name: str) -> None:
         self.scene_name_list.append(scene_name)
-        self._load_scene()
-        if (
-            self.previous_scene_name == "gamelobby"
-            and self.current_scene_name == "game_scene"
-        ):
-            self.current_scene.start()
-            pass
-        return None
+        return self._load_scene()
+        # if (
+        #     self.previous_scene_name == "gamelobby"
+        #     and self.current_scene_name == "game_scene"
+        # ):
+        #     self.current_scene.start()
+        #     pass
+        # return None
 
     def _load_scene(self) -> None:
         self.current_scene.exit()
