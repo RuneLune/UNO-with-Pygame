@@ -64,6 +64,7 @@ class SocketClient(metaclass=SingletonMeta):
                     print(f"[Client] {self._host}:{self._port} > {data}")
                     pass
 
+                data.player = data.player.strip()
                 data.action = data.action.upper()
 
                 if data.action == "JOIN":
