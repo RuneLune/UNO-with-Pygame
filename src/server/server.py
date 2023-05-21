@@ -1,7 +1,7 @@
 import socket
 from threading import Thread, Event
 import pickle
-from typing import List, Dict, Optional, Type, Tuple, Any
+from typing import List, Dict, Optional, Type, Tuple, Any, Final
 from typing_extensions import TypeAlias
 
 from metaclass.singleton import SingletonMeta
@@ -13,6 +13,7 @@ HOST = None
 PORT = None
 
 stop_thread: Event = Event()
+max_players: Final[int] = 6
 
 
 class SocketServer(metaclass=SingletonMeta):
@@ -65,6 +66,10 @@ class SocketServer(metaclass=SingletonMeta):
                 client_socket,
                 client_address,
             ) = self._socket.accept()  # type: Tuple[socket.socket, _RetAddress]
+            if len(self._client_list) >= max_players:
+                client_socket.send(pickle.dumps(ProcessData("SERVER", "FULL", None)))
+                client_socket.close()
+                continue
             self._client_list.append(client_socket)
             self._thread_list.append(
                 Thread(target=self._handle_client, args=(client_socket, client_address))
@@ -96,7 +101,7 @@ class SocketServer(metaclass=SingletonMeta):
                 if not data:
                     break
                 else:
-                    print(f"{client_address[0]}:{client_address[1]}:{data}")
+                    print(f"[Server] {client_address[0]}:{client_address[1]} > {data}")
                     pass
 
                 data.action = data.action.upper()
@@ -105,6 +110,13 @@ class SocketServer(metaclass=SingletonMeta):
                     self._player_name_dict.update({client_socket: data.target})
                     self._broadcast(data, client_socket, True)
                     pass
+                elif data.action == "JOIN":
+                    self._player_name_dict.update({client_socket: data.player})
+                    self._broadcast(data, client_socket, False)
+                    if self._owner is None:
+                        self._owner = client_socket
+                        self._broadcast(ProcessData(data.player, "OWNER", client_address), client_socket, True)
+                        pass
                 # Room Owner
                 elif client_socket is self._owner:
                     if data.action == "KICK":
