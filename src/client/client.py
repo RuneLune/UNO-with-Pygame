@@ -128,4 +128,9 @@ class SocketClient(metaclass=SingletonMeta):
         self._data_queue = []
         return data
 
+    def poll_data(self) -> ProcessData:
+        if len(self._data_queue) > 0:
+            return copy.deepcopy(self._data_queue.pop(0))
+        return None
+
     pass

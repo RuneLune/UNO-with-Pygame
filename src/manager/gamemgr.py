@@ -8,6 +8,7 @@ from game.stage_a import StageA
 from game.stage_b import StageB
 from game.stage_c import StageC
 from game.stage_d import StageD
+from manager.lobbymgr import LobbyManager
 
 if TYPE_CHECKING:
     from typing import Type, Dict, Callable
@@ -23,8 +24,8 @@ class GameManager(metaclass=SingletonMeta):
             "stage_d": StageD,
         }
         self.__current_game_type = "default"
-        self.__players_count = 2
-        self.__username = "User"
+        self.__players_count = LobbyManager().get_game_settings().get("player_count")
+        self.__username = LobbyManager().get_game_settings().get("user_name")
         return None
 
     def create_game(self) -> None:
