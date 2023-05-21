@@ -18,6 +18,8 @@ from gameobj.achieve.date import Date
 
 from gameobj.achieve.backbtn import BackButton
 
+from gameobj.achieve.lock import Locker
+
 
 
 
@@ -70,6 +72,15 @@ class AchieveScene(Scene):
         self.dateG = Date(name="date_g")
         self.dateH = Date(name="date_h")
 
+        self.lockerA = Locker(name="1")
+        self.lockerB = Locker(name="2")
+        self.lockerC = Locker(name="3")
+        self.lockerD = Locker(name="4")
+        self.lockerE = Locker(name="5")
+        self.lockerF = Locker(name="6")
+        self.lockerG = Locker(name="7")
+        self.lockerH = Locker(name="8")
+
 
 
         self.title_text.rect.center = (
@@ -92,6 +103,23 @@ class AchieveScene(Scene):
         self.iconG.rect.center = (
             screen_rect.centerx / 5, screen_rect.bottom / 1.2)
         self.iconH.rect.center = (
+            screen_rect.right / 1.8, screen_rect.bottom / 1.2)
+        
+        self.lockerA.rect.center = (
+            screen_rect.centerx / 5, screen_rect.centery / 2)
+        self.lockerB.rect.center = (
+            screen_rect.right / 1.8, screen_rect.centery / 2)
+        self.lockerC.rect.center = (
+            screen_rect.centerx / 5, screen_rect.centery / 1.2)
+        self.lockerD.rect.center = (
+            screen_rect.right / 1.8, screen_rect.centery / 1.2)
+        self.lockerE.rect.center = (
+            screen_rect.centerx / 5, screen_rect.bottom / 1.6)
+        self.lockerF.rect.center = (
+            screen_rect.right / 1.8, screen_rect.bottom / 1.6)
+        self.lockerG.rect.center = (
+            screen_rect.centerx / 5, screen_rect.bottom / 1.2)
+        self.lockerH.rect.center = (
             screen_rect.right / 1.8, screen_rect.bottom / 1.2)
         
         self.textA.rect.center = (
@@ -161,5 +189,14 @@ class AchieveScene(Scene):
         self.instantiate(self.dateF)
         self.instantiate(self.dateG)
         self.instantiate(self.dateH)
+        self.instantiate(self.lockerA)
+        self.instantiate(self.lockerB)
+        self.instantiate(self.lockerC)
+        self.instantiate(self.lockerD)
+        self.instantiate(self.lockerE)
+        self.instantiate(self.lockerF)
+        self.instantiate(self.lockerG)
+        self.instantiate(self.lockerH)
+
 
         return None

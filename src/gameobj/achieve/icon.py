@@ -16,63 +16,57 @@ from manager.acvmgr import AchieveManager
 class Icon(GameObject):
     @overrides
     def start(self) -> None:
+        screen_rect = pygame.display.get_surface().get_rect()
         self.achieved = AchieveManager().get_stage_states().get("achieved")
         if int(self.name) == 0:
             image = pygame.image.load(image_resource(
                 join("achieve", "a1.png")))
             self.idx = 0
+            image = pygame.transform.scale(image, size=(screen_rect.height // 8, screen_rect.height // 8))
         elif int(self.name) == 1:
             image = pygame.image.load(image_resource(
                 join("achieve", "a2.png")))
             self.idx = 1
+            image = pygame.transform.scale(image, size=(screen_rect.height // 8, screen_rect.height // 8))
         elif int(self.name) == 2:
             image = pygame.image.load(image_resource(
                 join("achieve", "a3.png")))
             self.idx = 2
+            image = pygame.transform.scale(image, size=(screen_rect.height // 8, screen_rect.height // 8))
         elif int(self.name) == 3:
             image = pygame.image.load(image_resource(
                 join("achieve", "a4.png")))
             self.idx = 3
+            image = pygame.transform.scale(image, size=(screen_rect.height // 8, screen_rect.height // 8))
         elif int(self.name) == 4:
             image = pygame.image.load(image_resource(
                 join("achieve", "a5.png")))
             self.idx = 4
+            image = pygame.transform.scale(image, size=(screen_rect.height // 8, screen_rect.height // 8))
         elif int(self.name) == 5:
             image = pygame.image.load(image_resource(
                 join("achieve", "a6.png")))
             self.idx = 5
+            image = pygame.transform.scale(image, size=(screen_rect.height // 8, screen_rect.height // 8))
         elif int(self.name) == 6:
             image = pygame.image.load(image_resource(
                 join("achieve", "a7.png")))
             self.idx = 6
+            image = pygame.transform.scale(image, size=(screen_rect.height // 8, screen_rect.height // 8))
         elif int(self.name) == 7:
             image = pygame.image.load(image_resource(
                 join("achieve", "a8.png")))
             self.idx = 7
+            image = pygame.transform.scale(image, size=(screen_rect.height // 8, screen_rect.height // 8))
         
-        image2 = self.create_neon(image)
-        if self.achieved[self.idx] == True:
-            self.image = image
-        else:
-            self.image = image2
+        self.image = image
+        
         self.rect = self.image.get_rect()
         self.z_index = 997
         
         return None
     
 
-    def create_neon(self, surf):
-        surf_alpha = surf.convert_alpha()
-        rgb = pygame.surfarray.array3d(surf_alpha)
-        alpha = pygame.surfarray.array_alpha(surf_alpha).reshape((*rgb.shape[:2], 1))
-        image = numpy.concatenate((rgb, alpha), 2)
-        cv2.GaussianBlur(image, ksize=(9, 9), sigmaX=10, sigmaY=10, dst=image)
-        cv2.blur(image, ksize=(5, 5), dst=image)
-        bloom_surf = pygame.image.frombuffer(
-            image.flatten(), image.shape[1::-1], "RGBA"
-        )
-        bloom_surf = pygame.transform.rotate(bloom_surf, 270)
-        bloom_surf = pygame.transform.flip(bloom_surf, True, False)
-        return bloom_surf
+
 
     pass
