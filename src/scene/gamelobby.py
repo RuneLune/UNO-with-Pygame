@@ -244,7 +244,7 @@ class GameLobby(Scene):
         self.back_button.on_click = lambda: self.scene_manager.load_previous_scene()
         self.name_text.on_mouse_up_as_button = lambda: self.editName()
         self.start_button.on_mouse_up_as_button = lambda: self.gameStart()
-        self.start_text.on_click = lambda: self.scene_manager.load_scene("game_scene")
+        # self.start_text.on_click = lambda: self.scene_manager.load_scene("game_scene")
         # self.bot1_button.on_mouse_up_as_button = lambda: self.bot1Clicked()
         self.bot2_button.on_mouse_up_as_button = lambda: self.bot2Clicked()
         self.bot3_button.on_mouse_up_as_button = lambda: self.bot3Clicked()
