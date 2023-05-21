@@ -54,8 +54,7 @@ class GameScene(Scene):
 
         self.screen_size = self.settings.get_screen_resolution()
         self.user = self.game.get_user()
-        self.user.set_cards([100, 101, 102, 103, 104, 105, 106, 107, 108, 109])
-        # self.user._yelled_uno = True
+        self.user.set_cards([14, 14, 14])
         self.bots = self.game.get_bots()
 
         color_dict = [colors.red, colors.green, colors.blue, colors.yellow]
@@ -181,6 +180,8 @@ class GameScene(Scene):
         self.bot_cards = [[] for i in range(len(self.bots))]
         for i, bot in enumerate(self.bots):
             for j in range(len(bot.get_hand_cards())):
+                if j >= 7:
+                    break
                 temp = BotCard(
                     surface=self.card_back_image,
                     name=f"bot{i} card",
@@ -244,7 +245,7 @@ class GameScene(Scene):
             text="(b˙◁˙ )b",
             font=pygame.font.Font(font_resource("MainFont.ttf"), 100),
             width=self.screen_size[0],
-            height=self.screen_size[1] * 2.5 / 5,
+            height=self.screen_size[1] * 2 / 5,
             top=self.winner_text.height,
             color=colors.light_salmon,
             z_index=1,
@@ -360,7 +361,7 @@ class GameScene(Scene):
             else:
                 self.firework1._visible = True
                 self.firework2._visible = False
-            time.sleep(0.2)
+            # time.sleep(0.2)
             return None
 
         # 현재 턴 플레이어 표시
@@ -479,16 +480,19 @@ class GameScene(Scene):
         for i, card in enumerate(self.user_cards_obj):
             if card.discard_end is True:
                 # 업적 체크 G: 연속 3번 같은 숫자 내기
-                if self.same_card3 is False and self.same_card_code == card.code:
-                    self.same_card_count += 1
-                    if self.same_card_code >= 2:
-                        self.same_card3 = True
-                        self.achive_check(6)
-                else:
-                    self.same_card_code = card.code
+                if self.same_card3 is False:
+                    if self.same_card_code == card.code:
+                        self.same_card_count += 1
+                        if self.same_card_code >= 3:
+                            self.same_card3 = True
+                            self.achive_check(6)
+                    else:
+                        self.same_card_code = card.code
+                        self.same_card_count = 0
 
                 if self.no_tech is True and card.code % 100 >= 10:
                     self.no_tech = False
+
                 self.user_cards_obj.remove(card)
                 self.destroy(card)
                 self.position_update(self.user_cards_obj)
@@ -508,7 +512,7 @@ class GameScene(Scene):
                     card.draw_end = False
                     break
 
-        # 업적체크 H: 패에 빨간색 카드 모두 모으기
+        # 업적체크 H: 패에 한가지 색상 카드 모두 모으기
         if self.all_red is False:
             count = 0
             for i, card in enumerate(self.user_cards_obj):

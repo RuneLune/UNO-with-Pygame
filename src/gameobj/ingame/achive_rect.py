@@ -58,11 +58,12 @@ class AchiveRect(GameObject):
             border_radius=self.height // 2,
         )
         self.font = pygame.font.Font(
-            font_resource("MainFont.ttf"), round(self.height * 2 / 3)
+            font_resource("MainFont.ttf"), round(self.height / 2)
         )
         self.achive_text = self.font.render(" ", True, colors.white)
 
     def achive_text_update(self, idx):
+        self.start()
         self.achive_text = self.font.render(
             f"{AchieveManager().get_achieve_text(idx)} 달성!", True, colors.white
         )
