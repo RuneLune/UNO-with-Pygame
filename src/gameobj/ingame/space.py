@@ -51,7 +51,7 @@ class Space(GameObject, Observer):
     @overrides
     def update(self):
         self.turn = self.player.is_turn()
-        time_left = self.game.remain_turn_time()
+        self.time_left = self.game.remain_turn_time()
         # 턴 시작하면 테두리 색 변화
         if self.turn is True:
             self.image.fill(colors.black)
@@ -66,7 +66,7 @@ class Space(GameObject, Observer):
                     self.rect_copy.bottomleft[1] - 13,
                 ),
                 end_pos=(
-                    time_left * self.width / 10 - 5,
+                    self.time_left * self.width / 10 - 5,
                     self.rect_copy.bottom - 13,
                 ),
                 width=15,
