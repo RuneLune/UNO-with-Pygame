@@ -4,6 +4,7 @@ from abstrclass.subject import Subject
 from gameobj.gameobj import GameObject
 from player.player import Player
 from game.game import Game
+from util.resource_manager import font_resource
 import util.colors as colors
 
 import pygame
@@ -47,6 +48,10 @@ class Space(GameObject, Observer):
             pygame.draw.rect(
                 surface=self.image, color=self.color, rect=self.rect_copy, width=2
             )
+        self.font = pygame.font.Font(
+            font_resource("MainFont.ttf"), round(self.height / 5)
+        )
+        self.player_name = self.font.render(self.player.get_name(), True, colors.white)
 
     @overrides
     def update(self):
@@ -76,3 +81,4 @@ class Space(GameObject, Observer):
             pygame.draw.rect(
                 surface=self.image, color=self.color, rect=self.rect_copy, width=3
             )
+        self.image.blit(self.player_name, (0, 0))

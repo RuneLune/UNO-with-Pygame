@@ -38,9 +38,11 @@ from manager.acvmgr import AchieveManager
 # - 일시정지 화면 o
 # - 효과음 추가
 # - 셔플 카드 오류 수정 o
-# - 업적 달성 체크
+# - 업적 달성 체크 o
 # - 업적 달성 메세지 표현 o
 # - 턴 종료시 자동 드로우 체크
+# - 유저, 봇 이름 표시
+# - 봇 카드 개수 표시
 class GameScene(Scene):
     @overrides
     def start(self) -> None:
