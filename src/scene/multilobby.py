@@ -34,7 +34,10 @@ class MultiLobby(Scene):
 
         self.instantiate(BackButton("<Back").attach_mgr(self.scene_manager))
 
-        self.socket_client.initialize()
+        result: bool = self.socket_client.initialize()
+        if not result:
+            self.scene_manager.load_previous_scene()
+            return None
         self.socket_client.send_data(self.game_manager.username, "JOIN")
 
         return None

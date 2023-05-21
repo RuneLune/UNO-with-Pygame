@@ -117,6 +117,18 @@ class GameObject(pygame.sprite.Sprite):
         """called when the user has pressed the key"""
         return False
 
+    def on_key_up(self, key: int) -> bool:
+        """called when the user has released the key"""
+        return False
+
+    def on_text_edit(self, text: str) -> bool:
+        """called when the user has edited the text"""
+        return False
+
+    def on_text_input(self, text: str) -> bool:
+        """called when the user has inputted the text"""
+        return False
+
     def print(self) -> None:
         """logs message to console"""
         print(f"{type(self).__name__} {self.name}.print() called. ")
@@ -367,6 +379,8 @@ class GameObject(pygame.sprite.Sprite):
         self.last_event = event
         if event.type == pygame.KEYDOWN:
             return self.on_key_down(event.key)
+        elif event.type == pygame.KEYUP:
+            return self.on_key_up(event.key)
         if not self._visible:
             return False
         # self._check_mouse_over(mouse_overed)
@@ -389,6 +403,12 @@ class GameObject(pygame.sprite.Sprite):
                 self.on_mouse_down()
                 self._clicked = True
                 pass
+            pass
+        elif event.type == pygame.TEXTINPUT:
+            self.on_text_input(event.text)
+            pass
+        elif event.type == pygame.TEXTEDITING:
+            self.on_text_edit(event.text)
             pass
 
         return self._mouse_over
