@@ -52,6 +52,8 @@ class SocketServer(metaclass=SingletonMeta):
             pass
         except BaseException:
             pass
+        # if hasattr(self, "_socket") and self._socket:
+        #     self._socket.shutdown(socket.SHUT_RDWR)
         if hasattr(self, "_thread") and self._thread:
             self._thread.join()
             del self._thread
@@ -115,7 +117,11 @@ class SocketServer(metaclass=SingletonMeta):
                     self._broadcast(data, client_socket, False)
                     if self._owner is None:
                         self._owner = client_socket
-                        self._broadcast(ProcessData(data.player, "OWNER", client_address), client_socket, True)
+                        self._broadcast(
+                            ProcessData(data.player, "OWNER", client_address),
+                            client_socket,
+                            True,
+                        )
                         pass
                 # Room Owner
                 elif client_socket is self._owner:
@@ -146,7 +152,9 @@ class SocketServer(metaclass=SingletonMeta):
                         self._owner = self._client_list[0]
                         self._broadcast(
                             ProcessData(
-                                "OWNER", self._player_name_dict.get(self._owner)
+                                self._player_name_dict.get(self._owner),
+                                "OWNER",
+                                self._owner.getpeername(),
                             ),
                             self._owner,
                             True,
