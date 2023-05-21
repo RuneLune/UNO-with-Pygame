@@ -30,18 +30,19 @@ from gameobj.ingame.achive_rect import AchiveRect
 from gameobj.txtobj import TextObject
 
 from metaclass.singleton import SingletonMeta
+from manager.gamemgr import GameManager
 
 
 # - 턴 스킵 표시
 # - 일시정지 화면 o
 # - 효과음 추가
-# - 셔플 카드 오류 수정
+# - 셔플 카드 오류 수정 o
 # - 업적 달성 체크
 # - 업적 달성 메세지 표현 o
-class GameScene(Scene, metaclass=SingletonMeta):
+class GameScene(Scene):
     @overrides
     def start(self) -> None:
-        self.game = Game(LobbyManager().get_game_settings().get("player_count"))
+        self.game = GameManager().get_game()
         self.settings = Config()
         self.cards_cls = Cards()
 
@@ -207,15 +208,15 @@ class GameScene(Scene, metaclass=SingletonMeta):
 
         # 키보드 입력 오브젝트 생성
         self.selector = Selector()
-        self.instantiate(self.selector)
 
         self.key_input = KeyInput().attach_selector(self.selector)
-        self.instantiate(self.key_input)
 
         self.key_input.attach_card(
             self.user_cards_obj, self.deck_card, self.uno_btn, self.color_set
         )
         self.key_input.observer_update(self.game)
+        self.instantiate(self.selector)
+        self.instantiate(self.key_input)
 
         # 텍스트 오브젝트 생성
         self.winner_text = WinnerText(
@@ -224,6 +225,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
             color=colors.gold,
             width=self.screen_size[0] * 3 / 4,
             height=self.screen_size[1] * 1 / 5,
+            z_index=1,
         )
         self.winner_text._visible = False
 
@@ -244,6 +246,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
             height=self.screen_size[1] * 2 / 5,
             top=self.winner_text.height,
             color=colors.light_salmon,
+            z_index=1,
         )
         self.firework1._visible = False
         self.firework2._visible = False
@@ -255,6 +258,7 @@ class GameScene(Scene, metaclass=SingletonMeta):
             color=colors.white,
             left=0,
             top=self.user_space.top,
+            z_index=1,
         )
         self.back_to_main._visible = False
         self.back_to_main._enabled = False
@@ -314,6 +318,22 @@ class GameScene(Scene, metaclass=SingletonMeta):
         self.key_input.state_update()
         for i in range(4):
             self.color_set[i].observer_update(self.game)
+
+        # 승리조건 확인
+        winner = self.game.check_winner()
+        if winner is not None:
+            self.winner_text.render(f"{winner.get_name()} is winner!")
+            self.winner_text._visible = True
+            self.back_to_main._enabled = True
+            self.back_to_main._visible = True
+            if self.firework1._visible is True:
+                self.firework1._visible = False
+                self.firework2._visible = True
+            else:
+                self.firework1._visible = True
+                self.firework2._visible = False
+            time.sleep(0.2)
+            return None
 
         # 현재 턴 플레이어 표시
         if self.user.is_turn() is True:
@@ -445,26 +465,6 @@ class GameScene(Scene, metaclass=SingletonMeta):
                 if card.draw_end is True:
                     card.draw_end = False
                     break
-
-        # 키 입력 받는 오브젝트 업데이트
-        self.key_input.attach_card(
-            self.user_cards_obj, self.deck_card, self.uno_btn, self.color_set
-        )
-
-        # 승리조건 확인
-        winner = self.game.check_winner()
-        if winner is not None:
-            self.winner_text.render(f"{winner.get_name()} is winner!")
-            self.winner_text._visible = True
-            self.back_to_main._enabled = True
-            self.back_to_main._visible = True
-            if self.firework1._visible is True:
-                self.firework1._visible = False
-                self.firework2._visible = True
-            else:
-                self.firework1._visible = True
-                self.firework2._visible = False
-            time.sleep(0.2)
 
     def position_update(self, obj_list: list):
         obj_list.sort(key=lambda x: x.code)
