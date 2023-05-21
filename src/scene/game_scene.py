@@ -180,8 +180,16 @@ class GameScene(Scene):
         self.bot_cards = [[] for i in range(len(self.bots))]
         for i, bot in enumerate(self.bots):
             for j in range(len(bot.get_hand_cards())):
-                if j >= 7:
-                    break
+                if j >= 6:
+                    temp = BotCard(
+                        surface=self.card_back_image,
+                        name=f"bot{i} card",
+                        left=self.bot_card_pos_x[6],
+                        top=self.bot_card_pos_y[i],
+                        target_pos=self.discard_pile_pos,
+                    )
+                    self.bot_cards[i].append(temp)
+                    continue
                 temp = BotCard(
                     surface=self.card_back_image,
                     name=f"bot{i} card",
@@ -483,7 +491,7 @@ class GameScene(Scene):
                 if self.same_card3 is False:
                     if self.same_card_code == card.code:
                         self.same_card_count += 1
-                        if self.same_card_code >= 3:
+                        if self.same_card_count >= 2:
                             self.same_card3 = True
                             self.achive_check(6)
                     else:
