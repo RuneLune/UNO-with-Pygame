@@ -466,6 +466,10 @@ class GameScene(Scene):
                     card.draw_end = False
                     break
 
+        self.key_input.attach_card(
+            self.user_cards_obj, self.deck_card, self.uno_btn, self.color_set
+        )
+
     def position_update(self, obj_list: list):
         obj_list.sort(key=lambda x: x.code)
         for idx, obj in enumerate(obj_list):

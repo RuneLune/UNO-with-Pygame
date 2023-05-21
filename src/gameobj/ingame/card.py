@@ -45,6 +45,7 @@ class Card(GameObject, Observer):
         self.draw_end = False
 
         self.playable = False
+        self.enter = False
 
         settings = Config()
         screen_size = settings.get_screen_resolution()
@@ -77,13 +78,16 @@ class Card(GameObject, Observer):
         self.move_rate = (self.vec_target - self.vec_rect).normalize() * 40
 
     @overrides
-    def on_mouse_enter(self) -> None:
+    def on_mouse_enter(self) -> True:
         if self.user_turn is True and self.playable is True:
             self.rect.y -= 10
+            self.enter = True
+        else:
+            self.enter = False
 
     @overrides
     def on_mouse_exit(self) -> None:
-        if self.user_turn is True and self.playable is True:
+        if self.enter is True:
             self.rect.y += 10
 
     @overrides
