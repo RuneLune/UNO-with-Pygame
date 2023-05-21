@@ -3,12 +3,13 @@ import json
 import os
 import pygame
 import event.events as events
+from metaclass.singleton import SingletonMeta
 
 from util.appdata_manager import stage_access_path
 
 initial_settings = {"touchable": [True, False, False, False]}
 
-class StoryManager:
+class StoryManager(metaclass = SingletonMeta):
     def __init__(self) -> None:
         
         global initial_settings
@@ -77,6 +78,22 @@ class StoryManager:
                         pass
                     pass
                 pass
+        
+        def update_stage_state(self, stage_name: str, status: bool):
+            if status:
+                if stage_name == "stage_a":
+                    self.__stage_states["touchable"][1] = 1
+                    self.save_stage_states()
+                    pass
+                elif stage_name == "stage_b":
+                    self.__stage_states["touchable"][2] = 1
+                    self.save_stage_states()
+                    pass
+                elif stage_name == "stage_c":
+                    self.__stage_states["touchable"][3] = 1
+                    self.save_stage_states()
+                    pass
+            pass
 
 
         return None
