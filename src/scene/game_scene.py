@@ -26,6 +26,7 @@ from gameobj.ingame.selector import Selector
 from gameobj.ingame.winner_txt import WinnerText
 from gameobj.ingame.back_txt import BackToMain
 from gameobj.ingame.achive_rect import AchiveRect
+from gameobj.ingame.card_num_txt import CardNumber
 
 from gameobj.txtobj import TextObject
 
@@ -38,9 +39,11 @@ from manager.acvmgr import AchieveManager
 # - 일시정지 화면 o
 # - 효과음 추가
 # - 셔플 카드 오류 수정 o
-# - 업적 달성 체크
+# - 업적 달성 체크 o
 # - 업적 달성 메세지 표현 o
 # - 턴 종료시 자동 드로우 체크
+# - 유저, 봇 이름 표시
+# - 봇 카드 개수 표시
 class GameScene(Scene):
     @overrides
     def start(self) -> None:
@@ -180,8 +183,16 @@ class GameScene(Scene):
         self.bot_cards = [[] for i in range(len(self.bots))]
         for i, bot in enumerate(self.bots):
             for j in range(len(bot.get_hand_cards())):
-                if j >= 7:
-                    break
+                if j >= 6:
+                    temp = BotCard(
+                        surface=self.card_back_image,
+                        name=f"bot{i} card",
+                        left=self.bot_card_pos_x[6],
+                        top=self.bot_card_pos_y[i],
+                        target_pos=self.discard_pile_pos,
+                    )
+                    self.bot_cards[i].append(temp)
+                    continue
                 temp = BotCard(
                     surface=self.card_back_image,
                     name=f"bot{i} card",
@@ -190,6 +201,23 @@ class GameScene(Scene):
                     target_pos=self.discard_pile_pos,
                 )
                 self.bot_cards[i].append(temp)
+
+        # 봇 카드 숫자 표시 오브젝트 생성
+        self.bot_card_num = []
+        for i, bot in enumerate(self.bots):
+            temp = CardNumber(
+                text=str(len(bot.get_hand_cards())),
+                font=pygame.font.Font(
+                    font_resource("MainFont.ttf"), round(self.bot_spaces[i].width / 5)
+                ),
+                color=colors.white,
+                left=self.bot_card_pos_x[6] + self.card_size[0],
+                top=self.bot_spaces[i].centery,
+                z_index=1,
+            )
+            temp.observer_update(bot)
+            self.bot_card_num.append(temp)
+            self.instantiate(self.bot_card_num[i])
 
         # 색 선택 오브젝트 생성
         self.color_set = []
@@ -483,7 +511,7 @@ class GameScene(Scene):
                 if self.same_card3 is False:
                     if self.same_card_code == card.code:
                         self.same_card_count += 1
-                        if self.same_card_code >= 3:
+                        if self.same_card_count >= 2:
                             self.same_card3 = True
                             self.achive_check(6)
                     else:

@@ -12,6 +12,7 @@ from scene.story_scene import StoryScene
 from scene.gamelobby import GameLobby
 from scene.multilobby import MultiLobby
 from scene.createserver import CreateServer
+from scene.joinserver import JoinServer
 from scene.quit import QuitScene
 
 if TYPE_CHECKING:
@@ -30,6 +31,7 @@ class SceneManager(metaclass=SingletonMeta):
             "gamelobby": GameLobby,
             "multi_lobby": MultiLobby,
             "create_server": CreateServer,
+            "join_server": JoinServer,
             "quit": QuitScene,
         }
         self._back_scene_name = None
@@ -42,8 +44,9 @@ class SceneManager(metaclass=SingletonMeta):
         return self._load_scene()
 
     def _load_scene(self) -> None:
-        self.current_scene.exit()
-        del self.current_scene
+        if hasattr(self, "current_scene") and self.current_scene:
+            self.current_scene.exit()
+            del self.current_scene
         pygame.display.get_surface().fill((0, 0, 0))
         self.current_scene = self.scenes[self.current_scene_name](self)
         return None

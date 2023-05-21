@@ -26,14 +26,14 @@ class Menu(TextButtonObject):
         Menu.Insts.append(self)
         screen_rect = pygame.display.get_surface().get_rect()
         self.font = pygame.font.Font(
-            font_resource("MainFont.ttf"), screen_rect.height // 13
+            font_resource("MainFont.ttf"), screen_rect.height // 14
         )
         self.color = color.black
         self.image = self.font.render(self.text, True, self.color)
         self.rect = self.image.get_rect()
         self.center = (
             screen_rect.centerx,
-            screen_rect.height * (6 + self.Inst_created) // 13,
+            screen_rect.height * (6 + self.Inst_created) // 14,
         )
         self._target_scene: Optional[str] = None
 

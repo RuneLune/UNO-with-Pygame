@@ -8,6 +8,7 @@ from manager.cfgmgr import Config
 from gameobj.gameobj import GameObject
 from metaclass.singleton import SingletonMeta
 from manager.lobbymgr import LobbyManager
+from manager.soundmgr import SoundManager
 
 if TYPE_CHECKING:
     from manager.scenemgr import SceneManager
@@ -24,19 +25,23 @@ class KeyInput(GameObject, metaclass=SingletonMeta):
         if self._changing_name:
             if key == keyconfig_value.get("cancel"):
                 LobbyManager().user_name = self.previous_name
+                SoundManager().play_effect("click")
                 self._changing_name = False
                 pass
             elif key == keyconfig_value.get("select"):
+                SoundManager().play_effect("click")
                 self._changing_name = False
                 pass
             elif key == pygame.K_BACKSPACE:
                 if len(LobbyManager().user_name) > 1:
                     LobbyManager().user_name = LobbyManager().user_name[:-1]
+                    SoundManager().play_effect("click")
                     pass
                 pass
             elif key == pygame.K_SPACE:
                 if len(LobbyManager().user_name) < 20:
                     LobbyManager().user_name = LobbyManager().user_name + " "
+                    SoundManager().play_effect("click")
                     pass
                 pass
             elif self.last_event.unicode is not None:
@@ -44,6 +49,7 @@ class KeyInput(GameObject, metaclass=SingletonMeta):
                     LobbyManager().user_name = (
                         LobbyManager().user_name + self.last_event.unicode
                     )
+                    SoundManager().play_effect("click")
                     pass
                 pass
             else:
@@ -52,9 +58,11 @@ class KeyInput(GameObject, metaclass=SingletonMeta):
         else:
             if key == keyconfig_value.get("cancel"):
                 print("called")
+                SoundManager().play_effect("click")
                 self.scene_manager.load_previous_scene()
                 pass
             elif key == keyconfig_value.get("select"):
+                SoundManager().play_effect("click")
                 self.changing_name = True
                 pass
             pass

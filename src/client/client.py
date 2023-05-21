@@ -45,6 +45,8 @@ class SocketClient(metaclass=SingletonMeta):
 
     def close(self) -> None:
         stop_thread.set()
+        if hasattr(self, "_socket") and self._socket:
+            self._socket.shutdown(socket.SHUT_RDWR)
         if hasattr(self, "_thread") and self._thread:
             self._thread.join()
             del self._thread
@@ -70,6 +72,8 @@ class SocketClient(metaclass=SingletonMeta):
                 elif data.action == "NAME":
                     print(f"[Client] {data.player} changed name to {data.target}")
                     pass
+                elif data.action == "DISCONNECT":
+                    print(f"[Client] {data.player} left game room")
                 elif data.action == "KICK":
                     print("[Client] Kicked by host")
                     self._socket.close()

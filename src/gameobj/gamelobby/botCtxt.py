@@ -12,7 +12,7 @@ import util.colors as color
 class BotCText(TextObject, metaclass=SingletonMeta):
     @overrides
     def start(self) -> None:
-        self.text = "C: 2명의 컴퓨터 플레이어와 대전 / 매 5턴마다 낼 수 있는 카드 색상 무작위 변경"
+        self.text = "C: 매 5턴마다 낼 수 있는 카드 색상 무작위 변경"
         screen_rect = pygame.display.get_surface().get_rect()
         self.font = pygame.font.Font(
             font_resource("MainFont.ttf"), screen_rect.height // 30
