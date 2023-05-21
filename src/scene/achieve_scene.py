@@ -8,32 +8,13 @@ from gameobj.txtbtnobj import TextButtonObject
 from util.resource_manager import font_resource
 import util.colors as color
 
-from gameobj.achieve.iconA import IconA
-from gameobj.achieve.iconB import IconB
-from gameobj.achieve.iconC import IconC
-from gameobj.achieve.iconD import IconD
-from gameobj.achieve.iconE import IconE
-from gameobj.achieve.iconF import IconF
-from gameobj.achieve.iconG import IconG
-from gameobj.achieve.iconH import IconH
+from gameobj.achieve.icon import Icon
 
-from gameobj.achieve.textA import TextA
-from gameobj.achieve.textB import TextB
-from gameobj.achieve.textC import TextC
-from gameobj.achieve.textD import TextD
-from gameobj.achieve.textE import TextE
-from gameobj.achieve.textF import TextF
-from gameobj.achieve.textG import TextG
-from gameobj.achieve.textH import TextH
 
-from gameobj.achieve.dateA import DateA
-from gameobj.achieve.dateB import DateB
-from gameobj.achieve.dateC import DateC
-from gameobj.achieve.dateD import DateD
-from gameobj.achieve.dateE import DateE
-from gameobj.achieve.dateF import DateF
-from gameobj.achieve.dateG import DateG
-from gameobj.achieve.dateH import DateH
+from gameobj.achieve.text import Text
+
+
+from gameobj.achieve.date import Date
 
 from gameobj.achieve.backbtn import BackButton
 
@@ -62,32 +43,32 @@ class AchieveScene(Scene):
         self.back_button = BackButton(
             "◀ Back", menu_font, color.white, "AchievementScene_BackButton", z_index=997).attach_mgr(self.scene_manager)
 
-        self.iconA = IconA()
-        self.iconB = IconB()
-        self.iconC = IconC()
-        self.iconD = IconD()
-        self.iconE = IconE()
-        self.iconF = IconF()
-        self.iconG = IconG()
-        self.iconH = IconH()
+        self.iconA = Icon(name="0")
+        self.iconB = Icon(name="1")
+        self.iconC = Icon(name="2")
+        self.iconD = Icon(name="3")
+        self.iconE = Icon(name="4")
+        self.iconF = Icon(name="5")
+        self.iconG = Icon(name="6")
+        self.iconH = Icon(name="7")
 
-        self.textA = TextA()
-        self.textB = TextB()
-        self.textC = TextC()
-        self.textD = TextD()
-        self.textE = TextE()
-        self.textF = TextF()
-        self.textG = TextG()
-        self.textH = TextH()
+        self.textA = Text(name="0")
+        self.textB = Text(name="1")
+        self.textC = Text(name="2")
+        self.textD = Text(name="3")
+        self.textE = Text(name="4")
+        self.textF = Text(name="5")
+        self.textG = Text(name="6")
+        self.textH = Text(name="7")
 
-        self.dateA = DateA()
-        self.dateB = DateB()
-        self.dateC = DateC()
-        self.dateD = DateD()
-        self.dateE = DateE()
-        self.dateF = DateF()
-        self.dateG = DateG()
-        self.dateH = DateH()
+        self.dateA = Date("date_a")
+        self.dateB = Date("date_b")
+        self.dateC = Date("date_c")
+        self.dateD = Date("date_d")
+        self.dateE = Date("date_e")
+        self.dateF = Date("date_f")
+        self.dateG = Date("date_g")
+        self.dateH = Date("date_h")
 
 
 

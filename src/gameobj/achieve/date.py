@@ -9,12 +9,28 @@ from metaclass.singleton import SingletonMeta
 import util.colors as color
 from manager.acvmgr import AchieveManager
 
-class DateG(TextObject):
+
+class Date(TextObject):
     @overrides
     def start(self) -> None:
         self.achieved = AchieveManager().get_stage_states().get("achieved")
         self.date = AchieveManager().get_stage_states().get("date")
-        self.text = self.date[5]
+        if self.name == "date_a":
+            self.text = self.date[0]
+        elif self.name == "date_b":
+            self.text = self.date[1]
+        elif self.name == "date_c":
+            self.text = self.date[2]
+        elif self.name == "date_d":
+            self.text = self.date[3]
+        elif self.name == "date_e":
+            self.text = self.date[4]
+        elif self.name == "date_f":
+            self.text = self.date[5]
+        elif self.name == "date_g":
+            self.text = self.date[6]
+        elif self.name == "date_h":
+            self.text = self.date[7]
         screen_rect = pygame.display.get_surface().get_rect()
         self.font = pygame.font.Font(
             font_resource("MainFont.ttf"), screen_rect.height // 30
@@ -22,7 +38,8 @@ class DateG(TextObject):
         self.color = color.white
         self.image = self.font.render(self.text, True, self.color)
         self.rect = self.image.get_rect()
-        if self.achieved[6] == True:
+        self._visible = False
+        if self.achieved[0] == True:
             self.visible()
         else: 
             self.invisible()
