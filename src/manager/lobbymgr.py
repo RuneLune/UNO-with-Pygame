@@ -7,7 +7,7 @@ from typing import Dict
 from util.appdata_manager import game_config_path
 from metaclass.singleton import SingletonMeta
 
-initial_settings: Dict[str, int | Dict[str, bool] | str] = {
+initial_settings: Dict[str, int | Dict[str, bool] | str | str] = {
     "player_count": 2,
     "active_bots": {
         "bot1": True,
@@ -17,6 +17,7 @@ initial_settings: Dict[str, int | Dict[str, bool] | str] = {
         "bot5": False,
     },
     "user_name": " User_Name ",
+    "bot_type": "Normal",
 }
 
 
@@ -137,4 +138,8 @@ class LobbyManager(metaclass=SingletonMeta):
     @user_name.setter
     def user_name(self, value: str):
         self.__game_settings["user_name"] = value
+        self.save_game_settings()
+
+    def set_bot_type(self, value: str):
+        self.__game_settings["bot_type"] = value
         self.save_game_settings()

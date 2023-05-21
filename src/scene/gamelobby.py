@@ -1,5 +1,6 @@
 from overrides import overrides
 import pygame
+from typing import Final, Dict
 
 from util.resource_manager import font_resource
 import util.colors as color
@@ -10,38 +11,77 @@ from gameobj.txtbtnobj import TextButtonObject
 from manager.lobbymgr import LobbyManager
 from gameobj.gamelobby.keyinput import KeyInput
 from gameobj.gamelobby.nametext import NameText
+from gameobj.gamelobby.botNMbtn import BotNormalButton
+from gameobj.gamelobby.botAbtn import BotAButton
+from gameobj.gamelobby.botBbtn import BotBButton
+from gameobj.gamelobby.botCbtn import BotCButton
+from gameobj.gamelobby.botDbtn import BotDButton
+from gameobj.gamelobby.botNMtxt import BotNormalText
+from gameobj.gamelobby.botAtxt import BotAText
+from gameobj.gamelobby.botBtxt import BotBText
+from gameobj.gamelobby.botCtxt import BotCText
+from gameobj.gamelobby.botDtxt import BotDText
+from gameobj.gamelobby.botsltbg import BotSelectBackground
+from gameobj.gamelobby.botslttxt import BotSelectText
+from gameobj.gamelobby.handlebotslt import HandleBotSelect
 from manager.gamemgr import GameManager
+
+
+bot_stage_link: Final[Dict[str, str]] = {
+    "Normal": "default",
+    "A": "stage_a",
+    "B": "stage_b",
+    "C": "stage_c",
+    "D": "stage_d",
+}
 
 
 class GameLobby(Scene):
     @overrides
     def start(self) -> None:
         # Background Surface
-        screen_rect = pygame.display.get_surface().get_rect()
-        background_surface = pygame.Surface(screen_rect.size)
+        global bot_stage_link
+        self.screen_rect = pygame.display.get_surface().get_rect()
+        background_surface = pygame.Surface(self.screen_rect.size)
         background_surface.fill(color.black)
         self.lobby_manager = LobbyManager()
+        self.botNM_button = BotNormalButton()
+        self.botA_button = BotAButton()
+        self.botB_button = BotBButton()
+        self.botC_button = BotCButton()
+        self.botD_button = BotDButton()
+        self.botNM_text = BotNormalText()
+        self.botA_text = BotAText()
+        self.botB_text = BotBText()
+        self.botC_text = BotCText()
+        self.botD_text = BotDText()
+        self.bot_select_background = BotSelectBackground()
+        self.bot_select_text = BotSelectText()
+        self.handle_bot_select = HandleBotSelect()
+        GameManager().game_type = bot_stage_link.get(
+            self.lobby_manager.get_game_settings().get("bot_type")
+        )
 
         # Font
         small_font = pygame.font.Font(
-            font_resource("MainFont.ttf"), screen_rect.height // 20
+            font_resource("MainFont.ttf"), self.screen_rect.height // 20
         )
         edit_font = pygame.font.Font(
-            font_resource("MainFont.ttf"), screen_rect.height // 14
+            font_resource("MainFont.ttf"), self.screen_rect.height // 14
         )
         big_font = pygame.font.Font(
-            font_resource("MainFont.ttf"), screen_rect.height // 10
+            font_resource("MainFont.ttf"), self.screen_rect.height // 10
         )
 
         # Deck Surface
         deck_surface = pygame.Surface(
-            (screen_rect.width * (3 / 4), screen_rect.height * (2 / 3))
+            (self.screen_rect.width * (3 / 4), self.screen_rect.height * (2 / 3))
         )
         deck_surface.fill((50, 100, 80))
 
         # User Surface
         user_surface = pygame.Surface(
-            (screen_rect.width * (3 / 4), screen_rect.height * (1 / 3))
+            (self.screen_rect.width * (3 / 4), self.screen_rect.height * (1 / 3))
         )
         user_surface.fill((80, 120, 80))
         pygame.draw.rect(user_surface, color.white, user_surface.get_rect(), width=2)
@@ -54,7 +94,7 @@ class GameLobby(Scene):
 
         # Bot Surface
         self.bot1_surface = pygame.Surface(
-            (screen_rect.width * (1 / 4), screen_rect.height * (1 / 5))
+            (self.screen_rect.width * (1 / 4), self.screen_rect.height * (1 / 5))
         )
         self.bot1_surface.fill((50, 50, 50))
         pygame.draw.rect(
@@ -66,7 +106,7 @@ class GameLobby(Scene):
         self.bot1_surface.blit(self.bot1_text.image, self.bot1_text.rect)
 
         self.bot2_surface = pygame.Surface(
-            (screen_rect.width * (1 / 4), screen_rect.height * (1 / 5))
+            (self.screen_rect.width * (1 / 4), self.screen_rect.height * (1 / 5))
         )
         self.bot2_surface.fill((50, 50, 50))
         pygame.draw.rect(
@@ -78,7 +118,7 @@ class GameLobby(Scene):
         self.bot2_surface.blit(self.bot2_text.image, self.bot2_text.rect)
 
         self.bot3_surface = pygame.Surface(
-            (screen_rect.width * (1 / 4), screen_rect.height * (1 / 5))
+            (self.screen_rect.width * (1 / 4), self.screen_rect.height * (1 / 5))
         )
         self.bot3_surface.fill((50, 50, 50))
         pygame.draw.rect(
@@ -90,7 +130,7 @@ class GameLobby(Scene):
         self.bot3_surface.blit(self.bot3_text.image, self.bot3_text.rect)
 
         self.bot4_surface = pygame.Surface(
-            (screen_rect.width * (1 / 4), screen_rect.height * (1 / 5))
+            (self.screen_rect.width * (1 / 4), self.screen_rect.height * (1 / 5))
         )
         self.bot4_surface.fill((50, 50, 50))
         pygame.draw.rect(
@@ -102,7 +142,7 @@ class GameLobby(Scene):
         self.bot4_surface.blit(self.bot4_text.image, self.bot4_text.rect)
 
         self.bot5_surface = pygame.Surface(
-            (screen_rect.width * (1 / 4), screen_rect.height * (1 / 5))
+            (self.screen_rect.width * (1 / 4), self.screen_rect.height * (1 / 5))
         )
         self.bot5_surface.fill((50, 50, 50))
         pygame.draw.rect(
@@ -115,14 +155,14 @@ class GameLobby(Scene):
 
         # Empty Surface
         self.empty_surface = pygame.Surface(
-            (screen_rect.width * (1 / 4), screen_rect.height * (1 / 5))
+            (self.screen_rect.width * (1 / 4), self.screen_rect.height * (1 / 5))
         )
         self.empty_surface.fill(color.white)
         pygame.draw.rect(
             self.empty_surface,
             color.black,
             self.empty_surface.get_rect(),
-            int(screen_rect.height * (1 / 100)),
+            int(self.screen_rect.height * (1 / 100)),
         )
         self.empty_text = TextObject(
             "Empty", small_font, color.light_gray, "GameLobby_EmptyText", z_index=1000
@@ -164,6 +204,20 @@ class GameLobby(Scene):
         self.back_button = TextButtonObject(
             "◀ Back", small_font, color.white, "GameLobby_BackButton", z_index=1000
         )
+        self.Select_Bot_text = TextObject(
+            "Selected Bot:",
+            small_font,
+            color.white,
+            "GameLobby_SelectBotText",
+            z_index=1000,
+        )
+        self.Select_Bot_button = TextButtonObject(
+            f"{self.lobby_manager.get_game_settings()['bot_type']}",
+            small_font,
+            color.white,
+            "GameLobby_SelectBotButton",
+            z_index=1000,
+        )
         self.edit_text = TextObject(
             "Press Enter to edit the name",
             edit_font,
@@ -197,9 +251,21 @@ class GameLobby(Scene):
 
         # Position of the objects
         self.deck_space.rect.topleft = (0, 0)
-        self.back_button.rect.bottomright = (
-            screen_rect.centerx / 3,
-            screen_rect.centery / 5,
+        self.back_button.rect.topleft = (
+            self.screen_rect.height // 20,
+            self.screen_rect.height // 20,
+        )
+        self.Select_Bot_button.topright = (
+            self.screen_rect.width * 3 // 4 - self.screen_rect.height // 20,
+            self.screen_rect.height // 20,
+        )
+        self.Select_Bot_text.rect.topright = (
+            self.Select_Bot_button.rect.left - self.screen_rect.height // 100,
+            self.screen_rect.height // 20,
+        )
+        self.bot_select_text.rect.center = (
+            self.screen_rect.centerx,
+            self.screen_rect.centery * (1 / 3),
         )
         self.edit_text.rect.center = (
             self.deck_space.rect.centerx,
@@ -218,19 +284,56 @@ class GameLobby(Scene):
         self.bot1_button.rect.topleft = (self.user_space.rect.right, 0)
         self.bot2_button.rect.topleft = (
             self.user_space.rect.right,
-            screen_rect.height * (1 / 5),
+            self.screen_rect.height * (1 / 5),
         )
         self.bot3_button.rect.topleft = (
             self.user_space.rect.right,
-            screen_rect.height * (2 / 5),
+            self.screen_rect.height * (2 / 5),
         )
         self.bot4_button.rect.topleft = (
             self.user_space.rect.right,
-            screen_rect.height * (3 / 5),
+            self.screen_rect.height * (3 / 5),
         )
         self.bot5_button.rect.topleft = (
             self.user_space.rect.right,
-            screen_rect.height * (4 / 5),
+            self.screen_rect.height * (4 / 5),
+        )
+        self.botNM_button.rect.center = (
+            self.screen_rect.width * (1 / 6),
+            self.screen_rect.centery,
+        )
+        self.botA_button.rect.center = (
+            self.screen_rect.width * (2 / 6),
+            self.screen_rect.centery,
+        )
+        self.botB_button.rect.center = self.screen_rect.center
+        self.botC_button.rect.center = (
+            self.screen_rect.width * (4 / 6),
+            self.screen_rect.centery,
+        )
+        self.botD_button.rect.center = (
+            self.screen_rect.width * (5 / 6),
+            self.screen_rect.centery,
+        )
+        self.botNM_text.rect.center = (
+            self.screen_rect.centerx,
+            self.screen_rect.height * (3 / 4),
+        )
+        self.botA_text.rect.center = (
+            self.screen_rect.centerx,
+            self.screen_rect.height * (3 / 4),
+        )
+        self.botB_text.rect.center = (
+            self.screen_rect.centerx,
+            self.screen_rect.height * (3 / 4),
+        )
+        self.botC_text.rect.center = (
+            self.screen_rect.centerx,
+            self.screen_rect.height * (3 / 4),
+        )
+        self.botD_text.rect.center = (
+            self.screen_rect.centerx,
+            self.screen_rect.height * (3 / 4),
         )
 
         def key_down(key):
@@ -244,16 +347,26 @@ class GameLobby(Scene):
         self.back_button.on_click = lambda: self.scene_manager.load_previous_scene()
         self.name_text.on_mouse_up_as_button = lambda: self.editName()
         self.start_button.on_mouse_up_as_button = lambda: self.gameStart()
-        # self.start_text.on_click = lambda: self.scene_manager.load_scene("game_scene")
+        self.start_text.on_click = lambda: self.scene_manager.load_scene("game_scene")
         # self.bot1_button.on_mouse_up_as_button = lambda: self.bot1Clicked()
         self.bot2_button.on_mouse_up_as_button = lambda: self.bot2Clicked()
         self.bot3_button.on_mouse_up_as_button = lambda: self.bot3Clicked()
         self.bot4_button.on_mouse_up_as_button = lambda: self.bot4Clicked()
         self.bot5_button.on_mouse_up_as_button = lambda: self.bot5Clicked()
+        self.Select_Bot_button.on_mouse_up_as_button = (
+            lambda: self.handle_bot_select.visible_bot_select()
+        )
+        self.botA_button.on_mouse_up_as_button = lambda: self.botAClicked()
+        self.botB_button.on_mouse_up_as_button = lambda: self.botBClicked()
+        self.botC_button.on_mouse_up_as_button = lambda: self.botCClicked()
+        self.botD_button.on_mouse_up_as_button = lambda: self.botDClicked()
+        self.botNM_button.on_mouse_up_as_button = lambda: self.botNMClicked()
 
         self.instantiate(self.background)
         self.instantiate(self.deck_space)
         self.instantiate(self.back_button)
+        self.instantiate(self.Select_Bot_text)
+        self.instantiate(self.Select_Bot_button)
         self.instantiate(self.edit_text)
         self.instantiate(self.name_text)
         self.instantiate(self.user_space)
@@ -264,6 +377,18 @@ class GameLobby(Scene):
         self.instantiate(self.bot3_button)
         self.instantiate(self.bot4_button)
         self.instantiate(self.bot5_button)
+        self.instantiate(self.botNM_button)
+        self.instantiate(self.botA_button)
+        self.instantiate(self.botB_button)
+        self.instantiate(self.botC_button)
+        self.instantiate(self.botD_button)
+        self.instantiate(self.botNM_text)
+        self.instantiate(self.botA_text)
+        self.instantiate(self.botB_text)
+        self.instantiate(self.botC_text)
+        self.instantiate(self.botD_text)
+        self.instantiate(self.bot_select_background)
+        self.instantiate(self.bot_select_text)
         self.key_input = KeyInput().attach_mgr(self.scene_manager)
         self.key_input.reset()
         self.instantiate(self.key_input)
@@ -351,8 +476,55 @@ class GameLobby(Scene):
         return None
 
     def gameStart(self):
-        GameManager().game_type = "default"
+        # GameManager().game_type = "default"
         GameManager().players = self.lobby_manager.get_game_settings()["player_count"]
         GameManager().create_game()
         self.scene_manager.load_scene("game_scene")
+        return None
+
+    def botNMClicked(self):
+        self.lobby_manager.set_bot_type("Normal")
+        self.Select_Bot_button.set_text("Normal")
+        self.set_select_bot_text_position()
+        GameManager().game_type = "default"
+        self.handle_bot_select.invisible_bot_select()
+        return None
+
+    def botAClicked(self):
+        self.lobby_manager.set_bot_type("A")
+        self.Select_Bot_button.set_text("A")
+        self.set_select_bot_text_position()
+        GameManager().game_type = "stage_a"
+        self.handle_bot_select.invisible_bot_select()
+        return None
+
+    def botBClicked(self):
+        self.lobby_manager.set_bot_type("B")
+        self.Select_Bot_button.set_text("B")
+        self.set_select_bot_text_position()
+        GameManager().game_type = "stage_b"
+        self.handle_bot_select.invisible_bot_select()
+        return None
+
+    def botCClicked(self):
+        self.lobby_manager.set_bot_type("C")
+        self.Select_Bot_button.set_text("C")
+        self.set_select_bot_text_position()
+        GameManager().game_type = "stage_c"
+        self.handle_bot_select.invisible_bot_select()
+        return None
+
+    def botDClicked(self):
+        self.lobby_manager.set_bot_type("D")
+        self.Select_Bot_button.set_text("D")
+        self.set_select_bot_text_position()
+        GameManager().game_type = "stage_d"
+        self.handle_bot_select.invisible_bot_select()
+        return None
+
+    def set_select_bot_text_position(self):
+        self.Select_Bot_text.rect.topright = (
+            self.Select_Bot_button.rect.left - self.screen_rect.height // 100,
+            self.screen_rect.height // 20,
+        )
         return None
