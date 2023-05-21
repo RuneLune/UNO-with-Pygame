@@ -339,27 +339,25 @@ class GameLobby(Scene):
         )
 
         self.back_button.on_click = lambda: (
-            self.scene_manager.load_previous_scene(),
-            self.soundmanager.play_effect("click")
+            self.soundmanager.play_effect("click"),
+            self.scene_manager.load_previous_scene()
         )
         self.name_text.on_mouse_up_as_button = lambda: (
-            self.editName(),
-            self.soundmanager.play_effect("click")
+            self.soundmanager.play_effect("click"),
+            self.editName()
         )
         self.start_button.on_mouse_up_as_button = lambda: (
-            self.gameStart(),
-            self.soundmanager.play_effect("click")
+            self.soundmanager.play_effect("click"),
+            self.gameStart()
         )
         # self.bot1_button.on_mouse_up_as_button = lambda: self.bot1Clicked()
         self.bot2_button.on_mouse_up_as_button = lambda: self.bot2Clicked()
         self.bot3_button.on_mouse_up_as_button = lambda: self.bot3Clicked()
         self.bot4_button.on_mouse_up_as_button = lambda: self.bot4Clicked()
         self.bot5_button.on_mouse_up_as_button = lambda: self.bot5Clicked()
-        self.Select_Bot_button.on_mouse_up_as_button = (
-            lambda: (
-                self.handle_bot_select.visible_bot_select(),
-                self.soundmanager.play_effect("click")
-            )
+        self.Select_Bot_button.on_mouse_up_as_button = lambda: (
+            self.soundmanager.play_effect("click"),
+            self.handle_bot_select.visible_bot_select()
         )
         self.botNM_button.on_mouse_up_as_button = lambda: self.botNMClicked()
         self.botA_button.on_mouse_up_as_button = lambda: self.botAClicked()
@@ -431,9 +429,9 @@ class GameLobby(Scene):
                 self.bot2_button.image = self.empty_surface
                 self.lobby_manager.set_player_count(2)
             self.lobby_manager.bot2_toggle()
+            self.soundmanager.play_effect("click")
         else:
             pass
-        self.soundmanager.play_effect("click")
         return None
 
     def bot3Clicked(self):
@@ -448,9 +446,9 @@ class GameLobby(Scene):
                 self.bot3_button.image = self.empty_surface
                 self.lobby_manager.set_player_count(3)
             self.lobby_manager.bot3_toggle()
+            self.soundmanager.play_effect("click")
         else:
             pass
-        self.soundmanager.play_effect("click")
         return None
 
     def bot4Clicked(self):
@@ -465,9 +463,9 @@ class GameLobby(Scene):
                 self.bot4_button.image = self.empty_surface
                 self.lobby_manager.set_player_count(4)
             self.lobby_manager.bot4_toggle()
+            self.soundmanager.play_effect("click")
         else:
             pass
-        self.soundmanager.play_effect("click")
         return None
 
     def bot5Clicked(self):
@@ -479,9 +477,9 @@ class GameLobby(Scene):
                 self.bot5_button.image = self.empty_surface
                 self.lobby_manager.set_player_count(5)
             self.lobby_manager.bot5_toggle()
+            self.soundmanager.play_effect("click")
         else:
             pass
-        self.soundmanager.play_effect("click")
         return None
 
     def gameStart(self):
@@ -493,47 +491,47 @@ class GameLobby(Scene):
         return None
 
     def botNMClicked(self):
+        self.soundmanager.play_effect("click")
         self.lobby_manager.set_bot_type("Normal")
         self.Select_Bot_button.set_text("Normal")
         self.set_select_bot_text_position()
         GameManager().game_type = "default"
-        self.soundmanager.play_effect("click")
         self.handle_bot_select.invisible_bot_select()
         return None
 
     def botAClicked(self):
+        self.soundmanager.play_effect("click")
         self.lobby_manager.set_bot_type("A")
         self.Select_Bot_button.set_text("A")
         self.set_select_bot_text_position()
         GameManager().game_type = "stage_a"
-        self.soundmanager.play_effect("click")
         self.handle_bot_select.invisible_bot_select()
         return None
 
     def botBClicked(self):
+        self.soundmanager.play_effect("click")
         self.lobby_manager.set_bot_type("B")
         self.Select_Bot_button.set_text("B")
         self.set_select_bot_text_position()
         GameManager().game_type = "stage_b"
-        self.soundmanager.play_effect("click")
         self.handle_bot_select.invisible_bot_select()
         return None
 
     def botCClicked(self):
+        self.soundmanager.play_effect("click")
         self.lobby_manager.set_bot_type("C")
         self.Select_Bot_button.set_text("C")
         self.set_select_bot_text_position()
         GameManager().game_type = "stage_c"
-        self.soundmanager.play_effect("click")
         self.handle_bot_select.invisible_bot_select()
         return None
 
     def botDClicked(self):
+        self.soundmanager.play_effect("click")
         self.lobby_manager.set_bot_type("D")
         self.Select_Bot_button.set_text("D")
         self.set_select_bot_text_position()
         GameManager().game_type = "stage_d"
-        self.soundmanager.play_effect("click")
         self.handle_bot_select.invisible_bot_select()
         return None
 
