@@ -28,16 +28,17 @@ class SceneManager(metaclass=SingletonMeta):
             "game_scene": GameScene,
             "story_scene": StoryScene,
             "gamelobby": GameLobby,
-            "multilobby": MultiLobby,
+            "multi_lobby": MultiLobby,
             "create_server": CreateServer,
             "quit": QuitScene,
         }
-        self.scene_name_list = ["quit", "main_menu"]
+        self._back_scene_name = None
+        self._scene_name_list = ["quit", "main_menu"]
         self.current_scene = self.scenes[self.current_scene_name](self)
         return None
 
     def load_scene(self, scene_name: str) -> None:
-        self.scene_name_list.append(scene_name)
+        self._scene_name_list.append(scene_name)
         return self._load_scene()
 
     def _load_scene(self) -> None:
@@ -51,7 +52,7 @@ class SceneManager(metaclass=SingletonMeta):
         return self._load_scene()
 
     def load_previous_scene(self) -> None:
-        self.scene_name_list.pop()
+        self._back_scene_name = self._scene_name_list.pop()
         self._load_scene()
 
     def handle_scene(self, event: pygame.event.Event) -> None:
@@ -62,16 +63,20 @@ class SceneManager(metaclass=SingletonMeta):
 
     @property
     def previous_scene_name(self) -> str:
-        if len(self.scene_name_list) >= 2:
-            return self.scene_name_list[-2]
+        if len(self._scene_name_list) >= 2:
+            return self._scene_name_list[-2]
         else:
             return "quit"
 
     @property
     def current_scene_name(self) -> str:
-        if self.scene_name_list:
-            return self.scene_name_list[-1]
+        if self._scene_name_list:
+            return self._scene_name_list[-1]
         else:
             return "quit"
+
+    @property
+    def back_scene_name(self) -> str:
+        return self._back_scene_name
 
     pass

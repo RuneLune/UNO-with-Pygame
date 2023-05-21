@@ -38,6 +38,8 @@ class GameObject(pygame.sprite.Sprite):
         self.key_index = key_index
         self._mouse_over: bool = False
         self._clicked: bool = False
+        self._last_x_position: str = "left"
+        self._last_y_position: str = "top"
         if width < 0 or height < 0:
             self.image = surface
             self.rect = surface.get_rect()
@@ -233,90 +235,114 @@ class GameObject(pygame.sprite.Sprite):
     def left(self, value: int) -> None:
         """left position of this object"""
         self.rect.left = value
+        self._last_x_position
         return None
 
     @top.setter
     def top(self, value: int) -> None:
         """top position of this object"""
         self.rect.top = value
+        self._last_y_position = "top"
         return None
 
     @right.setter
     def right(self, value: int) -> None:
         """right position of this object"""
         self.rect.right = value
+        self._last_x_position = "right"
         return None
 
     @bottom.setter
     def bottom(self, value: int) -> None:
         """bottom position of this object"""
         self.rect.bottom = value
+        self._last_y_position = "bottom"
         return None
 
     @center.setter
     def center(self, value: int) -> None:
         """center position of this object"""
         self.rect.center = value
+        self._last_x_position = "center"
+        self._last_y_position = "center"
         return None
 
     @centerx.setter
     def centerx(self, value: int) -> None:
         """center x position of this object"""
         self.rect.centerx = value
+        self._last_x_position = "center"
         return None
 
     @centery.setter
     def centery(self, value: int) -> None:
         """center y position of this object"""
         self.rect.centery = value
+        self._last_y_position = "center"
         return None
 
     @topleft.setter
     def topleft(self, value: Tuple[int, int]) -> None:
         """top left position of this object"""
         self.rect.topleft = value
+        self._last_x_position = "left"
+        self._last_y_position = "top"
         return None
 
     @topright.setter
     def topright(self, value: Tuple[int, int]) -> None:
         """top right position of this object"""
         self.rect.topright = value
+        self._last_x_position = "right"
+        self._last_y_position = "top"
         return None
 
     @bottomleft.setter
     def bottomleft(self, value: Tuple[int, int]) -> None:
         """bottom left position of this object"""
         self.rect.bottomleft = value
+        self._last_x_position = "left"
+        self._last_y_position = "bottom"
         return None
 
     @bottomright.setter
     def bottomright(self, value: Tuple[int, int]) -> None:
         """bottom right position of this object"""
         self.rect.bottomright = value
+        self._last_x_position = "right"
+        self._last_y_position = "bottom"
         return None
 
     @midtop.setter
     def midtop(self, value: Tuple[int, int]) -> None:
         """mid top position of this object"""
         self.rect.midtop = value
+        self._last_x_position = "center"
+        self._last_y_position = "top"
         return None
 
     @midleft.setter
     def midleft(self, value: Tuple[int, int]) -> None:
         """mid left position of this object"""
         self.rect.midleft = value
+        self._last_x_position = "left"
+        self._last_y_position = "center"
         return None
 
     @midbottom.setter
     def midbottom(self, value: Tuple[int, int]) -> None:
         """mid bottom position of this object"""
         self.rect.midbottom = value
+        self._last_x_position = "center"
+        self._last_y_position = "bottom"
         return None
 
     @midright.setter
     def midright(self, value: Tuple[int, int]) -> None:
         """mid right position of this object"""
         self.rect.midright = value
+        self._last_x_position = "right"
+        self._last_y_position = "center"
         return None
 
     @size.setter

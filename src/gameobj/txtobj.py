@@ -29,3 +29,34 @@ class TextObject(GameObject):
         return super(TextObject, self).__init__(
             rendered_text, name, width, height, left, top, z_index, -1, screen
         )
+
+    def set_text(self, text: str) -> None:
+        self.text = text
+        self.image = self.font.render(self.text, True, self.color)
+        rect = pygame.Rect(self.image.get_rect())
+        if self._last_x_position == "center":
+            rect.centerx = self.rect.centerx
+            pass
+        elif self._last_x_position == "right":
+            rect.right = self.rect.right
+            pass
+        elif self._last_x_position == "left":
+            rect.left = self.rect.left
+            pass
+        else:
+            pass
+        if self._last_y_position == "center":
+            rect.centery = self.rect.centery
+            pass
+        elif self._last_y_position == "bottom":
+            rect.bottom = self.rect.bottom
+            pass
+        elif self._last_y_position == "top":
+            rect.top = self.rect.top
+            pass
+        else:
+            pass
+        self.rect = rect
+        return None
+
+    pass

@@ -1,5 +1,5 @@
 import socket
-import threading
+from threading import Thread, Event
 import pickle
 from typing import List, Dict, Optional, Type, Tuple, Any
 from typing_extensions import TypeAlias
@@ -12,17 +12,15 @@ _RetAddress: TypeAlias = Any
 HOST = None
 PORT = None
 
+stop_thread: Event = Event()
+
 
 class SocketServer(metaclass=SingletonMeta):
     # def __init__(self):
     #     return None
 
     def initialize(self) -> bool:
-        self.run_thread: bool = False
-        if hasattr(self, "_thread") and self._thread:
-            self._thread.join()
-            del self._thread
-            pass
+        self.close()
         global HOST, PORT
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -36,16 +34,23 @@ class SocketServer(metaclass=SingletonMeta):
             print("[Server] Cannot start server")
             return False
         self._client_list: List[socket.socket] = []
-        self._thread_list: List[threading.Thread] = []
+        self._thread_list: List[Thread] = []
         self._player_name_dict: Dict[socket.socket, str] = {}
         self._owner: Optional[socket.socket] = None
-        self._thread: threading.Thread = threading.Thread(target=self._start)
-        self.run_thread: bool = True
+        self._thread: Thread = Thread(target=self._start)
+        stop_thread.clear()
         self._thread.start()
         return True
 
     def close(self) -> None:
-        self.run_thread = False
+        stop_thread.set()
+        try:
+            socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(
+                (self._host, self._port)
+            )
+            pass
+        except BaseException:
+            pass
         if hasattr(self, "_thread") and self._thread:
             self._thread.join()
             del self._thread
@@ -54,26 +59,26 @@ class SocketServer(metaclass=SingletonMeta):
 
     def _start(self) -> None:
         print(f"[Server] Start Listening on {self._host}:{self._port}")
-        while self.run_thread:
+        while not stop_thread.is_set():
             self._socket.listen()
             (
                 client_socket,
                 client_address,
-            ) = self._socket.accept()  # type: Tuple[socket.socket, Tuple[str, int]]
+            ) = self._socket.accept()  # type: Tuple[socket.socket, _RetAddress]
             self._client_list.append(client_socket)
             self._thread_list.append(
-                threading.Thread(
-                    target=self._handle_client, args=(client_socket, client_address)
-                )
+                Thread(target=self._handle_client, args=(client_socket, client_address))
             )
             self._thread_list[-1].start()
             continue
         for client in self._client_list:
             client.close()
+            self._client_list.remove(client)
             del client
             continue
         for thread in self._thread_list:
             thread.join()
+            self._thread_list.remove(thread)
             del thread
             continue
         self._socket.close()
@@ -85,7 +90,7 @@ class SocketServer(metaclass=SingletonMeta):
         self, client_socket: socket.socket, client_address: _RetAddress
     ) -> None:
         print(f"[Server] {client_address[0]}:{client_address[1]} connected")
-        while client_socket in self._client_list:
+        while client_socket in self._client_list and not stop_thread.is_set():
             try:
                 data: ProcessData = pickle.loads(client_socket.recv(4096))
                 if not data:
