@@ -24,6 +24,7 @@ from gameobj.story.handlewindow import HandleWindow
 from gameobj.story.keyinput import KeyInput
 from gameobj.story.backbtn import BackButton
 from manager.storymgr import StoryManager
+from gameobj.story.cat import Cat
 
 from gameobj.story.background import StoryBack
 
@@ -37,7 +38,7 @@ class StoryScene(Scene):
         self.touchable = StoryManager().get_stage_states().get("touchable")
         self.screen_rect = pygame.display.get_surface().get_rect()
         background_surface = pygame.Surface(self.screen_rect.size)
-        background_surface.fill(color.black)
+        background_surface.fill(color.light_gray)
         title_font = pygame.font.Font(
             font_resource("MainFont.ttf"), self.screen_rect.height // 5
         )
@@ -51,6 +52,8 @@ class StoryScene(Scene):
             "Story", title_font, color.white, "StoryScene_TitleText", z_index=997)
         self.back_button = BackButton(
             "◀ Back", menu_font, color.white, "StoryScene_BackButton", z_index=997).attach_mgr(self.scene_manager)
+
+        self.cat = Cat()
 
         self.story_a_button = StoryAButton()
         self.story_b_button = StoryBButton()
@@ -79,20 +82,20 @@ class StoryScene(Scene):
         self.window_background = WindowBackground()
         
         self.story_a_button.rect.center = (
-            self.screen_rect.right / 8.8, self.screen_rect.centery)
+            self.screen_rect.right / 4, self.screen_rect.centery * 1.1)
         self.story_b_button.rect.center = (
-            self.screen_rect.right / 2.6, self.screen_rect.centery)
+            self.screen_rect.right / 2, self.screen_rect.centery * 1.1)
         self.story_c_button.rect.center = (
-            self.screen_rect.right / 1.6, self.screen_rect.centery)
+            self.screen_rect.right / 1.35, self.screen_rect.centery * 1.1)
         self.story_d_button.rect.center = (
-            self.screen_rect.right / 1.14, self.screen_rect.centery)
+            self.screen_rect.right / 1.1, self.screen_rect.centery)
         
         self.locker_b.rect.center = (
-            self.screen_rect.right / 2.6, self.screen_rect.centery)
+            self.screen_rect.right / 2, self.screen_rect.centery * 1.1)
         self.locker_c.rect.center = (
-            self.screen_rect.right / 1.6, self.screen_rect.centery)
+            self.screen_rect.right / 1.35, self.screen_rect.centery * 1.1)
         self.locker_d.rect.center = (
-            self.screen_rect.right / 1.14, self.screen_rect.centery)
+            self.screen_rect.right / 1.1, self.screen_rect.centery)
         
 
         self.title_text.rect.center = (
@@ -101,13 +104,13 @@ class StoryScene(Scene):
             self.screen_rect.centerx / 3, self.screen_rect.centery / 5)
 
         self.story_a_text.rect.center = (
-            self.screen_rect.centerx, self.screen_rect.centery * 1.35)
+            self.screen_rect.centerx, self.screen_rect.centery / 2)
         self.story_b_text.rect.center = (
-            self.screen_rect.centerx, self.screen_rect.centery * 1.35)
+            self.screen_rect.centerx, self.screen_rect.centery / 2)
         self.story_c_text.rect.center = (
-            self.screen_rect.centerx, self.screen_rect.centery * 1.35)
+            self.screen_rect.centerx, self.screen_rect.centery / 2)
         self.story_d_text.rect.center = (
-            self.screen_rect.centerx, self.screen_rect.centery * 1.35)
+            self.screen_rect.centerx, self.screen_rect.centery / 2)
         
         self.no_button.rect.center = (
             self.screen_rect.centerx * 1.5, self.screen_rect.centery * 1.7)
@@ -143,7 +146,6 @@ class StoryScene(Scene):
         
 
         self.instantiate(self.background)
-        self.instantiate(self.title_text)
         self.instantiate(self.back_button)
         self.instantiate(self.story_a_button)
         self.instantiate(self.story_b_button)
@@ -160,5 +162,6 @@ class StoryScene(Scene):
         self.instantiate(self.locker_b)
         self.instantiate(self.locker_c)
         self.instantiate(self.locker_d)
+        self.instantiate(self.cat)
 
         return None
