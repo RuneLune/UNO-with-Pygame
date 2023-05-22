@@ -59,6 +59,7 @@ class KeyInput(GameObject, metaclass=SingletonMeta):
             if key == keyconfig_value.get("cancel"):
                 print("called")
                 SoundManager().play_effect("click")
+                SoundManager().stop_lobby_background_sound()
                 self.scene_manager.load_previous_scene()
                 pass
             elif key == keyconfig_value.get("select"):

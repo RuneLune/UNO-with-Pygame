@@ -20,6 +20,7 @@ class SoundManager(metaclass=SingletonMeta):
         self.achievement_background_sound = pygame.mixer.Sound(
             sound_resource("achievement.mp3")
         )
+        self.lobby_background_sound = pygame.mixer.Sound(sound_resource("lobby.mp3"))
 
         self.effect = {
             "deal": self.deal_effect_sound,
@@ -35,6 +36,7 @@ class SoundManager(metaclass=SingletonMeta):
         self.is_story_background_playing = False
         self.is_main_background_playing = False
         self.is_achievement_background_playing = False
+        self.is_lobby_background_playing = False
 
         # self.refresh()
 
@@ -78,6 +80,7 @@ class SoundManager(metaclass=SingletonMeta):
         self.update_story_background_volume()
         self.update_main_background_volume()
         self.update_achievement_background_volume()
+        self.update_lobby_background_volume()
         return None
 
     def play_effect(self, name):
@@ -125,3 +128,17 @@ class SoundManager(metaclass=SingletonMeta):
         self.achievement_background_sound.set_volume(
             Config().get_volume("bgm") * Config().get_volume("all") / 10000
         )  # 업적 배경음악 음량 조절 0~1 사이값, 0은 음소거 1은 최대 볼륨
+
+    def play_lobby_background_sound(self):
+        if not self.is_lobby_background_playing:  # 로비 배경음악이 재생중이 아니면
+            self.lobby_background_sound.play(-1)  # 로비 배경음악 재생
+            self.is_lobby_background_playing = True  # 로비 배경음악 재생중으로 표시
+
+    def stop_lobby_background_sound(self):
+        self.lobby_background_sound.stop()  # 로비 배경음악 정지
+        self.is_lobby_background_playing = False  # 로비 배경음악 재생중이 아니라고 표시
+
+    def update_lobby_background_volume(self):
+        self.lobby_background_sound.set_volume(
+            Config().get_volume("bgm") * Config().get_volume("all") / 10000
+        )  # 로비 배경음악 음량 조절 0~1 사이값, 0은 음소거 1은 최대 볼륨
