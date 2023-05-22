@@ -41,7 +41,7 @@ from manager.acvmgr import AchieveManager
 # - 셔플 카드 오류 수정 o
 # - 업적 달성 체크 o
 # - 업적 달성 메세지 표현 o
-# - 턴 종료시 자동 드로우 체크
+# - 턴 종료시 자동 드로우 체크 o
 # - 유저, 봇 이름 표시 o
 # - 봇 카드 개수 표시 o
 class GameScene(Scene):
@@ -57,9 +57,7 @@ class GameScene(Scene):
 
         self.screen_size = self.settings.get_screen_resolution()
         self.user = self.game.get_user()
-        self.user.set_cards([14, 14, 14])
         self.bots = self.game.get_bots()
-        self.bots[0].set_cards([15, 15, 15, 15, 15])
 
         color_dict = [colors.red, colors.green, colors.blue, colors.yellow]
 
@@ -465,14 +463,14 @@ class GameScene(Scene):
                     last_index = 6
                 for j in range(0, diff):
                     # 카드 생성
-                    if 6 - j < diff:
+                    if last_index - diff + j + 1 > 6:
                         temp = BotCard(
                             surface=self.card_back_image,
                             name=f"bot{i} card",
                             left=self.draw_pile_pos[0],
                             top=self.draw_pile_pos[1],
                             target_pos=(
-                                self.bot_card_pos_x[last_index],
+                                self.bot_card_pos_x[6],
                                 self.bot_card_pos_y[i],
                             ),
                         )
@@ -483,7 +481,7 @@ class GameScene(Scene):
                             left=self.draw_pile_pos[0],
                             top=self.draw_pile_pos[1],
                             target_pos=(
-                                self.bot_card_pos_x[last_index - diff + j],
+                                self.bot_card_pos_x[last_index - diff + j + 1],
                                 self.bot_card_pos_y[i],
                             ),
                         )
