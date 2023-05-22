@@ -4,6 +4,7 @@ from overrides import overrides
 from typing import TYPE_CHECKING, List, Type
 
 from manager.cfgmgr import Config
+from manager.soundmgr import SoundManager
 from gameobj.gameobj import GameObject
 from metaclass.singleton import SingletonMeta
 
@@ -18,6 +19,7 @@ class KeyInput(GameObject, metaclass=SingletonMeta):
         self._menu_index = 0
         self._menu_list: List[Type[Menu]] = []
         self._selector: Type[Selector] = None
+        self.soundManager = SoundManager()
         return None
 
     @overrides
@@ -31,7 +33,9 @@ class KeyInput(GameObject, metaclass=SingletonMeta):
             pass
         elif key == keyconfig_value.get("select"):
             self._menu_list[self._menu_index].on_click()
+            self.soundManager.stop_main_background_sound()
             pass
+        self.soundManager.play_effect("click")
         return False
 
     def attach_menu(self, menu_list: List[Type[Menu]]) -> None:
