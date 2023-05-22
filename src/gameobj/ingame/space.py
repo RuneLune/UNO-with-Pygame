@@ -1,19 +1,17 @@
 from __future__ import annotations
-from abstrclass.subject import Subject
-
-from gameobj.gameobj import GameObject
-from player.player import Player
-from game.game import Game
-from util.resource_manager import font_resource
-import util.colors as colors
 
 import pygame
 from overrides import overrides
-from abstrclass.observer import Observer
-from typing import Type, TYPE_CHECKING
+from typing import Type
 
-if TYPE_CHECKING:
-    from abstrclass.subject import Subject
+from abstrclass.observer import Observer
+import util.colors as colors
+from util.resource_manager import font_resource
+from manager.soundmgr import SoundManager
+from player.player import Player
+from game.game import Game
+
+from gameobj.gameobj import GameObject
 
 
 class Space(GameObject, Observer):
@@ -76,6 +74,8 @@ class Space(GameObject, Observer):
                 ),
                 width=15,
             )
+            if self.time_left < 0.1:
+                SoundManager().play_effect("timeout")
         elif self.turn is False:
             self.image.fill(colors.black)
             pygame.draw.rect(

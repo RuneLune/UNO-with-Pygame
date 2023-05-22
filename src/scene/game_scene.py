@@ -9,6 +9,7 @@ from .scene import Scene
 from game.game import Game
 from manager.cfgmgr import Config
 from manager.lobbymgr import LobbyManager
+from manager.soundmgr import SoundManager
 from card.cards import Cards
 
 from gameobj.bgobj import BackgroundObject
@@ -337,12 +338,16 @@ class GameScene(Scene):
         self.instantiate(self.firework2)
         self.instantiate(self.achive_rect)
 
+        SoundManager().play_effect("deal")
+        SoundManager().play_background_sound()
+
     @overrides
     def update(self):
         if self.key_input.pause is True:
             self.key_input.pause = False
             self.game.pause_timer()
             self.scene_manager.load_scene("config_menu")
+            SoundManager().stop_background_sound()
         else:
             self.game.resume_timer()
             self._update()
@@ -424,6 +429,7 @@ class GameScene(Scene):
                 self.user_cards_obj.append(temp)
             self.turn_update(self.user_cards_obj)
             self.deck_card.draw_flag = False
+            SoundManager().play_effect("draw")
 
         elif self.last_card.shuffle is True:
             self.last_card.shuffle = False
@@ -449,6 +455,7 @@ class GameScene(Scene):
                 temp.draw_start = True
                 self.user_cards_obj.append(temp)
             self.turn_update(self.user_cards_obj)
+            SoundManager().play_effect("shuffle")
 
         # 마지막 카드가 턴 스킵 카드인 경우
 
@@ -488,6 +495,7 @@ class GameScene(Scene):
                     self.instantiate(temp)
                     temp.draw_start = True
                     self.bot_cards[i].append(temp)
+                SoundManager().play_effect("draw")
             elif diff < 0:
                 # 카드 삭제
                 for j in range(
@@ -499,6 +507,7 @@ class GameScene(Scene):
                     card.discard_start = True
                     card.observer_update(self.game)
                     self.bot_cards[i].remove(card)
+                SoundManager().play_effect("discard")
 
         # 카드 내기
         for i, card in enumerate(self.user_cards_obj):

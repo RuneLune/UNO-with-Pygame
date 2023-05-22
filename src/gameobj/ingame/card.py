@@ -5,6 +5,7 @@ from overrides import overrides
 
 from gameobj.gameobj import GameObject
 from manager.cfgmgr import Config
+from manager.soundmgr import SoundManager
 
 from abstrclass.observer import Observer
 from typing import Type, TYPE_CHECKING
@@ -94,6 +95,8 @@ class Card(GameObject, Observer):
     def on_mouse_down(self) -> None:
         if self.user_turn is True and self.playable is True:
             self.discard_start = True
+            SoundManager().play_effect("discard")
+
         else:
             self.discard_start = False
 
