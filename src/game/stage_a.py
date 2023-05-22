@@ -5,7 +5,7 @@ from typing import Type
 import card.cards as cards
 from game.game import Game
 from player.player import Player
-from player.combo_bot import Combo_Bot
+from player.combo_bot import ComboBot
 
 
 class StageA(Game):
@@ -34,39 +34,47 @@ class StageA(Game):
     @overrides
     def _add_players(self, username: str = "User", players_count: int = 4) -> None:
         self._user: Player = Player(self, username)
-        self._computer: Combo_Bot = Combo_Bot(self, "CPU 1")
+        self._bots: list[ComboBot] = []
         self._players.append(self._user)
-        self._players.append(self._computer)
+        for i in range(1, players_count):
+            bot = ComboBot(self, "CPU " + str(i))
+            self._players.append(bot)
+            self._bots.append(bot)
+            continue
         random.shuffle(self._players)
         return None
 
     @overrides
     def _deal_hands(self, count: int = 7) -> None:
-        normal_cards: int = 0
-        functional_cards: int = 0
-        for card in self._draw_pile:
-            if cards.check_card(card).get("type") == "normal":
-                normal_cards += 1
-                pass
-            else:
-                functional_cards += 1
-                pass
+        for bot in self._bots:
+            normal_cards: int = 0
+            functional_cards: int = 0
+            for card in self._draw_pile:
+                if cards.check_card(card).get("type") == "normal":
+                    normal_cards += 1
+                    pass
+                else:
+                    functional_cards += 1
+                    pass
+                continue
+            normal_draw: int = 0
+            functional_draw: int = 0
+            for i in range(0, count):
+                random_number = random.randrange(
+                    0, normal_cards * 2 + functional_cards * 3
+                )
+                if random_number < normal_cards * 2:
+                    normal_draw += 1
+                    normal_cards -= 1
+                    pass
+                else:
+                    functional_draw += 1
+                    functional_cards -= 1
+                    pass
+                continue
+            self._draw_normal_card(bot, normal_draw)
+            self._draw_functional_card(bot, functional_draw)
             continue
-        normal_draw: int = 0
-        functional_draw: int = 0
-        for i in range(0, count):
-            random_number = random.randrange(0, normal_cards * 2 + functional_cards * 3)
-            if random_number < normal_cards * 2:
-                normal_draw += 1
-                normal_cards -= 1
-                pass
-            else:
-                functional_draw += 1
-                functional_cards -= 1
-                pass
-            continue
-        self._draw_normal_card(self._computer, normal_draw)
-        self._draw_functional_card(self._computer, functional_draw)
         self._user.draw_cards(count)
 
         return None

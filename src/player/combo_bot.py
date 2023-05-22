@@ -12,14 +12,14 @@ if TYPE_CHECKING:
     from game.game import Game
 
 
-class Combo_Bot(Bot):
+class ComboBot(Bot):
     @overrides
     def __new__(cls, *args, **kwargs):
-        return super(Combo_Bot, cls).__new__(cls)
+        return super(ComboBot, cls).__new__(cls)
 
     @overrides
     def __init__(self, game: Type[Game], name: str = "Computer") -> None:
-        return super(Combo_Bot, self).__init__(game, name)
+        return super(ComboBot, self).__init__(game, name)
 
     @overrides
     def _play(self) -> None:
