@@ -9,6 +9,7 @@ from gameobj.gameobj import GameObject
 from metaclass.singleton import SingletonMeta
 from manager.lobbymgr import LobbyManager
 from manager.soundmgr import SoundManager
+from gameobj.gamelobby.handlebotslt import HandleBotSelect
 
 if TYPE_CHECKING:
     from manager.scenemgr import SceneManager
@@ -20,6 +21,7 @@ class KeyInput(GameObject, metaclass=SingletonMeta):
 
     @overrides
     def on_key_down(self, key: int) -> bool:
+        HandleBotSelect().invisible_bot_select()
         self.key_index = 999
         keyconfig_value = Config().config.get("keybindings")
         if self._changing_name:

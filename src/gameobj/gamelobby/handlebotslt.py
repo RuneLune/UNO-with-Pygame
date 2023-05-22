@@ -10,9 +10,10 @@ from gameobj.gamelobby.botCtxt import BotCText
 from gameobj.gamelobby.botDtxt import BotDText
 from gameobj.gamelobby.botsltbg import BotSelectBackground
 from gameobj.gamelobby.botslttxt import BotSelectText
+from metaclass.singleton import SingletonMeta
 
 
-class HandleBotSelect:
+class HandleBotSelect(metaclass=SingletonMeta):
     def __init__(self) -> None:
         self.botNM_button = BotNormalButton()
         self.botA_button = BotAButton()
