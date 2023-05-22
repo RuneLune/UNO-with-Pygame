@@ -48,16 +48,16 @@ class SocketServer(metaclass=SingletonMeta):
 
     def close(self) -> None:
         stop_thread.set()
-        try:
-            socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(
-                (self._host, self._port)
-            )
-            pass
-        except BaseException:
-            pass
         # if hasattr(self, "_socket") and self._socket:
         #     self._socket.shutdown(socket.SHUT_RDWR)
         if hasattr(self, "_socket") and self._socket:
+            try:
+                socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(
+                    (self._host, self._port)
+                )
+                pass
+            except BaseException:
+                pass
             self._socket.close()
             del self._socket
             pass
