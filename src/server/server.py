@@ -88,12 +88,10 @@ class SocketServer(metaclass=SingletonMeta):
             del client
             continue
         for thread in self._thread_list:
-            print("joining thread")
             thread.join()
             self._thread_list.remove(thread)
             del thread
             continue
-        print("joining thread end")
         if hasattr(self, "_socket") and self._socket:
             self._socket.close()
             del self._socket

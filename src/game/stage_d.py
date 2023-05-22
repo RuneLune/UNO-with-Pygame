@@ -8,7 +8,7 @@ from player.player import Player
 class StageD(Game):
     @overrides
     def __init__(self, players_count: int = 2, username: str = "User") -> None:
-        super(StageD, self).__init__(2)
+        super(StageD, self).__init__(players_count, username)
         self._name = "stage_d"
         return None
 

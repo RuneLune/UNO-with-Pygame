@@ -1,7 +1,7 @@
 import socket
 from threading import Thread, Event
 import pickle
-from typing import List, Optional
+from typing import List, Optional, Tuple
 import copy
 
 # from typing_extensions import TypeAlias
@@ -97,6 +97,12 @@ class SocketClient(metaclass=SingletonMeta):
                     print(f"[Client] invalid data: {data}")
                     continue
                 self._data_queue.append(copy.deepcopy(data))
+                print("[Client] Data Queue Start")
+                for d in self._data_queue:
+                    print(d)
+                    pass
+                print("[Client] Data Queue End")
+                pass
             except BaseException:
                 print("[Client] Connection to server lost")
                 if hasattr(self, "_socket") and self._socket:
@@ -140,5 +146,13 @@ class SocketClient(metaclass=SingletonMeta):
         if len(self._data_queue) > 0:
             return copy.deepcopy(self._data_queue.pop(0))
         return None
+
+    @property
+    def address(self) -> Tuple[str, int]:
+        if hasattr(self, "_socket") and self._socket:
+            return self._socket.getsockname()
+        else:
+            return None
+        pass
 
     pass
