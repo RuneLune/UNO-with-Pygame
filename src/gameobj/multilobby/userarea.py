@@ -2,6 +2,8 @@ import pygame
 from typing import Tuple
 
 from .areabg import AreaBackground
+
+# from .kickbtn import KickButton
 import util.colors as color
 from util.resource_manager import font_resource
 
@@ -40,7 +42,6 @@ class UserArea(AreaBackground):
             image_rect,
             2,
         )
-        # render and draw text
         if self.is_owner:
             text = self._font.render("☆" + self._nametxt, True, self._txt_color)
             pass
@@ -99,6 +100,11 @@ class UserArea(AreaBackground):
     @is_owner.setter
     def is_owner(self, value: bool) -> None:
         self._is_owner = value
+        # if self.is_owner:
+        #     for kickbtn in KickButton.Insts:
+        #         kickbtn.visible()
+        #         continue
+        #     pass
         self._draw_image()
         return None
 

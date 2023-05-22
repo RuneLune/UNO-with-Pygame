@@ -7,6 +7,7 @@ from gameobj.bgobj import BackgroundObject
 from gameobj.multilobby.tablearea import TableArea
 from gameobj.multilobby.userarea import UserArea
 from gameobj.multilobby.playerarea import PlayerArea
+from gameobj.multilobby.kickbtn import KickButton
 from gameobj.multilobby.backbtn import BackButton
 from gameobj.multilobby.dataproc import DataProcess
 from client.client import SocketClient
@@ -28,13 +29,18 @@ class MultiLobby(Scene):
         self.instantiate(user_area)
 
         PlayerArea.destroy_all()
+        KickButton.destroy_all()
         player_area_list: List[PlayerArea] = []
         for i in range(5):
-            player_area_list.append(PlayerArea())
-            self.instantiate(player_area_list[-1])
+            player_area = PlayerArea()
+            player_area_list.append(player_area)
+            self.instantiate(player_area)
+            self.instantiate(
+                KickButton().attach_player_area(player_area).attach_user_area(user_area)
+            )
             continue
 
-        data_process = DataProcess()
+        data_process = DataProcess().attach_mgr(self.scene_manager)
         data_process.attach_user_area(user_area)
         data_process.attach_player_areas(player_area_list)
         self.instantiate(data_process)

@@ -92,7 +92,7 @@ class SocketClient(metaclass=SingletonMeta):
                     print(f"{color.CBEIGEBG}[Client] Kicked by host{color.CEND}")
                     self._socket.close()
                     self.run_thread = False
-                    break
+                    pass
                 elif data.action == "OWNER":
                     if data.target == self._socket.getsockname():
                         print(

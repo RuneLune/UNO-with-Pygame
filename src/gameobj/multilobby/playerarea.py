@@ -20,6 +20,7 @@ class PlayerArea(GameObject):
     @overrides
     def start(self) -> None:
         PlayerArea.Insts.append(self)
+        self.idx = PlayerArea.Inst_created - 1
         screen_rect = pygame.display.get_surface().get_rect()
         self.image = pygame.Surface((screen_rect.width // 4, screen_rect.height // 5))
         self._bg_color = color.dark_slate_gray

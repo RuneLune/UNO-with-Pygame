@@ -1,10 +1,16 @@
+from __future__ import annotations
+
 from overrides import overrides
-from typing import List
+from typing import List, TYPE_CHECKING
 
 from ..gameobj import GameObject
 from .userarea import UserArea
 from .playerarea import PlayerArea
 from client.client import SocketClient
+import util.bcolors as color
+
+if TYPE_CHECKING:
+    from manager.scenemgr import SceneManager
 
 
 class DataProcess(GameObject):
@@ -20,7 +26,7 @@ class DataProcess(GameObject):
     def update(self) -> None:
         data_queue = self._socket_client.get_data()
         for data in data_queue:
-            print(data)
+            print(f"{color.CBLUE}[DataProc] {data}{color.CEND}")
             act = data.action
             if act == "INFO":
                 self._user_area.nametxt = data.target["username"]
@@ -54,6 +60,9 @@ class DataProcess(GameObject):
                         pass
                     continue
                 pass
+            elif act == "KICK":
+                self._scene_manager.load_previous_scene()
+                break
             continue
         return None
 
@@ -64,5 +73,9 @@ class DataProcess(GameObject):
     def attach_player_areas(self, player_areas: List[PlayerArea]) -> None:
         self._player_areas = player_areas
         return None
+
+    def attach_mgr(self, scene_manager: SceneManager) -> DataProcess:
+        self._scene_manager = scene_manager
+        return self
 
     pass

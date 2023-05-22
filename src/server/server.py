@@ -234,6 +234,7 @@ class SocketServer(metaclass=SingletonMeta):
                 client.close()
                 self._client_list.remove(client)
                 self._player_name_list.remove(self._player_name_dict.pop(client))
+                self._broadcast(ProcessData(target, "DISCONNECT", None))
                 break
             continue
         return None
