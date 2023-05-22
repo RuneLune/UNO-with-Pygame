@@ -29,6 +29,7 @@ class DeckSpace(GameObject, Observer):
         self.circle_color = colors.white
         self.current_color = "white"
         self.reverse_turn = False
+        self.turn_alert = False
         super().__init__(surface, name, width, height, left, top, z_index)
         self.pt1 = (self.rect.centerx + self.height * 2 / 5 + 20, self.rect.centery)
         self.pt2 = (self.rect.centerx + self.height * 2 / 5 - 50, self.rect.centery)
@@ -45,10 +46,6 @@ class DeckSpace(GameObject, Observer):
     @overrides
     def start(self):
         self.image.fill(self.bgrcolor)
-
-    def player_attach(self, subject: Type[Subject]):
-        self.user = subject
-        pass
 
     def observer_update(self, subject: Type[Subject]):
         # 컬러 업데이트
@@ -105,6 +102,3 @@ class DeckSpace(GameObject, Observer):
             end_pos=self.pt3,
             width=4,
         )
-
-        # 유저 낼 카드 없을 시 드로우 권장 이미지 출력
-        # 유저 턴이면 턴 표시 이미지 출력

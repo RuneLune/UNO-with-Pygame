@@ -29,6 +29,7 @@ from gameobj.ingame.back_txt import BackToMain
 from gameobj.ingame.achive_rect import AchiveRect
 from gameobj.ingame.card_num_txt import CardNumber
 from gameobj.ingame.draw_icon import DrawIcon
+from gameobj.ingame.turn_icon import TurnIcon
 
 from gameobj.txtobj import TextObject
 
@@ -324,6 +325,17 @@ class GameScene(Scene):
         )
         self.draw_icon.observer_update(self.user)
 
+        # 턴 알림 이미지
+        self.turn_icon = TurnIcon(
+            surface=pygame.image.load("res/img/myturn.png"),
+            width=self.deck_space.width / 3,
+            height=self.deck_space.height / 3,
+            left=0,
+            top=0,
+        )
+        self.turn_icon.observer_update(self.user)
+        self.turn_icon.top = self.user_space.top - self.draw_icon.height * 2
+
         # 오브젝트 등록
         self.instantiate(BackgroundObject(colors.black))
         self.instantiate(self.deck_space)
@@ -348,6 +360,7 @@ class GameScene(Scene):
         self.instantiate(self.firework2)
         self.instantiate(self.achive_rect)
         self.instantiate(self.draw_icon)
+        self.instantiate(self.turn_icon)
 
         SoundManager().play_effect("deal")
         SoundManager().play_background_sound()

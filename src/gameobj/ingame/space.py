@@ -47,7 +47,7 @@ class Space(GameObject, Observer):
                 surface=self.image, color=self.color, rect=self.rect_copy, width=2
             )
         self.font = pygame.font.Font(
-            font_resource("MainFont.ttf"), round(self.height / 5)
+            font_resource("MainFont.ttf"), round(self.height / 6)
         )
         self.player_name = self.font.render(self.player.get_name(), True, colors.white)
 
