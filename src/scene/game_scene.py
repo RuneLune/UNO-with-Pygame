@@ -28,6 +28,7 @@ from gameobj.ingame.winner_txt import WinnerText
 from gameobj.ingame.back_txt import BackToMain
 from gameobj.ingame.achive_rect import AchiveRect
 from gameobj.ingame.card_num_txt import CardNumber
+from gameobj.ingame.draw_icon import DrawIcon
 
 from gameobj.txtobj import TextObject
 
@@ -38,7 +39,7 @@ from manager.acvmgr import AchieveManager
 
 # - 턴 스킵 표시
 # - 일시정지 화면 o
-# - 효과음 추가
+# - 효과음 추가 o
 # - 셔플 카드 오류 수정 o
 # - 업적 달성 체크 o
 # - 업적 달성 메세지 표현 o
@@ -314,6 +315,15 @@ class GameScene(Scene):
             z_index=1,
         )
 
+        # 드로우 권장 이미지
+        self.draw_icon = DrawIcon(
+            width=self.card_size[0] * 2,
+            height=self.card_size[1],
+            left=self.deck_card.left - self.card_size[0] / 2,
+            top=self.deck_card.top - self.card_size[1] / 2,
+        )
+        self.draw_icon.observer_update(self.user)
+
         # 오브젝트 등록
         self.instantiate(BackgroundObject(colors.black))
         self.instantiate(self.deck_space)
@@ -337,6 +347,7 @@ class GameScene(Scene):
         self.instantiate(self.firework1)
         self.instantiate(self.firework2)
         self.instantiate(self.achive_rect)
+        self.instantiate(self.draw_icon)
 
         SoundManager().play_effect("deal")
         SoundManager().play_background_sound()
@@ -368,6 +379,7 @@ class GameScene(Scene):
         # 승리조건 확인
         winner = self.game.check_winner()
         if winner is not None:
+            SoundManager().stop_background_sound()
             if winner == self.user:
                 self.achive_check(0)
                 if self.game._name == "stage_D":
