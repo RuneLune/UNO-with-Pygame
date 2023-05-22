@@ -4,6 +4,7 @@ import time
 
 from util.resource_manager import font_resource
 import util.colors as colors
+from util.timer import Timer
 from .scene import Scene
 
 from game.game import Game
@@ -41,21 +42,14 @@ from manager.gamemgr import GameManager
 from manager.acvmgr import AchieveManager
 
 
-# - 턴 스킵 표시
-# - 일시정지 화면 o
-# - 효과음 추가 o
-# - 셔플 카드 오류 수정 o
-# - 업적 달성 체크 o
-# - 업적 달성 메세지 표현 o
-# - 턴 종료시 자동 드로우 체크 o
-# - 유저, 봇 이름 표시 o
-# - 봇 카드 개수 표시 o
 class GameScene(Scene):
     @overrides
     def start(self) -> None:
         self.game = GameManager().get_game()
         self.settings = Config()
         self.cards_cls = Cards()
+        self.timer = Timer()
+        self.timer.start()
 
         self.cards_cls.refresh()
         self.card_size = self.cards_cls.get_card_image(000).get_rect().size
@@ -63,7 +57,6 @@ class GameScene(Scene):
 
         self.screen_size = self.settings.get_screen_resolution()
         self.user = self.game.get_user()
-        self.user.set_cards([112, 212, 312, 412])
         self.bots = self.game.get_bots()
 
         color_dict = [colors.red, colors.green, colors.blue, colors.yellow]
@@ -448,13 +441,12 @@ class GameScene(Scene):
             self.winner_text._visible = True
             self.back_to_main._enabled = True
             self.back_to_main._visible = True
-            if self.firework1._visible is True:
-                self.firework1._visible = False
-                self.firework2._visible = True
-            else:
+            if int(self.timer.get().total_seconds()) % 2 == 0:
                 self.firework1._visible = True
                 self.firework2._visible = False
-            # time.sleep(0.2)
+            else:
+                self.firework1._visible = False
+                self.firework2._visible = True
             return None
 
         # 현재 턴 플레이어 표시
