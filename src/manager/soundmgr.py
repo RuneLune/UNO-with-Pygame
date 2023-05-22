@@ -15,6 +15,7 @@ class SoundManager(metaclass=SingletonMeta):
         self.shuffle_effect_sound = pygame.mixer.Sound(sound_resource("shuffle.mp3"))
         self.timeout_effect_sound = pygame.mixer.Sound(sound_resource("timeout.mp3"))
         self.click_effect_sound = pygame.mixer.Sound(sound_resource("click.mp3"))
+        self.story_background_sound = pygame.mixer.Sound(sound_resource("story.mp3"))
 
         self.effect = {
             "deal": self.deal_effect_sound,
@@ -27,6 +28,7 @@ class SoundManager(metaclass=SingletonMeta):
         self.update_all_volume()
 
         self.is_background_playing = False
+        self.is_story_background_playing = False
 
         # self.refresh()
 
@@ -55,24 +57,35 @@ class SoundManager(metaclass=SingletonMeta):
 
     def update_background_volume(self):
         self.background_sound.set_volume(
-            Config().get_volume("bgm")
-            * Config().get_volume("all")
-            / 10000
+            Config().get_volume("bgm") * Config().get_volume("all") / 10000
         )  # 배경음악 음량 조절 0~1 사이값, 0은 음소거 1은 최대 볼륨
 
     def update_effect_volume(self):
         for effect_sound in self.effect.values():
             effect_sound.set_volume(
-                Config().get_volume("sfx")
-                * Config().get_volume("all")
-                / 10000
+                Config().get_volume("sfx") * Config().get_volume("all") / 10000
             )  # 효과음 음량 조절 0~1 사이값, 0은 음소거 1은 최대 볼륨
 
     def update_all_volume(self) -> None:
         self.update_background_volume()
         self.update_effect_volume()
+        self.update_story_background_volume()
         return None
 
     def play_effect(self, name):
         if name in self.effect:
             self.effect[name].play()  # 효과음 재생
+
+    def play_story_background_sound(self):
+        if not self.is_story_background_playing:  # 스토리 배경음악이 재생중이 아니면
+            self.story_background_sound.play(-1)  # 스토리 배경음악 재생
+            self.is_story_background_playing = True  # 스토리 배경음악 재생중으로 표시
+
+    def stop_story_background_sound(self):
+        self.story_background_sound.stop()  # 스토리 배경음악 정지
+        self.is_story_background_playing = False  # 스토리 배경음악 재생중이 아니라고 표시
+
+    def update_story_background_volume(self):
+        self.story_background_sound.set_volume(
+            Config().get_volume("bgm") * Config().get_volume("all") / 10000
+        )  # 스토리 배경음악 음량 조절 0~1 사이값, 0은 음소거 1은 최대 볼륨

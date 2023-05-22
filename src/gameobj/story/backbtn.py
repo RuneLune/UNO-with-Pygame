@@ -13,7 +13,6 @@ from manager.soundmgr import SoundManager
 
 if TYPE_CHECKING:
     from manager.scenemgr import SceneManager
-    
 
 
 class BackButton(TextButtonObject):
@@ -39,8 +38,9 @@ class BackButton(TextButtonObject):
     def on_click(self) -> None:
         self.scene_manager.load_previous_scene()
         self.soundmanager.play_effect("click")
+        self.soundmanager.stop_story_background_sound()
         return None
-    
+
     def change_highlighting_color(self, color: Tuple[int, int, int]) -> None:
         self.highlighting_color = color
         return None

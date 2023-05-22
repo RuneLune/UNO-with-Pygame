@@ -17,12 +17,12 @@ from manager.soundmgr import SoundManager
 if TYPE_CHECKING:
     from manager.scenemgr import SceneManager
 
+
 class YesButton(GameObject, metaclass=SingletonMeta):
     @overrides
     def start(self) -> None:
         self.soundmanager = SoundManager()
-        self.image_t = pygame.image.load(image_resource(
-            join("stage", "yes.png")))
+        self.image_t = pygame.image.load(image_resource(join("stage", "yes.png")))
         self.image = self.create_neon(self.image_t)
         self.rect = self.image.get_rect()
         self.name = "Yes_Button"
@@ -30,29 +30,30 @@ class YesButton(GameObject, metaclass=SingletonMeta):
         self.z_index = 999
         self._visible = False
         self._target = None
-        
+
         return None
-    
+
     def attach_mgr(self, scene_manager: SceneManager) -> YesButton:
         self.scene_manager = scene_manager
         return self
-    
+
     @overrides
     def on_mouse_up_as_button(self) -> None:
         self.soundmanager.play_effect("click")
+        self.soundmanager.stop_story_background_sound()
         GameManager().create_stage(self._target)
         self.scene_manager.load_scene("game_scene")
         return None
-    
+
     @property
     def target(self):
         return self._target
-    
+
     @target.setter
     def target(self, target):
         self._target = target
         return None
-    
+
     @overrides
     def on_mouse_enter(self) -> None:
         self.image = self.image_t
@@ -76,6 +77,5 @@ class YesButton(GameObject, metaclass=SingletonMeta):
         bloom_surf = pygame.transform.rotate(bloom_surf, 270)
         bloom_surf = pygame.transform.flip(bloom_surf, True, False)
         return bloom_surf
-     
 
     pass

@@ -24,7 +24,7 @@ class MainMenu(Scene):
             self.scene_manager, "create_server"
         )
         client_menu = Menu("Join Room").attach_mgr(self.scene_manager, "join_server")
-        stage_menu = Menu("Stage").attach_mgr(self.scene_manager, "story_scene")
+        stage_menu = Menu("Story").attach_mgr(self.scene_manager, "story_scene")
         achievements_menu = Menu("Achievements").attach_mgr(
             self.scene_manager, "achievements"
         )
