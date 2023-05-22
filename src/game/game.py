@@ -241,7 +241,9 @@ class Game(Subject):
             if self._reverse_direction is True:
                 self._skip_player = self._players[self._current_turn - 1]
             else:
-                self._skip_player = self._players[self._current_turn + 1]
+                self._skip_player = self._players[
+                    (self._current_turn + 1) % len(self._players)
+                ]
             pass
         elif self._discarded_card.get("color") == "wild":
             if self._discarded_card.get("type") == "draw4":

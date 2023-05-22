@@ -136,6 +136,7 @@ class Card(GameObject, Observer):
             if self.vec_rect.y > self.target_pos[1]:
                 self.rect.x = self.target_pos[0]
                 self.rect.y = self.target_pos[1]
+                self.top = self.target_pos[1]
                 self.draw_start = False
                 self.draw_end = True
                 self.target_pos = self.discard_pile_pos

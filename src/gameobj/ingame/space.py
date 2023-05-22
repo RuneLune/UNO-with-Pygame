@@ -36,6 +36,7 @@ class Space(GameObject, Observer):
 
     @overrides
     def start(self):
+        self.image.fill(colors.dark_slate_gray)
         self.color = colors.white
         self.rect_copy = pygame.rect.Rect((0, 0), self.rect.size)
         if self.turn is True:
@@ -57,7 +58,7 @@ class Space(GameObject, Observer):
         self.time_left = self.game.remain_turn_time()
         # 턴 시작하면 테두리 색 변화
         if self.turn is True:
-            self.image.fill(colors.black)
+            self.image.fill(colors.dark_slate_gray)
             pygame.draw.rect(
                 surface=self.image, color=self.turn_color, rect=self.rect_copy, width=5
             )
@@ -77,7 +78,7 @@ class Space(GameObject, Observer):
             if self.time_left < 0.1:
                 SoundManager().play_effect("timeout")
         elif self.turn is False:
-            self.image.fill(colors.black)
+            self.image.fill(colors.dark_slate_gray)
             pygame.draw.rect(
                 surface=self.image, color=self.color, rect=self.rect_copy, width=3
             )

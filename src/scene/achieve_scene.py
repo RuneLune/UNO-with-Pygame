@@ -171,6 +171,6 @@ class AchieveScene(Scene):
         self.instantiate(self.lockerG)
         self.instantiate(self.lockerH)
 
-        SoundManager().play_achievement_background_sound()
+        # SoundManager().play_achievement_background_sound()
 
         return None
