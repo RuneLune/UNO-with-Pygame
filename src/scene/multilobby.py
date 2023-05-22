@@ -38,6 +38,6 @@ class MultiLobby(Scene):
         if not result:
             self.scene_manager.load_previous_scene()
             return None
-        self.socket_client.send_data(self.game_manager.username, "JOIN")
+        self.socket_client.send_data(self.game_manager.username.strip(), "JOIN")
 
         return None

@@ -11,16 +11,17 @@ class CreateServer(Scene):
         if not hasattr(self, "update_called"):
             self.update_called = True
             server = SocketServer()
+            client = SocketClient()
             if (
                 self.scene_manager.back_scene_name is not None
                 and self.scene_manager.back_scene_name == "multi_lobby"
             ):
                 server.close()
+                client.close()
                 self.scene_manager.load_previous_scene()
                 pass
             elif self.scene_manager.previous_scene_name == "main_menu":
                 server.initialize()
-                client = SocketClient()
                 client.host = server.host
                 client.port = server.port
                 self.scene_manager.load_scene("multi_lobby")

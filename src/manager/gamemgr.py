@@ -25,7 +25,7 @@ class GameManager(metaclass=SingletonMeta):
         }
         self.__current_game_type = "default"
         self.__players_count = LobbyManager().get_game_settings().get("player_count")
-        self.__username = LobbyManager().get_game_settings().get("user_name")
+        self.__username = LobbyManager().get_game_settings().get("user_name").strip()
         return None
 
     def create_game(self) -> None:

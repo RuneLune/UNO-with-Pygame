@@ -4,11 +4,10 @@ from appdata import AppDataPaths
 
 
 def appdata_path(relative_path: str) -> str:
-    try:
-        if sys._MEIPASS:
-            base_path = AppDataPaths("SE2023_09")
-            pass
-    except Exception:
+    if hasattr(sys, "_MEIPASS"):
+        base_path = AppDataPaths("SE2023_09")
+        pass
+    else:
         base_path = os.path.join(os.path.abspath("."), ".appdata")
         pass
 

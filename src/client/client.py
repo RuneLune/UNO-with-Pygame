@@ -47,6 +47,8 @@ class SocketClient(metaclass=SingletonMeta):
         stop_thread.set()
         if hasattr(self, "_socket") and self._socket:
             self._socket.shutdown(socket.SHUT_RDWR)
+            del self._socket
+            pass
         if hasattr(self, "_thread") and self._thread:
             self._thread.join()
             del self._thread
@@ -88,13 +90,18 @@ class SocketClient(metaclass=SingletonMeta):
                         print(f"[Client] {data.player} is the owner")
                         pass
                     pass
+                elif data.action == "CLOSE":
+                    print("[Client] Connection to server closed")
+                    raise BaseException("[Client] Server Closed")
                 else:
                     print(f"[Client] invalid data: {data}")
                     continue
                 self._data_queue.append(copy.deepcopy(data))
             except BaseException:
                 print("[Client] Connection to server lost")
-                self._socket.close()
+                if hasattr(self, "_socket") and self._socket:
+                    self._socket.close()
+                    del self._socket
                 stop_thread.set()
                 break
         print("[Client] Message receiving thread terminated")

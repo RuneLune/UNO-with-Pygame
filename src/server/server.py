@@ -21,12 +21,12 @@ class SocketServer(metaclass=SingletonMeta):
     #     return None
 
     def initialize(self) -> bool:
-        self.close()
         global HOST, PORT
-        self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self._host = HOST if HOST else socket.gethostbyname(socket.gethostname())
         self._port = PORT if PORT else 23009
+        self.close()
+        self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         try:
             self._socket.bind((self._host, self._port))
             print("[Server] Server started")
@@ -54,6 +54,10 @@ class SocketServer(metaclass=SingletonMeta):
             pass
         # if hasattr(self, "_socket") and self._socket:
         #     self._socket.shutdown(socket.SHUT_RDWR)
+        if hasattr(self, "_socket") and self._socket:
+            self._socket.close()
+            del self._socket
+            pass
         if hasattr(self, "_thread") and self._thread:
             self._thread.join()
             del self._thread
@@ -84,12 +88,16 @@ class SocketServer(metaclass=SingletonMeta):
             del client
             continue
         for thread in self._thread_list:
+            print("joining thread")
             thread.join()
             self._thread_list.remove(thread)
             del thread
             continue
-        self._socket.close()
-        del self._socket
+        print("joining thread end")
+        if hasattr(self, "_socket") and self._socket:
+            self._socket.close()
+            del self._socket
+            pass
         print(f"[Server] Stop Listening on {self._host}:{self._port}")
         return None
 
@@ -110,17 +118,17 @@ class SocketServer(metaclass=SingletonMeta):
 
                 if data.action == "NAME":
                     self._player_name_dict.update({client_socket: data.target})
-                    self._broadcast(data, client_socket, True)
+                    self._broadcast(data, client_socket)
                     pass
                 elif data.action == "JOIN":
                     self._player_name_dict.update({client_socket: data.player})
-                    self._broadcast(data, client_socket, False)
+                    self._broadcast(data, client_socket)
                     if self._owner is None:
                         self._owner = client_socket
-                        self._broadcast(
-                            ProcessData(data.player, "OWNER", client_address),
-                            client_socket,
-                            True,
+                        client_socket.send(
+                            pickle.dumps(
+                                ProcessData(data.player, "OWNER", client_address)
+                            )
                         )
                         pass
                 # Room Owner
@@ -141,7 +149,7 @@ class SocketServer(metaclass=SingletonMeta):
                     if client_socket in self._player_name_dict.keys():
                         name: str = self._player_name_dict.pop(client_socket)
                         self._broadcast(
-                            ProcessData("DISCONNECT", name, None), client_socket, True
+                            ProcessData("DISCONNECT", name, None), client_socket
                         )
                         pass
                     pass
@@ -149,15 +157,21 @@ class SocketServer(metaclass=SingletonMeta):
 
                 if self._client_list:
                     if client_socket is self._owner:
-                        self._owner = self._client_list[0]
+                        # self._owner = self._client_list[0]
+                        # self._broadcast(
+                        #     ProcessData(
+                        #         self._player_name_dict.get(self._owner),
+                        #         "OWNER",
+                        #         self._owner.getpeername(),
+                        #     ),
+                        #     self._owner,
+                        #     True,
+                        # )
                         self._broadcast(
                             ProcessData(
-                                self._player_name_dict.get(self._owner),
-                                "OWNER",
-                                self._owner.getpeername(),
+                                "SERVER",
+                                "CLOSE",
                             ),
-                            self._owner,
-                            True,
                         )
                         pass
                     pass
@@ -169,12 +183,11 @@ class SocketServer(metaclass=SingletonMeta):
     def _broadcast(
         self,
         data: Type[ProcessData],
-        sender: socket.socket,
-        send_to_sender: bool = False,
+        sender: Optional[socket.socket] = None,
     ) -> None:
         message = pickle.dumps(data)
         for client in self._client_list:
-            if client is not sender or send_to_sender:
+            if sender is None or client is not sender:
                 client.send(message)
                 pass
             continue
