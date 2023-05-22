@@ -19,7 +19,6 @@ class MainMenu(Scene):
         self.instantiate(BackgroundObject(color.white))
 
         back = Back()
-        self.soundmanager = SoundManager()
 
         Menu.destroy_all()
         play_menu = Menu("Play").attach_mgr(self.scene_manager, "gamelobby")
@@ -68,6 +67,6 @@ class MainMenu(Scene):
             ]
         )
 
-        self.soundmanager.play_main_background_sound()
+        SoundManager().play_main_background_sound()
 
         return None
