@@ -20,7 +20,7 @@ from gameobj.achieve.backbtn import BackButton
 
 from gameobj.achieve.lock import Locker
 
-
+from manager.soundmgr import SoundManager
 
 
 class AchieveScene(Scene):
@@ -40,10 +40,15 @@ class AchieveScene(Scene):
             background_surface, "TestScene_Background", z_index=-999
         )
         self.title_text = TextObject(
-            "Achievement", title_font, color.white, "AchievementScene_TitleText", z_index=-900
+            "Achievement",
+            title_font,
+            color.white,
+            "AchievementScene_TitleText",
+            z_index=-900,
         )
         self.back_button = BackButton(
-            "◀ Back", menu_font, color.white, "AchievementScene_BackButton", z_index=997).attach_mgr(self.scene_manager)
+            "◀ Back", menu_font, color.white, "AchievementScene_BackButton", z_index=997
+        ).attach_mgr(self.scene_manager)
 
         self.iconA = Icon(name="0")
         self.iconB = Icon(name="1")
@@ -81,85 +86,53 @@ class AchieveScene(Scene):
         self.lockerG = Locker(name="7")
         self.lockerH = Locker(name="8")
 
-
-
-        self.title_text.rect.center = (
-            screen_rect.centerx, screen_rect.centery / 4)
+        self.title_text.rect.center = (screen_rect.centerx, screen_rect.centery / 4)
         self.back_button.rect.center = (
-            screen_rect.centerx / 5, screen_rect.centery / 5)
-        
-        self.iconA.rect.center = (
-            screen_rect.centerx / 5, screen_rect.centery / 2)
-        self.iconB.rect.center = (
-            screen_rect.right / 1.8, screen_rect.centery / 2)
-        self.iconC.rect.center = (
-            screen_rect.centerx / 5, screen_rect.centery / 1.2)
-        self.iconD.rect.center = (
-            screen_rect.right / 1.8, screen_rect.centery / 1.2)
-        self.iconE.rect.center = (
-            screen_rect.centerx / 5, screen_rect.bottom / 1.6)
-        self.iconF.rect.center = (
-            screen_rect.right / 1.8, screen_rect.bottom / 1.6)
-        self.iconG.rect.center = (
-            screen_rect.centerx / 5, screen_rect.bottom / 1.2)
-        self.iconH.rect.center = (
-            screen_rect.right / 1.8, screen_rect.bottom / 1.2)
-        
-        self.lockerA.rect.center = (
-            screen_rect.centerx / 5, screen_rect.centery / 2)
-        self.lockerB.rect.center = (
-            screen_rect.right / 1.8, screen_rect.centery / 2)
-        self.lockerC.rect.center = (
-            screen_rect.centerx / 5, screen_rect.centery / 1.2)
-        self.lockerD.rect.center = (
-            screen_rect.right / 1.8, screen_rect.centery / 1.2)
-        self.lockerE.rect.center = (
-            screen_rect.centerx / 5, screen_rect.bottom / 1.6)
-        self.lockerF.rect.center = (
-            screen_rect.right / 1.8, screen_rect.bottom / 1.6)
-        self.lockerG.rect.center = (
-            screen_rect.centerx / 5, screen_rect.bottom / 1.2)
-        self.lockerH.rect.center = (
-            screen_rect.right / 1.8, screen_rect.bottom / 1.2)
-        
-        self.textA.rect.center = (
-            screen_rect.centerx / 1.5, screen_rect.centery / 2.2)
-        self.textB.rect.center = (
-            screen_rect.right / 1.3, screen_rect.centery / 2.2)
-        self.textC.rect.center = (
-            screen_rect.centerx / 1.5, screen_rect.centery / 1.3)
-        self.textD.rect.center = (
-            screen_rect.right / 1.3, screen_rect.centery / 1.3)
-        self.textE.rect.center = (
-            screen_rect.centerx / 1.5, screen_rect.bottom / 1.7)
-        self.textF.rect.center = (
-            screen_rect.right / 1.3, screen_rect.bottom / 1.7)
-        self.textG.rect.center = (
-            screen_rect.centerx / 1.5, screen_rect.bottom / 1.3)
-        self.textH.rect.center = (
-            screen_rect.right / 1.3, screen_rect.bottom / 1.3)
-        
-        self.dateA.rect.center = (
-            screen_rect.centerx / 1.5, screen_rect.centery / 1.8)
-        self.dateB.rect.center = (
-            screen_rect.right / 1.3, screen_rect.centery / 1.8)
-        self.dateC.rect.center = (
-            screen_rect.centerx / 1.5, screen_rect.centery / 1.1)
-        self.dateD.rect.center = (
-            screen_rect.right / 1.3, screen_rect.centery / 1.1)
-        self.dateE.rect.center = (
-            screen_rect.centerx / 1.5, screen_rect.bottom / 1.5)
-        self.dateF.rect.center = (
-            screen_rect.right / 1.3, screen_rect.bottom / 1.5)
-        self.dateG.rect.center = (
-            screen_rect.centerx / 1.5, screen_rect.bottom / 1.2)
-        self.dateH.rect.center = (
-            screen_rect.right / 1.3, screen_rect.bottom / 1.2)
-
-
-        self.back_button.on_mouse_up_as_button = (
-            lambda: self.scene_manager.load_previous_scene()
+            screen_rect.centerx / 5,
+            screen_rect.centery / 5,
         )
+
+        self.iconA.rect.center = (screen_rect.centerx / 5, screen_rect.centery / 2)
+        self.iconB.rect.center = (screen_rect.right / 1.8, screen_rect.centery / 2)
+        self.iconC.rect.center = (screen_rect.centerx / 5, screen_rect.centery / 1.2)
+        self.iconD.rect.center = (screen_rect.right / 1.8, screen_rect.centery / 1.2)
+        self.iconE.rect.center = (screen_rect.centerx / 5, screen_rect.bottom / 1.6)
+        self.iconF.rect.center = (screen_rect.right / 1.8, screen_rect.bottom / 1.6)
+        self.iconG.rect.center = (screen_rect.centerx / 5, screen_rect.bottom / 1.2)
+        self.iconH.rect.center = (screen_rect.right / 1.8, screen_rect.bottom / 1.2)
+
+        self.lockerA.rect.center = (screen_rect.centerx / 5, screen_rect.centery / 2)
+        self.lockerB.rect.center = (screen_rect.right / 1.8, screen_rect.centery / 2)
+        self.lockerC.rect.center = (screen_rect.centerx / 5, screen_rect.centery / 1.2)
+        self.lockerD.rect.center = (screen_rect.right / 1.8, screen_rect.centery / 1.2)
+        self.lockerE.rect.center = (screen_rect.centerx / 5, screen_rect.bottom / 1.6)
+        self.lockerF.rect.center = (screen_rect.right / 1.8, screen_rect.bottom / 1.6)
+        self.lockerG.rect.center = (screen_rect.centerx / 5, screen_rect.bottom / 1.2)
+        self.lockerH.rect.center = (screen_rect.right / 1.8, screen_rect.bottom / 1.2)
+
+        self.textA.rect.center = (screen_rect.centerx / 1.5, screen_rect.centery / 2.2)
+        self.textB.rect.center = (screen_rect.right / 1.3, screen_rect.centery / 2.2)
+        self.textC.rect.center = (screen_rect.centerx / 1.5, screen_rect.centery / 1.3)
+        self.textD.rect.center = (screen_rect.right / 1.3, screen_rect.centery / 1.3)
+        self.textE.rect.center = (screen_rect.centerx / 1.5, screen_rect.bottom / 1.7)
+        self.textF.rect.center = (screen_rect.right / 1.3, screen_rect.bottom / 1.7)
+        self.textG.rect.center = (screen_rect.centerx / 1.5, screen_rect.bottom / 1.3)
+        self.textH.rect.center = (screen_rect.right / 1.3, screen_rect.bottom / 1.3)
+
+        self.dateA.rect.center = (screen_rect.centerx / 1.5, screen_rect.centery / 1.8)
+        self.dateB.rect.center = (screen_rect.right / 1.3, screen_rect.centery / 1.8)
+        self.dateC.rect.center = (screen_rect.centerx / 1.5, screen_rect.centery / 1.1)
+        self.dateD.rect.center = (screen_rect.right / 1.3, screen_rect.centery / 1.1)
+        self.dateE.rect.center = (screen_rect.centerx / 1.5, screen_rect.bottom / 1.5)
+        self.dateF.rect.center = (screen_rect.right / 1.3, screen_rect.bottom / 1.5)
+        self.dateG.rect.center = (screen_rect.centerx / 1.5, screen_rect.bottom / 1.2)
+        self.dateH.rect.center = (screen_rect.right / 1.3, screen_rect.bottom / 1.2)
+
+        # self.back_button.on_mouse_up_as_button = (
+        #     lambda: SoundManager().play_effect("click"),
+        #     lambda: SoundManager().stop_achievement_background_sound(),
+        #     lambda: self.scene_manager.load_previous_scene()
+        # )
 
         # 장면에 게임 오브젝트 추가
         self.instantiate(self.background)
@@ -198,5 +171,6 @@ class AchieveScene(Scene):
         self.instantiate(self.lockerG)
         self.instantiate(self.lockerH)
 
+        SoundManager().play_achievement_background_sound()
 
         return None

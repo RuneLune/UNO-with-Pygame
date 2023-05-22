@@ -46,8 +46,6 @@ class StoryScene(Scene):
             font_resource("MainFont.ttf"), self.screen_rect.height // 12
         )
 
-        self.soundmanager = SoundManager()
-
         self.background = GameObject(
             background_surface, "StoryScene_Background", z_index=-999
         )
@@ -82,11 +80,11 @@ class StoryScene(Scene):
 
         self.no_button.on_mouse_up_as_button = lambda: (
             handle_window.invisible_window(),
-            self.soundmanager.play_effect("click"),
+            SoundManager().play_effect("click"),
         )
         self.yes_button.on_mouse_up = lambda: (
             handle_window.invisible_window(),
-            self.soundmanager.play_effect("click"),
+            SoundManager().play_effect("click"),
         )
 
         self.window_background = WindowBackground()
@@ -198,6 +196,6 @@ class StoryScene(Scene):
         self.instantiate(self.locker_d)
         self.instantiate(self.cat)
 
-        self.soundmanager.play_story_background_sound()
+        SoundManager().play_story_background_sound()
 
         return None

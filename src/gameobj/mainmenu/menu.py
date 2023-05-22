@@ -24,7 +24,6 @@ class Menu(TextButtonObject):
 
     @overrides
     def start(self) -> None:
-        self.soundmanager = SoundManager()
         Menu.Insts.append(self)
         screen_rect = pygame.display.get_surface().get_rect()
         self.font = pygame.font.Font(
@@ -50,7 +49,8 @@ class Menu(TextButtonObject):
 
     @overrides
     def on_click(self) -> None:
-        self.soundmanager.play_effect("click")
+        SoundManager().play_effect("click")
+        SoundManager().stop_main_background_sound()
         self.scene_manager.load_scene(self.target_scene)
         return None
 

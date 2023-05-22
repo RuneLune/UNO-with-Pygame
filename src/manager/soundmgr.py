@@ -16,6 +16,10 @@ class SoundManager(metaclass=SingletonMeta):
         self.timeout_effect_sound = pygame.mixer.Sound(sound_resource("timeout.mp3"))
         self.click_effect_sound = pygame.mixer.Sound(sound_resource("click.mp3"))
         self.story_background_sound = pygame.mixer.Sound(sound_resource("story.mp3"))
+        self.main_background_sound = pygame.mixer.Sound(sound_resource("main.mp3"))
+        self.achievement_background_sound = pygame.mixer.Sound(
+            sound_resource("achievement.mp3")
+        )
 
         self.effect = {
             "deal": self.deal_effect_sound,
@@ -29,6 +33,8 @@ class SoundManager(metaclass=SingletonMeta):
 
         self.is_background_playing = False
         self.is_story_background_playing = False
+        self.is_main_background_playing = False
+        self.is_achievement_background_playing = False
 
         # self.refresh()
 
@@ -70,6 +76,8 @@ class SoundManager(metaclass=SingletonMeta):
         self.update_background_volume()
         self.update_effect_volume()
         self.update_story_background_volume()
+        self.update_main_background_volume()
+        self.update_achievement_background_volume()
         return None
 
     def play_effect(self, name):
@@ -89,3 +97,31 @@ class SoundManager(metaclass=SingletonMeta):
         self.story_background_sound.set_volume(
             Config().get_volume("bgm") * Config().get_volume("all") / 10000
         )  # 스토리 배경음악 음량 조절 0~1 사이값, 0은 음소거 1은 최대 볼륨
+
+    def play_main_background_sound(self):
+        if not self.is_main_background_playing:  # 메인 배경음악이 재생중이 아니면
+            self.main_background_sound.play(-1)  # 메인 배경음악 재생
+            self.is_main_background_playing = True  # 메인 배경음악 재생중으로 표시
+
+    def stop_main_background_sound(self):
+        self.main_background_sound.stop()  # 메인 배경음악 정지
+        self.is_main_background_playing = False  # 메인 배경음악 재생중이 아니라고 표시
+
+    def update_main_background_volume(self):
+        self.main_background_sound.set_volume(
+            Config().get_volume("bgm") * Config().get_volume("all") / 10000
+        )  # 메인 배경음악 음량 조절 0~1 사이값, 0은 음소거 1은 최대 볼륨
+
+    def play_achievement_background_sound(self):
+        if not self.is_achievement_background_playing:  # 업적 배경음악이 재생중이 아니면
+            self.achievement_background_sound.play(-1)  # 업적 배경음악 재생
+            self.is_achievement_background_playing = True  # 업적 배경음악 재생중으로 표시
+
+    def stop_achievement_background_sound(self):
+        self.achievement_background_sound.stop()  # 업적 배경음악 정지
+        self.is_achievement_background_playing = False  # 업적 배경음악 재생중이 아니라고 표시
+
+    def update_achievement_background_volume(self):
+        self.achievement_background_sound.set_volume(
+            Config().get_volume("bgm") * Config().get_volume("all") / 10000
+        )  # 업적 배경음악 음량 조절 0~1 사이값, 0은 음소거 1은 최대 볼륨

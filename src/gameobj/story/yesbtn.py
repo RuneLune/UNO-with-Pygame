@@ -21,7 +21,6 @@ if TYPE_CHECKING:
 class YesButton(GameObject, metaclass=SingletonMeta):
     @overrides
     def start(self) -> None:
-        self.soundmanager = SoundManager()
         self.image_t = pygame.image.load(image_resource(join("stage", "yes.png")))
         self.image = self.create_neon(self.image_t)
         self.rect = self.image.get_rect()
@@ -39,8 +38,8 @@ class YesButton(GameObject, metaclass=SingletonMeta):
 
     @overrides
     def on_mouse_up_as_button(self) -> None:
-        self.soundmanager.play_effect("click")
-        self.soundmanager.stop_story_background_sound()
+        SoundManager().play_effect("click")
+        SoundManager().stop_story_background_sound()
         GameManager().create_stage(self._target)
         self.scene_manager.load_scene("game_scene")
         return None

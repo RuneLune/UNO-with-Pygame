@@ -4,9 +4,9 @@ from overrides import overrides
 from typing import TYPE_CHECKING, List, Type
 
 from manager.cfgmgr import Config
+from manager.soundmgr import SoundManager
 from gameobj.gameobj import GameObject
 from metaclass.singleton import SingletonMeta
-
 
 
 class KeyInput(GameObject, metaclass=SingletonMeta):
@@ -53,6 +53,7 @@ class KeyInput(GameObject, metaclass=SingletonMeta):
             elif key == keyconfig_value.get("select"):
                 self._window_list[self._window_index].on_mouse_up_as_button()
                 pass
+        SoundManager().play_effect("click")
         return False
 
     def attach_stage(self, stage_list, window_list, back_button) -> None:
@@ -70,15 +71,12 @@ class KeyInput(GameObject, metaclass=SingletonMeta):
         self._stage_index = value
         return None
 
-    
     def update_flag_true(self):
         self.window_flag = True
         return None
-    
+
     def update_flag_false(self):
         self.window_flag = False
         return None
-
-
 
     pass

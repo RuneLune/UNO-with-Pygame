@@ -10,12 +10,14 @@ from gameobj.mainmenu.keyinput import KeyInput
 from gameobj.mainmenu.selector import Selector
 from gameobj.mainmenu.bg import Back
 
+from manager.soundmgr import SoundManager
+
 
 class MainMenu(Scene):
     @overrides
     def start(self) -> None:
         self.instantiate(BackgroundObject(color.white))
-        
+
         back = Back()
 
         Menu.destroy_all()
@@ -64,5 +66,7 @@ class MainMenu(Scene):
                 quit_menu,
             ]
         )
+
+        SoundManager().play_main_background_sound()
 
         return None
