@@ -6,6 +6,7 @@ from typing_extensions import TypeAlias
 
 from metaclass.singleton import SingletonMeta
 from data.processdata import ProcessData
+import util.bcolors as color
 
 _RetAddress: TypeAlias = Any
 
@@ -29,14 +30,16 @@ class SocketServer(metaclass=SingletonMeta):
         self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         try:
             self._socket.bind((self._host, self._port))
-            print("[Server] Server started")
+            print(f"{color.CBLUEBG}[Server] Server started{color.CEND}")
             pass
         except BaseException:
-            print("[Server] Cannot start server")
+            print(f"{color.CREDBG}[Server] Cannot start server{color.CEND}")
             return False
         self._client_list: List[socket.socket] = []
         self._thread_list: List[Thread] = []
+        self._client_addr_list: List[_RetAddress] = []
         self._player_name_dict: Dict[socket.socket, str] = {}
+        self._player_name_list: List[str] = []
         self._owner: Optional[socket.socket] = None
         self._thread: Thread = Thread(target=self._start)
         stop_thread.clear()
@@ -65,7 +68,9 @@ class SocketServer(metaclass=SingletonMeta):
         return None
 
     def _start(self) -> None:
-        print(f"[Server] Start Listening on {self._host}:{self._port}")
+        print(
+            f"{color.CBLUEBG}[Server] Start Listening on {self._host}:{self._port}{color.CEND}"
+        )
         while not stop_thread.is_set():
             self._socket.listen()
             (
@@ -96,20 +101,26 @@ class SocketServer(metaclass=SingletonMeta):
             self._socket.close()
             del self._socket
             pass
-        print(f"[Server] Stop Listening on {self._host}:{self._port}")
+        print(
+            f"{color.CYELLOWBG}[Server] Stop Listening on {self._host}:{self._port}{color.CEND}"
+        )
         return None
 
     def _handle_client(
         self, client_socket: socket.socket, client_address: _RetAddress
     ) -> None:
-        print(f"[Server] {client_address[0]}:{client_address[1]} connected")
+        print(
+            f"{color.CBLUEBG}[Server] {client_address[0]}:{client_address[1]} connected{color.CEND}"
+        )
         while client_socket in self._client_list and not stop_thread.is_set():
             try:
                 data: ProcessData = pickle.loads(client_socket.recv(4096))
                 if not data:
                     break
                 else:
-                    print(f"[Server] {client_address[0]}:{client_address[1]} > {data}")
+                    print(
+                        f"{color.CBLUEBG}[Server] {client_address[0]}:{client_address[1]} > {data}{color.CEND}"
+                    )
                     pass
 
                 data.action = data.action.upper()
@@ -119,6 +130,19 @@ class SocketServer(metaclass=SingletonMeta):
                     self._broadcast(data, client_socket)
                     pass
                 elif data.action == "JOIN":
+                    client_socket.send(
+                        pickle.dumps(
+                            ProcessData(
+                                "SERVER",
+                                "INFO",
+                                {
+                                    "clients": self._client_list,
+                                    "names": self._player_name_dict,
+                                    "owner": self._owner,
+                                },
+                            )
+                        )
+                    )
                     self._player_name_dict.update({client_socket: data.player})
                     self._broadcast(data, client_socket)
                     if self._owner is None:
@@ -175,7 +199,9 @@ class SocketServer(metaclass=SingletonMeta):
                     pass
                 break
             continue
-        print(f"[Server] {client_address[0]}:{client_address[1]} disconnected")
+        print(
+            f"{color.CBLUEBG}[Server] {client_address[0]}:{client_address[1]} disconnected{color.CEND}"
+        )
         return None
 
     def _broadcast(

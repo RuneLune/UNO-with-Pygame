@@ -8,6 +8,7 @@ import copy
 
 from metaclass.singleton import SingletonMeta
 from data.processdata import ProcessData
+import util.bcolors as color
 
 # _RetAddress: TypeAlias = Any
 
@@ -32,10 +33,12 @@ class SocketClient(metaclass=SingletonMeta):
         self._port = SERVER_PORT if SERVER_PORT else 23009
         try:
             self._socket.connect((self._host, self._port))
-            print(f"[Client] Connected to {self._host}:{self._port}")
+            print(
+                f"{color.CGREENBG}[Client] Connected to {self._host}:{self._port}{color.CEND}"
+            )
             pass
         except BaseException:
-            print("[Client] Cannot connect to server")
+            print(f"{color.CGREENBG}[Client] Cannot connect to server{color.CEND}")
             return False
         self._data_queue: List[ProcessData] = []
         self._thread: Thread = Thread(target=self._start)
@@ -56,66 +59,85 @@ class SocketClient(metaclass=SingletonMeta):
         return None
 
     def _start(self) -> None:
-        print("[Client] Message receiving thread started")
+        print(f"{color.CGREENBG}[Client] Message receiving thread started{color.CEND}")
         while not stop_thread.is_set():
             try:
                 data: ProcessData = pickle.loads(self._socket.recv(4096))
                 if not data:
                     break
                 else:
-                    print(f"[Client] {self._host}:{self._port} > {data}")
+                    print(
+                        f"{color.CGREENBG}[Client] {self._host}:{self._port} > {data}{color.CEND}"
+                    )
                     pass
 
                 data.player = data.player.strip()
                 data.action = data.action.upper()
 
                 if data.action == "JOIN":
-                    print(f"[Client] {data.player} joined game room")
+                    print(
+                        f"{color.CGREENBG}[Client] {data.player} joined game room{color.CEND}"
+                    )
                     pass
                 elif data.action == "NAME":
-                    print(f"[Client] {data.player} changed name to {data.target}")
+                    print(
+                        f"{color.CGREENBG}[Client] {data.player} changed name to {data.target}{color.CEND}"
+                    )
                     pass
                 elif data.action == "DISCONNECT":
-                    print(f"[Client] {data.player} left game room")
+                    print(
+                        f"{color.CGREENBG}[Client] {data.player} left game room{color.CEND}"
+                    )
                 elif data.action == "KICK":
-                    print("[Client] Kicked by host")
+                    print(f"{color.CBEIGEBG}[Client] Kicked by host{color.CEND}")
                     self._socket.close()
                     self.run_thread = False
                     break
                 elif data.action == "OWNER":
                     if data.target == self._socket.getsockname():
-                        print("[Client] You are the owner")
+                        print(
+                            f"{color.CVIOLETBG}[Client] You are the owner{color.CEND}"
+                        )
                         pass
-                    else:
-                        print(f"[Client] {data.player} is the owner")
-                        pass
+                    # else:
+                    #     print(f"{color.CGREENBG}[Client] {data.player} is the owner{color.CEND}")
+                    #     pass
+                    pass
+                elif data.action == "INFO":
+                    print(
+                        f"{color.CGREENBG}[Client] {data.player}:(room info){color.CEND}"
+                    )
                     pass
                 elif data.action == "CLOSE":
-                    print("[Client] Connection to server closed")
+                    print(
+                        f"{color.CYELLOWBG}[Client] Connection to server closed{color.CEND}"
+                    )
                     raise BaseException("[Client] Server Closed")
                 else:
-                    print(f"[Client] invalid data: {data}")
+                    print(f"{color.CREDBG}[Client] invalid data: {data}{color.CEND}")
                     continue
                 self._data_queue.append(copy.deepcopy(data))
-                print("[Client] Data Queue Start")
+                print(f"{color.CGREENBG}[Client] Data Queue Start{color.CEND}")
                 for d in self._data_queue:
-                    print(d)
+                    print(color.CGREEN + str(d) + color.CEND)
                     pass
-                print("[Client] Data Queue End")
+                print(f"{color.CGREENBG}[Client] Data Queue End{color.CEND}")
                 pass
             except BaseException:
-                print("[Client] Connection to server lost")
+                print(f"{color.CREDBG}[Client] Connection to server lost{color.CEND}")
                 if hasattr(self, "_socket") and self._socket:
                     self._socket.close()
                     del self._socket
                 stop_thread.set()
                 break
-        print("[Client] Message receiving thread terminated")
+        print(f"{color.CREDBG}[Client] Message receiving thread terminated{color.CEND}")
         return None
 
     def send_data(self, player: str, action: str, target: Optional[str] = None) -> None:
         data = ProcessData(player, action, target)
-        print(f"[Client] {self._host}:{self._port} < {data}")
+        print(
+            f"{color.CGREENBG}[Client] {self._host}:{self._port} < {data}{color.CEND}"
+        )
         self._socket.send(pickle.dumps(data))
         return None
 
