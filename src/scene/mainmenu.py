@@ -8,13 +8,15 @@ from gameobj.mainmenu.menu import Menu
 from gameobj.mainmenu.keybind import KeyBind
 from gameobj.mainmenu.keyinput import KeyInput
 from gameobj.mainmenu.selector import Selector
+from gameobj.mainmenu.bg import Back
 
 
 class MainMenu(Scene):
     @overrides
     def start(self) -> None:
         self.instantiate(BackgroundObject(color.white))
-        self.instantiate(TitleText("UNO"))
+        
+        back = Back()
 
         Menu.destroy_all()
         play_menu = Menu("Play").attach_mgr(self.scene_manager, "gamelobby")
@@ -35,6 +37,7 @@ class MainMenu(Scene):
         self.instantiate(achievements_menu)
         self.instantiate(config_menu)
         self.instantiate(quit_menu)
+        self.instantiate(back)
 
         KeyBind.destroy_all()
         self.instantiate(KeyBind("Left"))
