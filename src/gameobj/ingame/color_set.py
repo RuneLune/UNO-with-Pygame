@@ -1,13 +1,14 @@
 from __future__ import annotations
 from overrides import overrides
+from typing import Type, TYPE_CHECKING
 
 import pygame
-from abstrclass.subject import Subject
-from gameobj.gameobj import GameObject
 import util.colors as colors
-from manager.cfgmgr import Config
+from abstrclass.subject import Subject
 from abstrclass.observer import Observer
-from typing import Type, TYPE_CHECKING
+from gameobj.gameobj import GameObject
+from manager.cfgmgr import Config
+from manager.soundmgr import SoundManager
 
 if TYPE_CHECKING:
     from abstrclass.subject import Subject
@@ -51,6 +52,7 @@ class ColorSet(GameObject, Observer):
     def on_mouse_down(self):
         self.user.set_color(self.choice)
         self._visible = False
+        SoundManager().play_effect("click")
 
     def user_update(self, subject: Type[Subject]):
         self.user = subject.get_user()
