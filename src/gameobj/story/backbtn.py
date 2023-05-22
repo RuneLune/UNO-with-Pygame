@@ -19,7 +19,6 @@ class BackButton(TextButtonObject):
     @overrides
     def start(self) -> None:
         self.highlighting_color = color.black
-        self.soundmanager = SoundManager()
         screen_rect = pygame.display.get_surface().get_rect()
         self.font = pygame.font.Font(
             font_resource("MainFont.ttf"), screen_rect.height // 20
@@ -37,8 +36,8 @@ class BackButton(TextButtonObject):
     @overrides
     def on_click(self) -> None:
         self.scene_manager.load_previous_scene()
-        self.soundmanager.play_effect("click")
-        self.soundmanager.stop_story_background_sound()
+        SoundManager().play_effect("click")
+        SoundManager().stop_story_background_sound()
         return None
 
     def change_highlighting_color(self, color: Tuple[int, int, int]) -> None:

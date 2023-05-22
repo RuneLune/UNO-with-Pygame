@@ -15,17 +15,15 @@ from metaclass.singleton import SingletonMeta
 class NoButton(GameObject, metaclass=SingletonMeta):
     @overrides
     def start(self) -> None:
-        self.image_t = pygame.image.load(image_resource(
-            join("stage", "no.png")))
+        self.image_t = pygame.image.load(image_resource(join("stage", "no.png")))
         self.image = self.create_neon(self.image_t)
         self.rect = self.image.get_rect()
         self.name = "No_Button"
         self.img_copy = self.image
         self.z_index = 999
         self._visible = False
-        
+
         return None
-    
 
     @overrides
     def on_mouse_enter(self) -> None:
