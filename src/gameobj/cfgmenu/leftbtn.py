@@ -8,6 +8,7 @@ from gameobj.txtbtnobj import TextButtonObject
 from util.resource_manager import font_resource
 from manager.cfgmgr import Config
 import util.colors as color
+from manager.soundmgr import SoundManager
 
 if TYPE_CHECKING:
     from manager.scenemgr import SceneManager
@@ -23,6 +24,7 @@ class LeftButton(TextButtonObject):
 
     @overrides
     def start(self) -> None:
+        self.soundmanager = SoundManager()
         LeftButton.Insts.append(self)
         screen_rect = pygame.display.get_surface().get_rect()
         self.font = pygame.font.Font(
@@ -45,6 +47,7 @@ class LeftButton(TextButtonObject):
 
     @overrides
     def on_click(self) -> None:
+        self.soundmanager.play_effect("click")
         Config().decrease(self.target_config)
         self.scene_manager.reload_scene()
         return None

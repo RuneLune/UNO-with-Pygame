@@ -17,10 +17,12 @@ from manager.storymgr import StoryManager
 from gameobj.story.handlewindow import HandleWindow
 from gameobj.story.yesbtn import YesButton
 from gameobj.story.keyinput import KeyInput
+from manager.soundmgr import SoundManager
 
 class StoryDButton(GameObject):
     @overrides
     def start(self) -> None:
+        self.soundmanager = SoundManager()
         screen_rect = pygame.display.get_surface().get_rect()
         self.story_d_text = StoryDText()
         self.touchable = StoryManager().get_stage_states().get("touchable")
@@ -51,6 +53,7 @@ class StoryDButton(GameObject):
     @overrides
     def on_mouse_up_as_button(self) -> None:
         if self.touchable[3]:
+            self.soundmanager.play_effect("click")
             KeyInput().update_flag_true()
             HandleWindow().visible_window()
             YesButton().target = "stage_d"

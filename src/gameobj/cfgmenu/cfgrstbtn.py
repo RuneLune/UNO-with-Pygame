@@ -11,11 +11,12 @@ import util.colors as color
 
 if TYPE_CHECKING:
     from manager.scenemgr import SceneManager
-
+from manager.soundmgr import SoundManager
 
 class ConfigResetButton(TextButtonObject):
     @overrides
     def start(self) -> None:
+        self.soundmanager = SoundManager()
         screen_rect = pygame.display.get_surface().get_rect()
         self.font = pygame.font.Font(
             font_resource("MainFont.ttf"), screen_rect.height // 20
@@ -32,6 +33,7 @@ class ConfigResetButton(TextButtonObject):
 
     @overrides
     def on_click(self) -> None:
+        self.soundmanager.play_effect("click")
         Config().reset()
         self.scene_manager.reload_scene()
         return None

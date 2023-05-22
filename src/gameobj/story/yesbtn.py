@@ -12,6 +12,7 @@ from util.resource_manager import font_resource
 from util.resource_manager import image_resource
 from metaclass.singleton import SingletonMeta
 from manager.gamemgr import GameManager
+from manager.soundmgr import SoundManager
 
 if TYPE_CHECKING:
     from manager.scenemgr import SceneManager
@@ -19,6 +20,7 @@ if TYPE_CHECKING:
 class YesButton(GameObject, metaclass=SingletonMeta):
     @overrides
     def start(self) -> None:
+        self.soundmanager = SoundManager()
         self.image_t = pygame.image.load(image_resource(
             join("stage", "yes.png")))
         self.image = self.create_neon(self.image_t)
@@ -37,6 +39,7 @@ class YesButton(GameObject, metaclass=SingletonMeta):
     
     @overrides
     def on_mouse_up_as_button(self) -> None:
+        self.soundmanager.play_effect("click")
         GameManager().create_stage(self._target)
         self.scene_manager.load_scene("game_scene")
         return None

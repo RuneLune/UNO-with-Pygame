@@ -7,6 +7,7 @@ import pygame
 from gameobj.txtbtnobj import TextButtonObject
 from util.resource_manager import font_resource
 import util.colors as color
+from manager.soundmgr import SoundManager
 
 if TYPE_CHECKING:
     from manager.scenemgr import SceneManager
@@ -15,6 +16,7 @@ if TYPE_CHECKING:
 class BackButton(TextButtonObject):
     @overrides
     def start(self) -> None:
+        self.soundmanager = SoundManager()
         screen_rect = pygame.display.get_surface().get_rect()
         self.font = pygame.font.Font(
             font_resource("MainFont.ttf"), screen_rect.height // 20
@@ -31,6 +33,7 @@ class BackButton(TextButtonObject):
 
     @overrides
     def on_click(self) -> None:
+        self.soundmanager.play_effect("click")
         self.scene_manager.load_previous_scene()
         return None
 

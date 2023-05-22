@@ -24,6 +24,7 @@ from gameobj.story.handlewindow import HandleWindow
 from gameobj.story.keyinput import KeyInput
 from gameobj.story.backbtn import BackButton
 from manager.storymgr import StoryManager
+from manager.soundmgr import SoundManager
 from gameobj.story.cat import Cat
 
 from gameobj.story.background import StoryBack
@@ -45,6 +46,8 @@ class StoryScene(Scene):
         menu_font = pygame.font.Font(
             font_resource("MainFont.ttf"), self.screen_rect.height // 12
         )
+
+        self.soundmanager = SoundManager()
         
         self.background = GameObject(
             background_surface, "StoryScene_Background", z_index=-999)
@@ -75,8 +78,10 @@ class StoryScene(Scene):
 
         handle_window = HandleWindow()
 
-        self.no_button.on_mouse_up_as_button = lambda: handle_window.invisible_window()
-        self.yes_button.on_mouse_up = lambda: handle_window.invisible_window()
+        self.no_button.on_mouse_up_as_button = lambda: (handle_window.invisible_window(),
+                                                        self.soundmanager.play_effect("click"))
+        self.yes_button.on_mouse_up = lambda: (handle_window.invisible_window(),
+                                                        self.soundmanager.play_effect("click"))
     
 
         self.window_background = WindowBackground()

@@ -8,6 +8,7 @@ from ..txtbtnobj import TextButtonObject
 from .keyinput import KeyInput
 from util.resource_manager import font_resource
 import util.colors as color
+from manager.soundmgr import SoundManager
 
 if TYPE_CHECKING:
     from manager.scenemgr import SceneManager
@@ -23,6 +24,7 @@ class Menu(TextButtonObject):
 
     @overrides
     def start(self) -> None:
+        self.soundmanager = SoundManager()
         Menu.Insts.append(self)
         screen_rect = pygame.display.get_surface().get_rect()
         self.font = pygame.font.Font(
@@ -48,6 +50,7 @@ class Menu(TextButtonObject):
 
     @overrides
     def on_click(self) -> None:
+        self.soundmanager.play_effect("click")
         self.scene_manager.load_scene(self.target_scene)
         return None
 
