@@ -6,6 +6,7 @@ from os.path import join
 import cv2
 import numpy
 
+from manager.cfgmgr import Config
 from gameobj.gameobj import GameObject
 from util.resource_manager import font_resource
 from util.resource_manager import image_resource
@@ -19,11 +20,16 @@ from gameobj.story.keyinput import KeyInput
 class Back(GameObject):
     @overrides
     def start(self) -> None:
+        color_value = Config().config.get("colorblind_mode")
         screen_rect = pygame.display.get_surface().get_rect()
         self.story_a_text = StoryAText()
         self.touchable = StoryManager().get_stage_states().get("touchable")
-        image = pygame.image.load(image_resource(
-            join("stage", "mian.png")))
+        if color_value:
+            image = pygame.image.load(image_resource(
+                join("stage", "mian2.png")))
+        else: 
+            image = pygame.image.load(image_resource(
+                join("stage", "mian.png")))
         self.image = pygame.transform.scale(image, size=(screen_rect.width, screen_rect.height))
         self.rect = self.image.get_rect()
         
