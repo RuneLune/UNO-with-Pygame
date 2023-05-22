@@ -28,8 +28,9 @@ from gameobj.ingame.winner_txt import WinnerText
 from gameobj.ingame.back_txt import BackToMain
 from gameobj.ingame.achive_rect import AchiveRect
 from gameobj.ingame.card_num_txt import CardNumber
-from gameobj.ingame.draw_icon import DrawIcon
-from gameobj.ingame.turn_icon import TurnIcon
+from gameobj.ingame.icon_draw import DrawIcon
+from gameobj.ingame.icon_turn import TurnIcon
+from gameobj.ingame.icon_skipped import SkipIcon
 
 from gameobj.txtobj import TextObject
 
@@ -60,6 +61,7 @@ class GameScene(Scene):
 
         self.screen_size = self.settings.get_screen_resolution()
         self.user = self.game.get_user()
+        self.user.set_cards([112, 212, 312, 412])
         self.bots = self.game.get_bots()
 
         color_dict = [colors.red, colors.green, colors.blue, colors.yellow]
@@ -336,6 +338,13 @@ class GameScene(Scene):
         self.turn_icon.observer_update(self.user)
         self.turn_icon.top = self.user_space.top - self.draw_icon.height * 2
 
+        # 스킵 알림 이미지
+        self.skip_icon = SkipIcon(
+            width=self.bot_spaces[0].width / 2,
+            height=self.bot_spaces[0].height / 2,
+            left=self.deck_space.width - self.bot_spaces[0].width / 2,
+        )
+
         # 오브젝트 등록
         self.instantiate(BackgroundObject(colors.black))
         self.instantiate(self.deck_space)
@@ -361,6 +370,7 @@ class GameScene(Scene):
         self.instantiate(self.achive_rect)
         self.instantiate(self.draw_icon)
         self.instantiate(self.turn_icon)
+        self.instantiate(self.skip_icon)
 
         SoundManager().play_effect("deal")
         SoundManager().play_background_sound()
@@ -388,6 +398,14 @@ class GameScene(Scene):
 
         if self.user_space.time_left <= 5:
             self.speed_game = False
+
+        skipped_player = self.game.get_skipped_player()
+        if skipped_player is not None:
+            for sp in self.bot_spaces:
+                if sp.player is skipped_player:
+                    self.skip_icon.top = sp.top
+                    self.skip_icon._visible = True
+                    self.game._skip_player = None
 
         # 승리조건 확인
         winner = self.game.check_winner()

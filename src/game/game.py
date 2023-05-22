@@ -76,6 +76,7 @@ class Game(Subject):
         self._reverse_direction: bool = False
         self._current_turn: int = 1
         self._skip_turn: bool = False
+        self._skip_player = None
         # self._player_drawed: bool = False
 
         # self._last_discarded_card = 0
@@ -237,6 +238,10 @@ class Game(Subject):
             pass
         elif self._discarded_card.get("type") == "skip":
             self._skip_turn = True
+            if self._reverse_direction is True:
+                self._skip_player = self._players[self._current_turn - 1]
+            else:
+                self._skip_player = self._players[self._current_turn + 1]
             pass
         elif self._discarded_card.get("color") == "wild":
             if self._discarded_card.get("type") == "draw4":
@@ -484,3 +489,9 @@ class Game(Subject):
             remain_time = 0
             pass
         return remain_time
+
+    def get_skipped_player(self):
+        if self._skip_player is not None:
+            return self._skip_player
+        else:
+            return None
