@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from abstrclass.subject import Subject
 
 
-class Deck(GameObject):
+class Deck(GameObject, Observer):
     @overrides
     def __init__(
         self,
@@ -49,7 +49,15 @@ class Deck(GameObject):
             self.draw_flag = True
 
     def observer_update(self, subject: Type[Subject]):
-        self.user_turn = subject.get_user().is_turn()
+        self.user = subject.get_user()
+        self.user_turn = self.user.is_turn()
+
+    @overrides
+    def update(self) -> None:
+        if self.user_turn is True:
+            return None
+        else:
+            self.user_turn = self.user.is_turn()
 
     def create_neon(self, surf):
         surf_alpha = surf.convert_alpha()

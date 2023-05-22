@@ -42,8 +42,8 @@ from manager.acvmgr import AchieveManager
 # - 업적 달성 체크 o
 # - 업적 달성 메세지 표현 o
 # - 턴 종료시 자동 드로우 체크
-# - 유저, 봇 이름 표시
-# - 봇 카드 개수 표시
+# - 유저, 봇 이름 표시 o
+# - 봇 카드 개수 표시 o
 class GameScene(Scene):
     @overrides
     def start(self) -> None:
@@ -59,6 +59,7 @@ class GameScene(Scene):
         self.user = self.game.get_user()
         self.user.set_cards([14, 14, 14])
         self.bots = self.game.get_bots()
+        self.bots[0].set_cards([15, 15, 15, 15, 15])
 
         color_dict = [colors.red, colors.green, colors.blue, colors.yellow]
 
@@ -106,7 +107,6 @@ class GameScene(Scene):
             top=0,
             color=(0, 150, 100),
         )
-        self.deck_space.deck = True
 
         # 드로우 파일 카드 위치 정의
         self.draw_pile_pos = (
@@ -121,6 +121,7 @@ class GameScene(Scene):
             left=self.draw_pile_pos[0],
             top=self.draw_pile_pos[1],
         )
+        self.deck_card.observer_update(self.game)
 
         # 버린 카드 위치 정의
         self.discard_pile_pos = (
@@ -394,18 +395,12 @@ class GameScene(Scene):
 
         # 현재 턴 플레이어 표시
         if self.user.is_turn() is True:
-            self.user_space.turn = True
             self.turn_count += 1
-        else:
-            self.user_space.turn = False
-        for i, bot in enumerate(self.bots):
-            if bot.is_turn() is True:
-                self.bot_spaces[i].turn = True
-            else:
-                self.bot_spaces[i].turn = False
 
         # 카드 뽑기
-        if self.deck_card.draw_flag is True:
+        if self.deck_card.draw_flag is True or (
+            self.user.is_turn() is True and self.game.remain_turn_time() < 0.1
+        ):
             self.user.draw_cards()
             drawing_cards = self.user.get_last_drawing_cards()
             self.user_cards_list = self.user.get_hand_cards()
@@ -436,10 +431,8 @@ class GameScene(Scene):
             self.last_card.shuffle = False
             self.user_cards_list = self.user.get_hand_cards()
             for obj in self.user_cards_obj:
-                print(obj)
-                self.user_cards_obj.remove(obj)
                 self.destroy(obj)
-
+            self.user_cards_obj.clear()
             # 뽑은 카드 생성 후 유저 공간으로 이동
             for i, code in enumerate(self.user_cards_list):
                 temp = Card(
@@ -464,24 +457,36 @@ class GameScene(Scene):
         # 봇 카드 개수 업데이트
         diff_list = self.bot_card_difference(self.bots)
         for i, diff in enumerate(diff_list):
-            last_index = len(self.bots[i].get_hand_cards()) - 1
-            if last_index >= 6:
-                last_index = 6
             if diff == 0:
                 continue
             elif diff > 0:
-                for j in range(diff, 0, -1):
+                last_index = len(self.bots[i].get_hand_cards()) - 1
+                if last_index >= 6:
+                    last_index = 6
+                for j in range(0, diff):
                     # 카드 생성
-                    temp = BotCard(
-                        surface=self.card_back_image,
-                        name=f"bot{i} card",
-                        left=self.draw_pile_pos[0],
-                        top=self.draw_pile_pos[1],
-                        target_pos=(
-                            self.bot_card_pos_x[last_index - j + 1],
-                            self.bot_card_pos_y[i],
-                        ),
-                    )
+                    if 6 - j < diff:
+                        temp = BotCard(
+                            surface=self.card_back_image,
+                            name=f"bot{i} card",
+                            left=self.draw_pile_pos[0],
+                            top=self.draw_pile_pos[1],
+                            target_pos=(
+                                self.bot_card_pos_x[last_index],
+                                self.bot_card_pos_y[i],
+                            ),
+                        )
+                    else:
+                        temp = BotCard(
+                            surface=self.card_back_image,
+                            name=f"bot{i} card",
+                            left=self.draw_pile_pos[0],
+                            top=self.draw_pile_pos[1],
+                            target_pos=(
+                                self.bot_card_pos_x[last_index - diff + j],
+                                self.bot_card_pos_y[i],
+                            ),
+                        )
                     self.instantiate(temp)
                     temp.draw_start = True
                     self.bot_cards[i].append(temp)
@@ -571,16 +576,7 @@ class GameScene(Scene):
         for i, bot in enumerate(bots):
             before = len(self.bot_cards[i])
             after = len(bot.get_hand_cards())
-            if before == after:
-                diff.append(0)
-            elif before >= 7 and after >= 7:
-                diff.append(0)
-            elif before >= 7 and after < 7:  # 카드 삭제
-                diff.append(after - before)
-            elif before < 7 and after >= 7:  # 카드 생성 7개까지
-                diff.append(7 - before)
-            elif before < 7 and after < 7:
-                diff.append(after - before)
+            diff.append(after - before)
         return diff
 
     def achive_check(self, idx):
