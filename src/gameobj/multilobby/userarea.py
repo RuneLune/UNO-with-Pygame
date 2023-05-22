@@ -1,43 +1,34 @@
-from __future__ import annotations
-
-from typing import List, Tuple
-from overrides import overrides
 import pygame
+from typing import Tuple
 
-from gameobj.gameobj import GameObject
+from .areabg import AreaBackground
 import util.colors as color
 from util.resource_manager import font_resource
 
 
-class PlayerArea(GameObject):
-    Inst_created = 0
-    Insts: List[PlayerArea] = []
-
-    def __new__(cls, *args, **kwargs):
-        cls.Inst_created += 1
-        return super().__new__(cls)
-
-    @overrides
-    def start(self) -> None:
-        PlayerArea.Insts.append(self)
+class UserArea(AreaBackground):
+    def __init__(self) -> None:
         screen_rect = pygame.display.get_surface().get_rect()
-        self.image = pygame.Surface((screen_rect.width // 4, screen_rect.height // 5))
+        super().__init__(
+            pygame.Rect(
+                0,
+                screen_rect.height * 2 // 3,
+                screen_rect.width * 3 // 4,
+                screen_rect.height // 3,
+            ),
+            color.dark_slate_gray,
+            color.white,
+            border_width=2,
+        )
         self._bg_color = color.dark_slate_gray
         self._bd_color = color.white
         self._txt_color = color.white
         self._nametxt = ""
         self._font = pygame.font.Font(
-            font_resource("MainFont.ttf"), screen_rect.height // 30
+            font_resource("MainFont.ttf"), screen_rect.height // 20
         )
         self._is_owner = False
         self._draw_image()
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (
-            screen_rect.width * 3 // 4,
-            screen_rect.height // 5 * (PlayerArea.Inst_created - 1),
-        )
-        self.z_index = 100
-
         return None
 
     def _draw_image(self) -> None:
@@ -59,21 +50,6 @@ class PlayerArea(GameObject):
         text_rect = text.get_rect()
         text_rect.topleft = (image_rect.height // 20, image_rect.height // 20)
         self.image.blit(text, text_rect)
-        return None
-
-    @overrides
-    def on_destroy(self) -> None:
-        PlayerArea.Insts.remove(self)
-        PlayerArea.Inst_created -= 1
-        return None
-
-    @staticmethod
-    def destroy_all() -> None:
-        for inst in PlayerArea.Insts:
-            inst.on_destroy()
-            del inst
-            pass
-        PlayerArea.Inst_created = 0
         return None
 
     @property

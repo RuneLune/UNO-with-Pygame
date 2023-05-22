@@ -37,7 +37,7 @@ class SocketServer(metaclass=SingletonMeta):
             return False
         self._client_list: List[socket.socket] = []
         self._thread_list: List[Thread] = []
-        self._client_addr_list: List[_RetAddress] = []
+        # self._client_addr_list: List[_RetAddress] = []
         self._player_name_dict: Dict[socket.socket, str] = {}
         self._player_name_list: List[str] = []
         self._owner: Optional[socket.socket] = None
@@ -126,24 +126,33 @@ class SocketServer(metaclass=SingletonMeta):
                 data.action = data.action.upper()
 
                 if data.action == "NAME":
+                    while data.target in self._player_name_list:
+                        data.target += "_"
+                        continue
                     self._player_name_dict.update({client_socket: data.target})
+                    self._player_name_list.remove(data.player)
+                    self._player_name_list.append(data.target)
                     self._broadcast(data, client_socket)
                     pass
                 elif data.action == "JOIN":
+                    while data.player in self._player_name_list:
+                        data.player += "_"
+                        continue
                     client_socket.send(
                         pickle.dumps(
                             ProcessData(
                                 "SERVER",
                                 "INFO",
                                 {
-                                    "clients": self._client_list,
-                                    "names": self._player_name_dict,
-                                    "owner": self._owner,
+                                    "player_list": self._player_name_list,
+                                    "owner": self._player_name_dict.get(self._owner),
+                                    "username": data.player,
                                 },
                             )
                         )
                     )
                     self._player_name_dict.update({client_socket: data.player})
+                    self._player_name_list.append(data.player)
                     self._broadcast(data, client_socket)
                     if self._owner is None:
                         self._owner = client_socket
@@ -170,8 +179,9 @@ class SocketServer(metaclass=SingletonMeta):
                     self._client_list.remove(client_socket)
                     if client_socket in self._player_name_dict.keys():
                         name: str = self._player_name_dict.pop(client_socket)
+                        self._player_name_list.remove(name)
                         self._broadcast(
-                            ProcessData("DISCONNECT", name, None), client_socket
+                            ProcessData(name, "DISCONNECT", None), client_socket
                         )
                         pass
                     pass
@@ -220,9 +230,10 @@ class SocketServer(metaclass=SingletonMeta):
     def _kick_client(self, target: str) -> None:
         for client in self._client_list:
             if self._player_name_dict.get(client) == target:
+                client.send(pickle.dumps(ProcessData("SERVER", "KICK", None)))
                 client.close()
                 self._client_list.remove(client)
-                self._player_name_dict.pop(client)
+                self._player_name_list.remove(self._player_name_dict.pop(client))
                 break
             continue
         return None
