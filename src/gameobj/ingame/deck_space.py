@@ -6,6 +6,7 @@ import util.colors as colors
 import pygame
 from overrides import overrides
 from abstrclass.observer import Observer
+from manager.cfgmgr import Config
 from typing import Type, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -62,16 +63,28 @@ class DeckSpace(GameObject, Observer):
             self.pt3 = self.down_pt3
 
     def color_update(self, updated_color):
-        if updated_color == "wild":
-            self.circle_color = colors.black
-        elif updated_color == "red":
-            self.circle_color = colors.red
-        elif updated_color == "blue":
-            self.circle_color = colors.blue
-        elif updated_color == "green":
-            self.circle_color = colors.green
-        elif updated_color == "yellow":
-            self.circle_color = colors.yellow
+        if Config().config.get("colorblind_mode") is False:
+            if updated_color == "wild":
+                self.circle_color = colors.black
+            elif updated_color == "red":
+                self.circle_color = colors.red
+            elif updated_color == "blue":
+                self.circle_color = colors.blue
+            elif updated_color == "green":
+                self.circle_color = colors.green
+            elif updated_color == "yellow":
+                self.circle_color = colors.yellow
+        else:
+            if updated_color == "wild":
+                self.circle_color = colors.black
+            elif updated_color == "red":
+                self.circle_color = colors.orange
+            elif updated_color == "blue":
+                self.circle_color = colors.blue
+            elif updated_color == "green":
+                self.circle_color = colors.colorblinemode_green
+            elif updated_color == "yellow":
+                self.circle_color = colors.yellow
 
     @overrides
     def update(self):

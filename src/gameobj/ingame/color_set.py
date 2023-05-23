@@ -32,16 +32,28 @@ class ColorSet(GameObject, Observer):
         self.user = None
         self.color = color
         self.rect_copy = pygame.rect.Rect((0, 0), self.rect.size)
-        if self.color == colors.red:
-            self.choice = "red"
-        elif self.color == colors.green:
-            self.choice = "green"
-        elif self.color == colors.blue:
-            self.choice = "blue"
-        elif self.color == colors.yellow:
-            self.choice = "yellow"
+        if Config().config.get("colorblind_mode") is False:
+            if self.color == colors.red:
+                self.choice = "red"
+            elif self.color == colors.green:
+                self.choice = "green"
+            elif self.color == colors.blue:
+                self.choice = "blue"
+            elif self.color == colors.yellow:
+                self.choice = "yellow"
+            else:
+                self.choice = "black"
         else:
-            self.choice = "black"
+            if self.color == colors.orange:
+                self.choice = "red"
+            elif self.color == colors.colorblinemode_green:
+                self.choice = "green"
+            elif self.color == colors.blue:
+                self.choice = "blue"
+            elif self.color == colors.yellow:
+                self.choice = "yellow"
+            else:
+                self.choice = "black"
 
     @overrides
     def start(self):

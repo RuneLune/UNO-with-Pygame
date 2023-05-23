@@ -58,10 +58,17 @@ class GameScene(Scene):
 
         self.screen_size = self.settings.get_screen_resolution()
         self.user = self.game.get_user()
-        self.user.set_cards([14, 14])
+        self.user.set_cards([14, 14, 14, 14])
         self.bots = self.game.get_bots()
-
-        color_dict = [colors.red, colors.green, colors.blue, colors.yellow]
+        if Config().config.get("colorblind_mode") is False:
+            color_dict = [colors.red, colors.green, colors.blue, colors.yellow]
+        else:
+            color_dict = [
+                colors.orange,
+                colors.colorblinemode_green,
+                colors.blue,
+                colors.yellow,
+            ]
 
         # 업적 체크용 flag
         self.turn_count = 0
