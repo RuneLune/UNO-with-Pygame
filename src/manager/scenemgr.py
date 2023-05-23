@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 from metaclass.singleton import SingletonMeta
 from scene.achieve_scene import AchieveScene
 from scene.mainmenu import MainMenu
+from scene.selectmenu import SelectMenu
 from scene.cfgmenu import ConfigMenu
 from scene.game_scene import GameScene
 from scene.story_scene import StoryScene
@@ -25,6 +26,7 @@ class SceneManager(metaclass=SingletonMeta):
         self.scenes: Dict[str, Type[Scene]] = {
             "achievements": AchieveScene,
             "main_menu": MainMenu,
+            "select_menu": SelectMenu,
             "config_menu": ConfigMenu,
             "game_scene": GameScene,
             "story_scene": StoryScene,

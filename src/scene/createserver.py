@@ -20,7 +20,7 @@ class CreateServer(Scene):
                 client.close()
                 self.scene_manager.load_previous_scene()
                 pass
-            elif self.scene_manager.previous_scene_name == "main_menu":
+            elif self.scene_manager.previous_scene_name == "select_menu":
                 server.initialize()
                 client.host = server.host
                 client.port = server.port

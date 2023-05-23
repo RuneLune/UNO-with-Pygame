@@ -22,10 +22,11 @@ class MainMenu(Scene):
 
         Menu.destroy_all()
         play_menu = Menu("Play").attach_mgr(self.scene_manager, "gamelobby")
-        server_menu = Menu("Create Room").attach_mgr(
-            self.scene_manager, "create_server"
-        )
-        client_menu = Menu("Join Room").attach_mgr(self.scene_manager, "join_server")
+        select_menu = Menu("MultiPlayer").attach_mgr(self.scene_manager, "select_menu")
+        # server_menu = Menu("Create Room").attach_mgr(
+        #     self.scene_manager, "create_server"
+        # )
+        # client_menu = Menu("Join Room").attach_mgr(self.scene_manager, "join_server")
         stage_menu = Menu("Story").attach_mgr(self.scene_manager, "story_scene")
         achievements_menu = Menu("Achievements").attach_mgr(
             self.scene_manager, "achievements"
@@ -33,8 +34,9 @@ class MainMenu(Scene):
         config_menu = Menu("Settings").attach_mgr(self.scene_manager, "config_menu")
         quit_menu = Menu("Quit").attach_mgr(self.scene_manager, "quit")
         self.instantiate(play_menu)
-        self.instantiate(server_menu)
-        self.instantiate(client_menu)
+        self.instantiate(select_menu)
+        # self.instantiate(server_menu)
+        # self.instantiate(client_menu)
         self.instantiate(stage_menu)
         self.instantiate(achievements_menu)
         self.instantiate(config_menu)
@@ -58,8 +60,9 @@ class MainMenu(Scene):
         key_input.attach_menu(
             [
                 play_menu,
-                server_menu,
-                client_menu,
+                select_menu,
+                # server_menu,
+                # client_menu,
                 stage_menu,
                 achievements_menu,
                 config_menu,
