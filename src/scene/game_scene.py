@@ -2,7 +2,7 @@ from overrides import overrides
 import pygame
 import time
 
-from util.resource_manager import font_resource
+from util.resource_manager import font_resource, image_resource
 import util.colors as colors
 from util.timer import Timer
 from .scene import Scene
@@ -58,7 +58,7 @@ class GameScene(Scene):
 
         self.screen_size = self.settings.get_screen_resolution()
         self.user = self.game.get_user()
-        self.user.set_cards([14, 14, 14, 14])
+        # self.user.set_cards([14, 14, 14, 14])
         self.bots = self.game.get_bots()
         if Config().config.get("colorblind_mode") is False:
             color_dict = [colors.red, colors.green, colors.blue, colors.yellow]
@@ -364,7 +364,7 @@ class GameScene(Scene):
 
         # 턴 알림 이미지
         self.turn_icon = TurnIcon(
-            surface=pygame.image.load("res/img/myturn.png"),
+            surface=pygame.image.load(image_resource("myturn.png")),
             width=self.deck_space.width / 3,
             height=self.deck_space.height / 3,
             left=0,

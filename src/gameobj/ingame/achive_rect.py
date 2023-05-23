@@ -6,7 +6,7 @@ from player.player import Player
 from game.game import Game
 import util.colors as colors
 from manager.cfgmgr import Config
-from util.resource_manager import font_resource
+from util.resource_manager import font_resource, image_resource
 from manager.acvmgr import AchieveManager
 
 import pygame
@@ -67,7 +67,8 @@ class AchiveRect(GameObject):
         self.achive_text = self.font.render(
             f"{AchieveManager().get_achieve_text(idx)} 달성!", True, colors.white
         )
-        self.icon = pygame.image.load(f"res/img/achieve/a{idx+1}.png")
+        # self.icon = pygame.image.load(f"res/img/achieve/a{idx+1}.png")
+        self.icon = pygame.image.load(image_resource(f"achieve/a{idx+1}.png"))
         self.icon = pygame.transform.scale(self.icon, size=(self.height, self.height))
         self.image.blit(self.icon, (self.width / self.height * 2, self.height / 6))
 

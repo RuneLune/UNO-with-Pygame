@@ -8,6 +8,7 @@ import pygame
 from overrides import overrides
 from abstrclass.observer import Observer
 from typing import Type, TYPE_CHECKING
+from util.resource_manager import image_resource
 
 if TYPE_CHECKING:
     from abstrclass.subject import Subject
@@ -31,7 +32,7 @@ class UnoBtn(GameObject, Observer):
 
     @overrides
     def start(self) -> None:
-        self.uno_img = pygame.image.load("./res/img/uno.png")
+        self.uno_img = pygame.image.load(image_resource("uno.png"))
         self.uno_img = pygame.transform.scale(self.uno_img, (self.width, self.height))
         self.uno_gray_img = pygame.transform.grayscale(self.uno_img)
         self.image = self.uno_gray_img

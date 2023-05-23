@@ -8,6 +8,7 @@ from overrides import overrides
 from abstrclass.observer import Observer
 from manager.cfgmgr import Config
 from typing import Type, TYPE_CHECKING
+from util.resource_manager import image_resource
 
 if TYPE_CHECKING:
     from abstrclass.subject import Subject
@@ -17,7 +18,7 @@ class SkipIcon(GameObject, Observer):
     @overrides
     def __init__(
         self,
-        surface: pygame.Surface = pygame.image.load("res/img/skipped.png"),
+        surface: pygame.Surface = pygame.image.load(image_resource("skipped.png")),
         name: str = "GameObject",
         width: int = -1,
         height: int = -1,

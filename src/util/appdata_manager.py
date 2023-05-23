@@ -4,12 +4,13 @@ from appdata import AppDataPaths
 
 
 def appdata_path(relative_path: str) -> str:
-    if hasattr(sys, "_MEIPASS"):
-        base_path = AppDataPaths("SE2023_09")
-        pass
-    else:
-        base_path = os.path.join(os.path.abspath("."), ".appdata")
-        pass
+    # if hasattr(sys, "_MEIPASS"):
+    #     base_path = AppDataPaths("SE2023_09")
+    #     pass
+    # else:
+    #     base_path = os.path.join(os.path.abspath("."), ".appdata")
+    #     pass
+    base_path = os.path.join(os.path.abspath("."), ".appdata")
 
     if not os.path.exists(base_path):
         os.mkdir(base_path)
