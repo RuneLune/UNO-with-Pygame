@@ -1,25 +1,38 @@
+from __future__ import annotations
+
 import copy
 import pygame
 import random
-from typing import List, Dict, Iterable, Type
+from typing import List, Dict, Iterable, Type, TYPE_CHECKING
 
 from player.bot import Bot
 import card.cards as cards
 import event.events as events
 from player.player import Player
 from util.timer import Timer
+from abstrclass.subject import Subject
+from manager.storymgr import StoryManager
+
+if TYPE_CHECKING:
+    from abstrclass.observer import Observer
 
 
-class Game:
-    # MAX_Inst = 1
-    # Inst_created = 0
+class Game(Subject):
+    _observers: List[Observer] = []
 
-    # Game 클래스 생성자
-    def __new__(cls, *args, **kwargs):
-        # if cls.Inst_created >= cls.MAX_Inst:
-        #     raise ValueError("Cannot create more Game object")
-        # cls.Inst_created += 1
-        return super(Game, cls).__new__(cls)
+    def attach(self, observer: Observer) -> None:
+        self._observers.append(observer)
+        return None
+
+    def detach(self, observer: Observer) -> None:
+        self._observers.remove(observer)
+        return None
+
+    def notify(self) -> None:
+        for observer in self._observers:
+            observer.update(self)
+            pass
+        return None
 
     # Game 객체 초기화 메서드
     def __init__(
@@ -63,6 +76,7 @@ class Game:
         self._reverse_direction: bool = False
         self._current_turn: int = 1
         self._skip_turn: bool = False
+        self._skip_player = None
         # self._player_drawed: bool = False
 
         # self._last_discarded_card = 0
@@ -224,6 +238,12 @@ class Game:
             pass
         elif self._discarded_card.get("type") == "skip":
             self._skip_turn = True
+            if self._reverse_direction is True:
+                self._skip_player = self._players[self._current_turn - 1]
+            else:
+                self._skip_player = self._players[
+                    (self._current_turn + 1) % len(self._players)
+                ]
             pass
         elif self._discarded_card.get("color") == "wild":
             if self._discarded_card.get("type") == "draw4":
@@ -277,7 +297,7 @@ class Game:
     def check_winner(self) -> None:
         if len(self._players[self._current_turn].get_hand_cards()) == 0:
             self._end_round()
-            pass
+            return self._players[self._current_turn]
         return None
 
     # 라운드 종료 후 점수를 계산하는 메서드
@@ -293,6 +313,7 @@ class Game:
                     },
                 )
             )
+            StoryManager().update_stage_state(self._name, True)
             pass
         else:
             pygame.event.post(
@@ -305,6 +326,7 @@ class Game:
                     },
                 )
             )
+            StoryManager().update_stage_state(self._name, False)
             pass
         self._game_status = False
         points: int = 0
@@ -384,6 +406,7 @@ class Game:
             self._skip_turn = False
             pass
         self._turn_move = True
+        self.notify()
 
         return None
 
@@ -462,9 +485,15 @@ class Game:
             pass
         return None
 
-    def remain_turn_time(self) -> int:
-        remain_time = self._turn_seconds - self._turn_timer.get().seconds
+    def remain_turn_time(self) -> float:
+        remain_time = self._turn_seconds - self._turn_timer.get().total_seconds()
         if remain_time < 0:
             remain_time = 0
             pass
         return remain_time
+
+    def get_skipped_player(self):
+        if self._skip_player is not None:
+            return self._skip_player
+        else:
+            return None
