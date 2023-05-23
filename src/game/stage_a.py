@@ -1,9 +1,10 @@
 import random
 from overrides import overrides
-from typing import Type
+from typing import List, Type
 
 import card.cards as cards
 from game.game import Game
+from player.bot import Bot
 from player.player import Player
 from player.combo_bot import ComboBot
 
@@ -78,6 +79,9 @@ class StageA(Game):
         self._user.draw_cards(count)
 
         return None
+
+    def get_bots(self) -> List[Bot]:
+        return self._bots
 
     # 기술 카드 드로우 메서드
     def _draw_functional_card(self, player: Type[Player], count: int = 1) -> None:

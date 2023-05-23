@@ -24,6 +24,7 @@ class GameManager(metaclass=SingletonMeta):
             "stage_d": StageD,
         }
         self.__current_game_type = "default"
+        self.__game = Game(4)
         self.__players_count = LobbyManager().get_game_settings().get("player_count")
         self.__username = LobbyManager().get_game_settings().get("user_name").strip()
         return None
