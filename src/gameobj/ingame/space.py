@@ -28,6 +28,7 @@ class Space(GameObject, Observer):
         player: Type[Player] = None,
         game: Type[Game] = None,
     ):
+        self.time_left = 0
         self.turn = False
         self.turn_color = colors.red
         self.player = player
