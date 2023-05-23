@@ -4,17 +4,17 @@ import random
 from game.game import Game
 
 
-class Stage_C(Game):
-    # Stage_C 클래스 생성자
+class StageC(Game):
+    # StageC 클래스 생성자
     @overrides
     def __new__(cls, *args, **kwargs):
-        return super(Stage_C, cls).__new__(cls)
+        return super(StageC, cls).__new__(cls)
 
-    # Stage_C 객체 초기화 메서드
+    # StageC 객체 초기화 메서드
     @overrides
-    def __init__(self, username: str = "Player") -> None:
+    def __init__(self, players_count: int = 3, username: str = "User") -> None:
         self._init_variables(10, 0, 1, 0)
-        self._add_players(username, 3)
+        self._add_players(username, players_count)
         self._make_draw_pile()
         self._deal_hands()
         self._flip_top()
@@ -34,7 +34,7 @@ class Stage_C(Game):
         target_score: int = 500,
     ) -> None:
         self._truns_count = 0
-        return super(Stage_C, self)._init_variables(
+        return super(StageC, self)._init_variables(
             turn_seconds, round_seconds, max_rounds, target_score
         )
 
@@ -45,4 +45,4 @@ class Stage_C(Game):
             self._discarded_card.update(
                 color=random.choice(["blue", "green", "red", "yellow"])
             )
-        return super(Stage_C, self).end_turn()
+        return super(StageC, self).end_turn()
