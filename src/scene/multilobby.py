@@ -10,6 +10,8 @@ from gameobj.multilobby.playerarea import PlayerArea
 from gameobj.multilobby.kickbtn import KickButton
 from gameobj.multilobby.backbtn import BackButton
 from gameobj.multilobby.dataproc import DataProcess
+from gameobj.multilobby.pwdbtn import PasswordButton
+from gameobj.multilobby.keyinput import KeyInput
 from client.client import SocketClient
 from manager.gamemgr import GameManager
 
@@ -47,12 +49,15 @@ class MultiLobby(Scene):
 
         self.instantiate(BackButton("<Back").attach_mgr(self.scene_manager))
 
+        self.instantiate(PasswordButton())
+        self.instantiate(KeyInput().attach_mgr(self.scene_manager))
+
         result: bool = self.socket_client.initialize()
         if not result:
             self.scene_manager.load_previous_scene()
             return None
         self.socket_client.send_data(
-            self.game_manager.username.strip(), "JOIN", self.socket_client.address
+            self.game_manager.username.strip(), "JOIN", self.socket_client.password
         )
 
         # data = None

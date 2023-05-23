@@ -19,47 +19,63 @@ client_ip = socket.gethostbyname(socket.gethostname())
 
 
 class KeyInput(GameObject, metaclass=SingletonMeta):
-    _editing: bool = False
-    _current_text: str = client_ip
-    _previous_text: str = client_ip
+    _editing_ip: bool = False
+    _editing_password: bool = False
+    _current_ip_text: str = client_ip
+    _previous_ip_text: str = client_ip
+    _current_pwd_text: str = ""
+    _previous_pwd_text: str = ""
 
     @overrides
     def on_key_down(self, key: int) -> bool:
         self.key_index = 999
         keyconfig_value = Config().config.get("keybindings")
-        if self._editing:
+        if self._editing_ip:
             if key == keyconfig_value.get("cancel"):
-                self._current_text = self._previous_text
-                # print("stop input")
+                self._current_ip_text = self._previous_ip_text
                 pygame.key.stop_text_input()
-                self.editing = False
+                self.editing_ip = False
                 pass
             elif key == keyconfig_value.get("select"):
-                if re.search(reg_ip, self._current_text) is not None:
-                    self._previous_text = self._current_text
-                    SocketClient().host = self._current_text
-                    self.scene_manager.load_scene("multi_lobby")
+                if re.search(reg_ip, self._current_ip_text) is not None:
+                    self._previous_ip_text = self._current_ip_text
+                    SocketClient().host = self._current_ip_text
+                    # self.scene_manager.load_scene("multi_lobby")
                     pass
                 else:
-                    self._current_text = self._previous_text
+                    self._current_ip_text = self._previous_ip_text
                     pass
-                # print("stop input")
-                pygame.key.stop_text_input()
-                self.editing = False
+                # pygame.key.stop_text_input()
+                self.editing_ip = False
+                self.editing_password = True
+                # pygame.key.start_text_input()
                 pass
             elif key == pygame.K_BACKSPACE:
-                if len(self._current_text) >= 1:
-                    self._current_text = self._current_text[:-1]
+                if len(self._current_ip_text) >= 1:
+                    self._current_ip_text = self._current_ip_text[:-1]
                     pass
                 pass
-            # elif self.last_event.unicode is not None:
-            #     char = self.last_event.unicode
-            #     if ((char >= "0" and char <= "9") or char == ".") and len(
-            #         self._current_text
-            #     ) < 15:
-            #         self._current_text += char
-            #         pass
-            #     pass
+            else:
+                return False
+            return True
+        elif self.editing_password:
+            if key == keyconfig_value.get("cancel"):
+                self._current_pwd_text = self._previous_pwd_text
+                pygame.key.stop_text_input()
+                self.editing_password = False
+                pass
+            elif key == keyconfig_value.get("select"):
+                self._previous_pwd_text = self._current_pwd_text
+                pygame.key.stop_text_input()
+                SocketClient().password = self._current_pwd_text
+                self.editing_password = False
+                self.scene_manager.load_scene("multi_lobby")
+                pass
+            elif key == pygame.K_BACKSPACE:
+                if len(self._current_pwd_text) >= 1:
+                    self._current_pwd_text = self._current_pwd_text[:-1]
+                    pass
+                pass
             else:
                 return False
             return True
@@ -68,8 +84,7 @@ class KeyInput(GameObject, metaclass=SingletonMeta):
                 self.scene_manager.load_previous_scene()
                 pass
             elif key == keyconfig_value.get("select"):
-                self.editing = True
-                # print("start input")
+                self.editing_ip = True
                 pygame.key.start_text_input()
                 pass
             pass
@@ -77,12 +92,14 @@ class KeyInput(GameObject, metaclass=SingletonMeta):
 
     @overrides
     def on_text_input(self, text: str) -> bool:
-        if self._editing and len(self._current_text) < 15:
+        if self._editing_ip and len(self._current_ip_text) < 15:
             if (text[-1] >= "0" and text[-1] <= "9") or text[-1] == ".":
-                self._current_text += text
+                self._current_ip_text += text
                 pass
             pass
-        # print(text)
+        elif self._editing_password and len(self._current_pwd_text) < 8:
+            self._current_pwd_text += text
+            pass
         return True
 
     def attach_mgr(self, scene_manager: SceneManager) -> KeyInput:
@@ -90,24 +107,37 @@ class KeyInput(GameObject, metaclass=SingletonMeta):
         return self
 
     @property
-    def editing(self) -> bool:
-        return self._editing
+    def editing_ip(self) -> bool:
+        return self._editing_ip
 
-    @editing.setter
-    def editing(self, value: bool) -> None:
+    @editing_ip.setter
+    def editing_ip(self, value: bool) -> None:
         # if value is True:
-        #     self._previous_text = self._current_text
+        #     self._previous_ip_text = self._current_ip_text
         #     pass
-        self._editing = value
+        self._editing_ip = value
         return None
 
     @property
-    def current_text(self) -> str:
-        return self._current_text
+    def current_ip_text(self) -> str:
+        return self._current_ip_text
+
+    @property
+    def current_pwd_text(self) -> str:
+        return self._current_pwd_text
+
+    @property
+    def editing_password(self) -> bool:
+        return self._editing_password
+
+    @editing_password.setter
+    def editing_password(self, value: bool) -> None:
+        self._editing_password = value
+        return None
 
     def reset(self) -> None:
-        self._current_text = self._previous_text
-        self.editing = False
+        self._current_ip_text = self._previous_ip_text
+        self.editing_ip = False
         return None
 
     pass

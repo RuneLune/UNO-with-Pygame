@@ -22,6 +22,7 @@ stop_thread: Event = Event()
 class SocketClient(metaclass=SingletonMeta):
     def initialize(self) -> bool:
         self.close()
+        self._password = ""
         global SERVER_IP, SERVER_PORT
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -176,5 +177,14 @@ class SocketClient(metaclass=SingletonMeta):
         else:
             return None
         pass
+
+    @property
+    def password(self) -> str:
+        return self._password
+
+    @password.setter
+    def password(self, value: str) -> None:
+        self._password = value
+        return None
 
     pass

@@ -14,19 +14,19 @@ class IPText(TextObject):
         self.z_index = 1000
         self.key_index = -1000
         screen_rect = pygame.display.get_surface().get_rect()
-        self.text = KeyInput().current_text
+        self.text = KeyInput().current_ip_text
         self.font = pygame.font.Font(
             font_resource("MainFont.ttf"), screen_rect.height // 15
         )
         self.image = self.font.render(self.text, True, self.color)
         self.size = self.image.get_rect().size
-        self.center = screen_rect.center
+        self.midbottom = screen_rect.center
         return None
 
     @overrides
     def update(self) -> None:
-        if self.text != KeyInput().current_text:
-            self.set_text(KeyInput().current_text)
+        if self.text != KeyInput().current_ip_text:
+            self.set_text(KeyInput().current_ip_text)
             pass
         return None
 

@@ -4,6 +4,7 @@ from .scene import Scene
 from gameobj.bgobj import BackgroundObject
 from gameobj.joinserver.keyinput import KeyInput
 from gameobj.joinserver.iptxt import IPText
+from gameobj.joinserver.pwdtxt import PasswordText
 from client.client import SocketClient
 import util.colors as color
 
@@ -16,6 +17,7 @@ class JoinServer(Scene):
         self.key_input = KeyInput().attach_mgr(self.scene_manager)
         self.instantiate(self.key_input)
         self.instantiate(IPText())
+        self.instantiate(PasswordText())
         return None
 
     @overrides

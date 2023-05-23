@@ -22,6 +22,7 @@ class SocketServer(metaclass=SingletonMeta):
     #     return None
 
     def initialize(self) -> bool:
+        self._password: Optional[str] = None
         global HOST, PORT
         self._host = HOST if HOST else socket.gethostbyname(socket.gethostname())
         self._port = PORT if PORT else 23009
@@ -114,7 +115,8 @@ class SocketServer(metaclass=SingletonMeta):
         )
         while client_socket in self._client_list and not stop_thread.is_set():
             try:
-                data: ProcessData = pickle.loads(client_socket.recv(4096))
+                message = client_socket.recv(4096)
+                data: ProcessData = pickle.loads(message)
                 if not data:
                     break
                 else:
@@ -135,6 +137,21 @@ class SocketServer(metaclass=SingletonMeta):
                     self._broadcast(data, client_socket)
                     pass
                 elif data.action == "JOIN":
+                    pass_ok: bool = True
+                    if self._password is not None:
+                        if data.target is None or data.target != self._password:
+                            pass_ok = False
+                            pass
+                        else:
+                            pass_ok = True
+                            pass
+                    if not pass_ok:
+                        client_socket.send(
+                            pickle.dumps(ProcessData("SERVER", "WRONGPASS", None))
+                        )
+                        client_socket.close()
+                        self._client_list.remove(client_socket)
+                        break
                     while data.player in self._player_name_list:
                         data.player += "_"
                         continue
@@ -168,6 +185,15 @@ class SocketServer(metaclass=SingletonMeta):
                         if data.target is not None:
                             self._kick_client(data.target)
                             pass
+                        pass
+                    elif data.action == "SETPASS":
+                        if data.target == "":
+                            self._password = None
+                            pass
+                        else:
+                            self._password = data.target
+                            pass
+                        pass
                     pass
                 # Room Member
                 else:

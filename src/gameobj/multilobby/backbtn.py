@@ -22,7 +22,7 @@ class BackButton(TextButtonObject):
         self.color = color.white
         self.image = self.font.render(self.text, True, self.color)
         self.rect = self.image.get_rect()
-        self.topleft = (screen_rect.width // 32, screen_rect.height // 32)
+        self.topleft = (screen_rect.height // 32, screen_rect.height // 32)
         return None
 
     def attach_mgr(self, scene_manager: SceneManager) -> BackButton:
