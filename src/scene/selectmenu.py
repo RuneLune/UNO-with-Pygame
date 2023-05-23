@@ -9,7 +9,7 @@ from gameobj.mainmenu.keybind import KeyBind
 from gameobj.mainmenu.keyinput import KeyInput
 from gameobj.mainmenu.selector import Selector
 from gameobj.mainmenu.bg import Back
-from gameobj.achieve.backbtn import BackButton
+from gameobj.mainmenu.backbtn import BackButton
 
 from manager.soundmgr import SoundManager
 
@@ -36,7 +36,9 @@ class SelectMenu(Scene):
         # self.instantiate(play_menu)
         self.instantiate(server_menu)
         self.instantiate(client_menu)
-        self.instantiate(BackButton())
+        backbutton = BackButton("Back").attach_mgr(self.scene_manager)
+        # backbutton.color = color.black
+        self.instantiate(backbutton)
         # self.instantiate(stage_menu)
         # self.instantiate(achievements_menu)
         # self.instantiate(config_menu)
