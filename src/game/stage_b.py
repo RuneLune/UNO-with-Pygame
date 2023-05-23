@@ -6,17 +6,17 @@ from game.game import Game
 import card.cards as cards
 
 
-class Stage_B(Game):
-    # Stage_B 클래스 생성자
+class StageB(Game):
+    # StageB 클래스 생성자
     @overrides
     def __new__(cls, *args, **kwargs):
-        return super(Stage_B, cls).__new__(cls)
+        return super(StageB, cls).__new__(cls)
 
-    # Stage_B 객체 초기화 메서드
+    # StageB 객체 초기화 메서드
     @overrides
-    def __init__(self, username: str = "Player") -> None:
+    def __init__(self, players_count: int = 4, username: str = "User") -> None:
         self._init_variables(10, 0, 1, 0)
-        self._add_players(username, 4)
+        self._add_players(username, players_count)
         self._make_draw_pile()
         drawing_cards_count: int = (len(self._draw_pile) - 1) // len(self._players)
         self._deal_hands(drawing_cards_count)

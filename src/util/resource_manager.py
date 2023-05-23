@@ -3,10 +3,12 @@ import os
 
 
 def resource_path(relative_path: str) -> str:
-    try:
+    if hasattr(sys, "_MEIPASS"):
         base_path = sys._MEIPASS
-    except Exception:
+        pass
+    else:
         base_path = os.path.abspath(".")
+        pass
 
     return os.path.join(base_path, "res", relative_path)
 
