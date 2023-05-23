@@ -33,6 +33,7 @@ from gameobj.ingame.diff_txt import DiffNumber
 from gameobj.ingame.icon_draw import DrawIcon
 from gameobj.ingame.icon_turn import TurnIcon
 from gameobj.ingame.icon_skipped import SkipIcon
+from gameobj.ingame.icon_uno import UnoIcon
 
 
 from gameobj.txtobj import TextObject
@@ -57,6 +58,7 @@ class GameScene(Scene):
 
         self.screen_size = self.settings.get_screen_resolution()
         self.user = self.game.get_user()
+        self.user.set_cards([14, 14])
         self.bots = self.game.get_bots()
 
         color_dict = [colors.red, colors.green, colors.blue, colors.yellow]
@@ -218,6 +220,7 @@ class GameScene(Scene):
             self.bot_card_num.append(temp)
             self.instantiate(self.bot_card_num[i])
 
+        # 봇 카드 변화 표시 텍스트 오브젝트 생성
         self.bot_card_diff = []
         for i, bot in enumerate(self.bots):
             temp = DiffNumber(
@@ -233,6 +236,20 @@ class GameScene(Scene):
             temp.observer_update(bot)
             self.bot_card_diff.append(temp)
             self.instantiate(self.bot_card_diff[i])
+
+        # 봇 uno 표시 아이콘 오브젝트 생성
+        self.bot_uno_icon = []
+        for i, bot in enumerate(self.bots):
+            temp = UnoIcon(
+                width=self.bot_spaces[0].width / 2,
+                height=self.bot_spaces[0].height / 2,
+                left=self.bot_card_pos_x[3],
+                top=self.bot_card_pos_y[i],
+                z_index=1,
+            )
+            temp.attach_bot(bot)
+            self.bot_uno_icon.append(temp)
+            self.instantiate(self.bot_uno_icon[i])
 
         # 색 선택 오브젝트 생성
         self.color_set = []
@@ -312,7 +329,7 @@ class GameScene(Scene):
             font=pygame.font.Font(font_resource("MainFont.ttf"), 100),
             color=colors.white,
             left=0,
-            top=self.user_space.top,
+            top=self.user_space.top * 6 / 5,
             z_index=1,
         )
         self.back_to_main._visible = False
