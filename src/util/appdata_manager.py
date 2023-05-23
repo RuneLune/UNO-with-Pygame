@@ -4,13 +4,13 @@ from appdata import AppDataPaths
 
 
 def appdata_path(relative_path: str) -> str:
-    try:
-        if sys._MEIPASS:
-            base_path = AppDataPaths("SE2023_09")
-            pass
-    except Exception:
-        base_path = os.path.join(os.path.abspath("."), ".appdata")
-        pass
+    # if hasattr(sys, "_MEIPASS"):
+    #     base_path = AppDataPaths("SE2023_09")
+    #     pass
+    # else:
+    #     base_path = os.path.join(os.path.abspath("."), ".appdata")
+    #     pass
+    base_path = os.path.join(os.path.abspath("."), ".appdata")
 
     if not os.path.exists(base_path):
         os.mkdir(base_path)
@@ -40,3 +40,4 @@ def game_data_path(file_name: str) -> str:
 config_path: str = appdata_path("config.json")
 stage_access_path: str = game_data_path("access.json")
 game_config_path: str = game_data_path("config.json")
+achieve_path: str = game_data_path("achieve.json")
