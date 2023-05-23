@@ -6,11 +6,11 @@ sys.path.append(
     os.path.join(os.path.dirname(os.path.abspath(os.path.dirname(__file__))), "src")
 )
 
-from game.stage_a import Stage_A
+from game.stage_a import StageA
 import card.cards as cards
 
 
-class Stage_A_test(Stage_A):
+class Stage_A_test(StageA):
     @overrides
     def __init__(self) -> None:
         self._players = []
@@ -20,9 +20,9 @@ class Stage_A_test(Stage_A):
 
     def check_computer_draw1(self) -> int:
         self._draw_pile = [cards.blue_0, cards.blue_draw2] * 50
-        self._computer.set_cards([])
+        self._bots[0].set_cards([])
         self._deal_hands(1)
-        return self._computer.get_hand_cards()[0]
+        return self._bots[0].get_hand_cards()[0]
 
 
 def test_bot_drawing():
