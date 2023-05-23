@@ -8,10 +8,10 @@ sys.path.append(
 )
 
 from game.game import Game
-from game.stage_a import Stage_A
-from game.stage_b import Stage_B
-from game.stage_c import Stage_C
-from game.stage_d import Stage_D
+from game.stage_a import StageA
+from game.stage_b import StageB
+from game.stage_c import StageC
+from game.stage_d import StageD
 
 pygame.init()
 
@@ -37,7 +37,7 @@ def test_game() -> None:
 
 def test_stage_a() -> None:
     try:
-        stage_a: Stage_A = Stage_A()
+        stage_a: StageA = StageA()
         time.sleep(5)
         stage_a.tick()
         pass
@@ -50,7 +50,7 @@ def test_stage_a() -> None:
 
 def test_stage_b() -> None:
     try:
-        stage_b: Stage_B = Stage_B()
+        stage_b: StageB = StageB()
         time.sleep(5)
         stage_b.tick()
         pass
@@ -63,7 +63,7 @@ def test_stage_b() -> None:
 
 def test_stage_c() -> None:
     try:
-        stage_c: Stage_C = Stage_C()
+        stage_c: StageC = StageC()
         time.sleep(5)
         stage_c.tick()
         pass
@@ -76,7 +76,7 @@ def test_stage_c() -> None:
 
 def test_stage_d() -> None:
     try:
-        stage_d: Stage_D = Stage_D()
+        stage_d: StageD = StageD()
         time.sleep(5)
         stage_d.tick()
         pass
